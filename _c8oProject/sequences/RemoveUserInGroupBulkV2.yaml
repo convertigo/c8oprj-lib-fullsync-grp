@@ -39,12 +39,9 @@ comment: Bulk remove of 1,n users to 1,n groups
     
     _use_json_base = JSON.stringify(_use_json_base);'
 ↓Call_Transaction2 [steps.TransactionStep-1741268872217]: 
-  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocuments
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
   ↓_use_json_base [variables.StepVariable-1741268872220]: 
     description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
-  ↓_c8oAcl [variables.StepVariable-1741268872223]: 
-    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
-    value: c8o:admin
 ↓groups [variables.RequestableVariable-1741268872226]: 
   comment: Array<String> groups -- should be stringified from front-end
 ↓users [variables.RequestableVariable-1741268872229]: 

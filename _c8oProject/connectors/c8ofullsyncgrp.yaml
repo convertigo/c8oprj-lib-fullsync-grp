@@ -35,6 +35,17 @@ databaseName: c8ofullsyncgrp
   ↓_c8oAcl [variables.RequestableVariable-1594128554396]: 
     description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
     value: c8o:admin
+↓PostBulkDocumentsOverride [transactions.couchdb.PostBulkDocumentsTransaction]: 
+  fullSyncAclPolicy: noOp
+  policy: merge
+  ↓Test_Case [core.TestCase]: 
+    ↓_use_json_base [variables.TestCaseVariable-1741280474518]: 
+      description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+    ↓_c8oAcl [variables.TestCaseVariable-1741280474521]: 
+      description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+      value: c8o:admin
+  ↓_use_json_base [variables.RequestableVariable-1741280474524]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
 ↓PostFind [transactions.couchdb.PostFindTransaction]: 
   ↓Test_Case [core.TestCase]: 
     ↓_use_selector [variables.TestCaseVariable-1672751510992]: 

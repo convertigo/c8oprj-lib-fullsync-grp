@@ -2,14 +2,16 @@
 ↓lib_FullSyncGrp [core.Project]: 
   comment: Library to define users and groups for fullsync replication filtering
   contextTimeout: 1800
-  version: 8.0.0.0
+  version: 8.0.0.1
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓Groups [sequences.GenericSequence]: 🗏 sequences/Groups.yaml
   ↓GroupsOf [sequences.GenericSequence]: 🗏 sequences/GroupsOf.yaml
   ↓RemoveGroup [sequences.GenericSequence]: 🗏 sequences/RemoveGroup.yaml
   ↓RemoveUserFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveUserFromGroup.yaml
+  ↓RemoveUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/RemoveUserInGroupBulkV2.yaml
   ↓SetUserInGroup [sequences.GenericSequence]: 🗏 sequences/SetUserInGroup.yaml
   ↓SetUserInGroupBulk [sequences.GenericSequence]: 🗏 sequences/SetUserInGroupBulk.yaml
+  ↓SetUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/SetUserInGroupBulkV2.yaml
   ↓UpdateGroup [sequences.GenericSequence]: 🗏 sequences/UpdateGroup.yaml
   ↓Users [sequences.GenericSequence]: 🗏 sequences/Users.yaml
   ↓UsersOf [sequences.GenericSequence]: 🗏 sequences/UsersOf.yaml

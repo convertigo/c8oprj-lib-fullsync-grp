@@ -1,0 +1,53 @@
+accessibility: Private
+comment: Bulk add of 1,n users to 1,n groups
+↓Input_variables [steps.InputVariablesStep-1741257035035]: 
+↓jGroups [steps.JsonSourceStep-1741257151640]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1741257035035
+        - java.lang.String: 
+          - ↑value: ./groups
+  variableName: jGroups
+↓jGroups1 [steps.JsonSourceStep-1741257164954]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1741257035035
+        - java.lang.String: 
+          - ↑value: ./users
+  variableName: jUsers
+↓Sequence_ComputeGroups [steps.SimpleStep-1741257238328]: 
+  expression: |
+    'var _use_json_base = [];
+    users = JSON.parse(users);
+    groups = JSON.parse(groups);
+    for(var i=0; i < users.length; i++){
+    	for(var j=0; j < groups.length; j++){
+    		_use_json_base.push(
+    				{
+    					_id : org.apache.commons.codec.digest.DigestUtils.sha256Hex(users[i] + ":" + groups[j]),
+    					user: users[i],
+    					group: groups[j],
+    					type: "c8oGrp"
+    				}
+    			)
+    	}
+    }
+    
+    _use_json_base = JSON.stringify(_use_json_base);'
+↓Call_Transaction2 [steps.TransactionStep-1741257518362]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocuments
+  ↓_use_json_base [variables.StepVariable-1741257518365]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+  ↓_c8oAcl [variables.StepVariable-1741257518368]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
+↓groups [variables.RequestableVariable-1741258004766]: 
+  comment: Array<String> groups -- should be stringified from front-end
+↓users [variables.RequestableVariable-1741258007958]: 
+  comment: Array<String> users -- should be stringified from front-end

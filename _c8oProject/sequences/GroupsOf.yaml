@@ -10,6 +10,11 @@ comment: list groups of a user
           - ↑mode: PLAIN
           - →→: The "user" parameter must be defined and not empty
   ↓Return [steps.ReturnStep-1486393491118]: 
+↓cast [steps.SimpleStep-1743521191804]: 
+  expression: |
+    'if(!isNaN(_use_key)){
+    	_use_key = ''"'' + _use_key + ''"'';
+    }'
 ↓Call_Transaction [steps.TransactionStep-1486393576613]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupsByUser
   ↓_use_key [variables.StepVariable-1486393576615]: 

@@ -2,7 +2,7 @@
 ↓lib_FullSyncGrp [core.Project]: 
   comment: Library to define users and groups for fullsync replication filtering
   contextTimeout: 1800
-  version: 8.0.0.2
+  version: 8.0.0.3
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓Groups [sequences.GenericSequence]: 🗏 sequences/Groups.yaml
   ↓GroupsOf [sequences.GenericSequence]: 🗏 sequences/GroupsOf.yaml

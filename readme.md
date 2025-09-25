@@ -14,8 +14,10 @@ For more technical informations : [documentation](./project.md)
     - [GroupsOf](#groupsof)
     - [RemoveGroup](#removegroup)
     - [RemoveUserFromGroup](#removeuserfromgroup)
+    - [RemoveUserInGroupBulkV2](#removeuseringroupbulkv2)
     - [SetUserInGroup](#setuseringroup)
     - [SetUserInGroupBulk](#setuseringroupbulk)
+    - [SetUserInGroupBulkV2](#setuseringroupbulkv2)
     - [UpdateGroup](#updategroup)
     - [Users](#users)
     - [UsersOf](#usersof)
@@ -95,6 +97,24 @@ remove a user from a group
 </tr>
 </table>
 
+### RemoveUserInGroupBulkV2
+
+Bulk remove of 1,n users to 1,n groups
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>groups</td><td>Array<String> groups -- should be stringified from front-end</td>
+</tr>
+<tr>
+<td>users</td><td>Array<String> users -- should be stringified from front-end</td>
+</tr>
+</table>
+
 ### SetUserInGroup
 
 add a user to a group
@@ -125,6 +145,24 @@ add a user to a group
 </tr>
 <tr>
 <td>bulkOBj</td><td></td>
+</tr>
+</table>
+
+### SetUserInGroupBulkV2
+
+Bulk add of 1,n users to 1,n groups
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>groups</td><td>Array<String> groups -- should be stringified from front-end</td>
+</tr>
+<tr>
+<td>users</td><td>Array<String> users -- should be stringified from front-end</td>
 </tr>
 </table>
 

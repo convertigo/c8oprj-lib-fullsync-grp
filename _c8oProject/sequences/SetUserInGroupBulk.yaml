@@ -10,11 +10,23 @@ comment: add a user to a group
           - ↑value: 1594129985760
         - java.lang.String: 
           - ↑value: ./bulkOBj/groups
+↓myVariable [steps.JsonSourceStep-1758732925548]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1594129985760
+        - java.lang.String: 
+          - ↑value: ./bulkOBj
+  variableName: groups
 ↓CalcID [steps.SimpleStep-1594128461727]: 
   expression: |
     'var jDoc = JSON.parse(''''+com.twinsoft.convertigo.engine.util.XMLUtils.XmlToJson(myNodeList.item(0), true, true));
     var bulk = jDoc.groups.complex;
-    
+    if(!Array.isArray(bulk)){
+    	bulk = [bulk];
+    }
     for(var i in bulk){
     	bulk[i]["_id"] = ""+ org.apache.commons.codec.digest.DigestUtils.sha256Hex(bulk[i]["user"] + ":" + bulk[i]["group"]);  
     	bulk[i]["type"] = "c8oGrp";
@@ -40,3 +52,5 @@ comment: add a user to a group
     description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
     value: c8o:admin
 ↓bulkOBj [variables.RequestableMultiValuedVariable-1594128493594]: 
+↓Test_Case [core.TestCase]: 
+  ↓bulkOBj [variables.TestCaseMultiValuedVariable-1749028004679]: 

@@ -3,7 +3,7 @@
 
 # lib_FullSyncGrp
 
-Library to define users, groups, roles, and permissions for fullsync replication filtering
+Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering
 
 
 For more technical informations : [documentation](./project.md)
@@ -478,4 +478,3 @@ list users of a group
 <td>group</td><td></td>
 </tr>
 </table>
-

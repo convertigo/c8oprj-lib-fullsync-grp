@@ -5,10 +5,38 @@ databaseName: c8ofullsyncgrp
   q_group_level: 1
   q_reduce: true
   viewname: design/get_users_by_group
+↓GetGroupsByRole [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_groups_by_role
+  ↓_use_key [variables.RequestableVariable-1776161211372]: 
+    description: (string) – Return only documents that match the specified key. Optional
 ↓GetGroupsByUser [transactions.couchdb.GetViewTransaction]: 
   q_reduce: false
   viewname: design/get_groups_by_user
   ↓_use_key [variables.RequestableVariable-1486393547007]: 
+    description: (string) – Return only documents that match the specified key. Optional
+↓GetPermissions [transactions.couchdb.GetViewTransaction]: 
+  q_group_level: 1
+  q_reduce: true
+  viewname: design/get_roles_count_by_permission
+↓GetPermissionsByRole [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_permissions_by_role
+  ↓_use_key [variables.RequestableVariable-1776161212334]: 
+    description: (string) – Return only documents that match the specified key. Optional
+↓GetRoles [transactions.couchdb.GetViewTransaction]: 
+  q_group_level: 1
+  q_reduce: true
+  viewname: design/get_groups_count_by_role
+↓GetRolesByGroup [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_roles_by_group
+  ↓_use_key [variables.RequestableVariable-1776161210887]: 
+    description: (string) – Return only documents that match the specified key. Optional
+↓GetRolesByPermission [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_roles_by_permission
+  ↓_use_key [variables.RequestableVariable-1776161212681]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetServerInfo [transactions.couchdb.GetServerInfoTransaction]: 
   ↑default: true
@@ -65,9 +93,36 @@ databaseName: c8ofullsyncgrp
 ↓RemoveGroup [transactions.couchdb.DeleteDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1672247091187]: 
     description: Document ID
+↓RemovePermissionFromRole [transactions.couchdb.DeleteDocumentTransaction]: 
+  ↓_use_docid [variables.RequestableVariable-1776161214974]: 
+    description: Document ID
+↓RemoveRoleFromGroup [transactions.couchdb.DeleteDocumentTransaction]: 
+  ↓_use_docid [variables.RequestableVariable-1776161213537]: 
+    description: Document ID
 ↓RemoveUserFromGroup [transactions.couchdb.DeleteDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1486391952010]: 
     description: Document ID
+↓SetPermissionInRole [transactions.couchdb.PostDocumentTransaction]: 
+  fullSyncAclPolicy: fromKeyC8oAcl
+  p_json_base: '{"type":"c8oRolePerm"}'
+  ↓role [variables.RequestableVariable-1776161215188]: 
+  ↓element [variables.RequestableVariable-1776161215190]: 
+  ↓action [variables.RequestableVariable-1776161215192]: 
+  ↓scope [variables.RequestableVariable-1776161215194]: 
+  ↓permission [variables.RequestableVariable-1776161215196]: 
+  ↓_id [variables.RequestableVariable-1776161215198]: 
+  ↓_c8oAcl [variables.RequestableVariable-1776161215200]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
+↓SetRoleInGroup [transactions.couchdb.PostDocumentTransaction]: 
+  fullSyncAclPolicy: fromKeyC8oAcl
+  p_json_base: '{"type":"c8oGrpRole"}'
+  ↓group [variables.RequestableVariable-1776161213815]: 
+  ↓role [variables.RequestableVariable-1776161213819]: 
+  ↓_id [variables.RequestableVariable-1776161213821]: 
+  ↓_c8oAcl [variables.RequestableVariable-1776161213823]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
 ↓SetUserInGroup [transactions.couchdb.PostDocumentTransaction]: 
   fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oGrp"}'
@@ -102,6 +157,74 @@ databaseName: c8ofullsyncgrp
           try {\r\n
               if (doc.type == \"c8oGrp\" && doc.user && doc.group) {\r\n
                   emit(doc.user, doc.group);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_count"
+          },
+          "get_roles_by_group": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGrpRole\" && doc.group && doc.role) {\r\n
+                  emit(doc.group, doc.role);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_groups_by_role": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGrpRole\" && doc.group && doc.role) {\r\n
+                  emit(doc.role, doc.group);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_groups_count_by_role": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGrpRole\" && doc.group && doc.role) {\r\n
+                  emit(doc.role, doc.group);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_count"
+          },
+          "get_permissions_by_role": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oRolePerm\" && doc.role && doc.permission) {\r\n
+                  emit(doc.role, doc.permission);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_roles_by_permission": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oRolePerm\" && doc.role && doc.permission) {\r\n
+                  emit(doc.permission, doc.role);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_roles_count_by_permission": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oRolePerm\" && doc.role && doc.permission) {\r\n
+                  emit(doc.permission, doc.role);\r\n
               }\r\n
           } catch (err) {\r\n
               log(err.message);\r\n

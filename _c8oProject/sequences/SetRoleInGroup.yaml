@@ -1,0 +1,85 @@
+accessibility: Private
+comment: add a role to a group
+↓jIf [steps.IfStep-1776163000060]: 
+  condition: role == undefined || role.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776163000061]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "role" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776163000062]: 
+↓jIf1 [steps.IfStep-1776163000063]: 
+  condition: group == undefined || group.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776163000064]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "group" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776163000065]: 
+↓CalcID [steps.SimpleStep-1776163000066]: 
+  expression: |
+    group = group.trim();
+    role = role.trim().toLowerCase();
+    var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(group + ":" + role);
+↓Call_Transaction [steps.TransactionStep-1776163000067]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetRoleInGroup
+  ↓group [variables.StepVariable-1776163000068]: 
+  ↓role [variables.StepVariable-1776163000069]: 
+  ↓_id [variables.StepVariable-1776163000070]: 
+↓IfExistThenElse [steps.IfExistThenElseStep-1776163000071]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776163000067
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok[.="true"]
+  ↓jThen [steps.ThenStep-1776163000072]: 
+    ↓jElement [steps.ElementStep-1776163000073]: 
+      expression: '"The role ''" + role + "'' is added to the ''" + group + "'' group"'
+      nodeName: success
+    ↓Element [steps.XMLElementStep-1776163000074]: 
+      nodeName: new
+      nodeText: true
+  ↓jElse [steps.ElseStep-1776163000075]: 
+    ↓IfExistThenElse [steps.IfExistThenElseStep-1776163000076]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1776163000067
+            - java.lang.String: 
+              - ↑value: ./document/couchdb_output/error[.="conflict"]
+      ↓jThen [steps.ThenStep-1776163000077]: 
+        ↓jElement [steps.ElementStep-1776163000078]: 
+          expression: '"The role ''" + role + "'' already exists in the ''" + group + "'' group"'
+          nodeName: success
+        ↓Element [steps.XMLElementStep-1776163000079]: 
+          nodeName: new
+          nodeText: false
+      ↓jElse [steps.ElseStep-1776163000080]: 
+        ↓Error_structure [steps.XMLErrorStep-1776163000081]: 
+          details: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: SOURCE
+                - com.twinsoft.convertigo.beans.common.XMLVector: 
+                  - java.lang.String: 
+                    - ↑value: 1776163000067
+                  - java.lang.String: 
+                    - ↑value: ./document/couchdb_output/*
+          message: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: JS
+                - →→: '"Unexpected error while adding the role ''" + role + "'' in the ''" + group + "'' group"'
+↓role [variables.RequestableVariable-1776163000082]: 
+↓group [variables.RequestableVariable-1776163000083]: 

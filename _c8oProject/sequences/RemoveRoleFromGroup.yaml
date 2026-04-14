@@ -1,0 +1,78 @@
+accessibility: Private
+comment: remove a role from a group
+↓jIf [steps.IfStep-1776161236562]: 
+  condition: role == undefined || role.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161236578]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "role" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161236580]: 
+↓jIf1 [steps.IfStep-1776161236789]: 
+  condition: group == undefined || group.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161236792]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "group" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161236795]: 
+↓CalcID [steps.SimpleStep-1776161237144]: 
+  expression: |
+    group = group.trim();
+    role = role.trim().toLowerCase();
+    var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex(group + ":" + role);
+↓Call_Transaction [steps.TransactionStep-1776161237429]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveRoleFromGroup
+  ↓_use_docid [variables.StepVariable-1776161237440]: 
+    description: Document ID
+↓IfExistThenElse [steps.IfExistThenElseStep-1776161237722]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776163000097
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok
+  ↓jThen [steps.ThenStep-1776161237729]: 
+    ↓jElement [steps.ElementStep-1776161237731]: 
+      expression: '"The role ''" + role + "'' is removed from the ''" + group + "'' group"'
+      nodeName: success
+    ↓Element [steps.XMLElementStep-1776161237733]: 
+      nodeName: removed
+  ↓jElse [steps.ElseStep-1776161237740]: 
+    ↓IfExistThenElse [steps.IfExistThenElseStep-1776161237742]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1776163000097
+            - java.lang.String: 
+              - ↑value: ./document/couchdb_output/error[.="not_found"]
+      ↓jThen [steps.ThenStep-1776161237744]: 
+        ↓jElement [steps.ElementStep-1776161237746]: 
+          expression: '"The role ''" + role + "'' doesn''t exist in the ''" + group + "'' group"'
+          nodeName: success
+        ↓Element [steps.XMLElementStep-1776161237748]: 
+          nodeName: removed
+      ↓jElse [steps.ElseStep-1776161237765]: 
+        ↓Error_structure [steps.XMLErrorStep-1776161237779]: 
+          details: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: SOURCE
+                - com.twinsoft.convertigo.beans.common.XMLVector: 
+          message: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: JS
+                - →→: '"Unexpected error while removing the role ''" + role + "'' in the ''" + group + "'' group"'
+↓role [variables.RequestableVariable-1776161238399]: 
+↓group [variables.RequestableVariable-1776161238658]: 

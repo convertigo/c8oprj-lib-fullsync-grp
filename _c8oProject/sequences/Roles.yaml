@@ -1,0 +1,33 @@
+accessibility: Private
+comment: list all roles
+↓Call_Transaction [steps.TransactionStep-1776161239626]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoles
+↓Iterator [steps.IteratorStep-1776161239915]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776161239626
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  ↓Role [steps.XMLElementStep-1776161239921]: 
+    nodeName: role
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776161239915
+          - java.lang.String: 
+            - ↑value: ./key/text()
+    ↓groups [steps.XMLAttributeStep-1776161239929]: 
+      nodeName: groups
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1776161239915
+            - java.lang.String: 
+              - ↑value: ./value/text()

@@ -1,0 +1,107 @@
+accessibility: Private
+comment: list effective permissions of a user through groups and roles
+↓jIf [steps.IfStep-1777361000001]: 
+  condition: user == undefined || user.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1777361000002]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "user" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1777361000003]: 
+↓InitPermissions [steps.SimpleStep-1777362000001]: 
+  expression: |
+    var effectivePermissions = {};
+    var scopePriorities = {
+    	own: 1,
+    	all: 2
+    };
+↓Call_GroupsOf [steps.SequenceStep-1777361000004]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOf
+  ↓user [variables.StepVariable-1777361000005]: 
+↓IteratorGroups [steps.IteratorStep-1777361000006]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1777361000004
+        - java.lang.String: 
+          - ↑value: ./document/group
+  ↓Call_RolesOfGroup [steps.SequenceStep-1777361000007]: 
+    sourceSequence: lib_FullSyncGrp.RolesOfGroup
+    ↓group [variables.StepVariable-1777361000008]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1777361000006
+            - java.lang.String: 
+              - ↑value: ./text()
+  ↓IteratorRoles [steps.IteratorStep-1777361000009]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1777361000007
+          - java.lang.String: 
+            - ↑value: ./document/role
+    ↓Call_PermissionsOfRole [steps.SequenceStep-1777361000010]: 
+      sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+      ↓role [variables.StepVariable-1777361000011]: 
+        sourceDefinition: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1777361000009
+              - java.lang.String: 
+                - ↑value: ./text()
+    ↓IteratorPermissions [steps.IteratorStep-1777361000012]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1777361000010
+            - java.lang.String: 
+              - ↑value: ./document/permission
+      ↓CurrentPermission [steps.SimpleSourceStep-1777362000002]: 
+        sourceDefinition: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1777361000012
+              - java.lang.String: 
+                - ↑value: ./text()
+        variableName: currentPermission
+      ↓MergePermission [steps.SimpleStep-1777362000003]: 
+        expression: |
+          var splitPermission = currentPermission.split(":");
+          if (splitPermission.length == 2) {
+          	var resourceAction = splitPermission[0];
+          	var scope = splitPermission[1];
+          	var rank = scopePriorities[scope] || 0;
+          	var current = effectivePermissions[resourceAction];
+          	if (current == undefined || rank > current.rank) {
+          		effectivePermissions[resourceAction] = {
+          			scope: scope,
+          			rank: rank
+          		};
+          	}
+          }
+↓BuildPermissions [steps.SimpleStep-1777362000004]: 
+  expression: |
+    var _effectivePermissions = Object.keys(effectivePermissions).map(function(resourceAction) {
+    	return resourceAction + ":" + effectivePermissions[resourceAction].scope;
+    }).sort();
+↓IteratorEffectivePermissions [steps.SimpleIteratorStep-1777362000005]: 
+  expression: _effectivePermissions
+  ↓Permission [steps.ElementStep-1777362000006]: 
+    expression: _effectivePermissions[index]
+    nodeName: permission
+↓user [variables.RequestableVariable-1777361000014]: 

@@ -1,0 +1,103 @@
+accessibility: Private
+comment: remove a permission from a role
+↓jIf [steps.IfStep-1776161228802]: 
+  condition: role == undefined || role.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161228807]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "role" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161228810]: 
+↓jIf1 [steps.IfStep-1776161229122]: 
+  condition: element == undefined || element.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161229130]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "element" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161229133]: 
+↓jIf2 [steps.IfStep-1776161229422]: 
+  condition: action == undefined || action.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161229445]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "action" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161229448]: 
+↓jIf3 [steps.IfStep-1776161229649]: 
+  condition: scope == undefined || scope.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776161229653]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "scope" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776161229656]: 
+↓ComputePermission [steps.SimpleStep-1776161229925]: 
+  expression: |
+    role = role.trim().toLowerCase();
+    element = element.trim().toLowerCase();
+    action = action.trim().toLowerCase();
+    scope = scope.trim().toLowerCase();
+    var permission = element + "." + action + ":" + scope;
+    var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex(role + ":" + permission);
+↓Call_Transaction [steps.TransactionStep-1776161231932]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemovePermissionFromRole
+  ↓_use_docid [variables.StepVariable-1776161231984]: 
+    description: Document ID
+↓IfExistThenElse [steps.IfExistThenElseStep-1776161234035]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776163000173
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok
+  ↓jThen [steps.ThenStep-1776161234064]: 
+    ↓jElement [steps.ElementStep-1776161234066]: 
+      expression: '"The permission ''" + permission + "'' is removed from the ''" + role + "'' role"'
+      nodeName: success
+    ↓Element [steps.XMLElementStep-1776161234073]: 
+      nodeName: removed
+  ↓jElse [steps.ElseStep-1776161234106]: 
+    ↓IfExistThenElse [steps.IfExistThenElseStep-1776161234132]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1776163000173
+            - java.lang.String: 
+              - ↑value: ./document/couchdb_output/error[.="not_found"]
+      ↓jThen [steps.ThenStep-1776161234188]: 
+        ↓jElement [steps.ElementStep-1776161234195]: 
+          expression: '"The permission ''" + permission + "'' doesn''t exist in the ''" + role + "'' role"'
+          nodeName: success
+        ↓Element [steps.XMLElementStep-1776161234201]: 
+          nodeName: removed
+      ↓jElse [steps.ElseStep-1776161234208]: 
+        ↓Error_structure [steps.XMLErrorStep-1776161234212]: 
+          details: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: SOURCE
+                - com.twinsoft.convertigo.beans.common.XMLVector: 
+          message: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: JS
+                - →→: '"Unexpected error while removing the permission ''" + permission + "'' in the ''" + role + "'' role"'
+↓role [variables.RequestableVariable-1776161234720]: 
+↓element [variables.RequestableVariable-1776161234917]: 
+↓action [variables.RequestableVariable-1776161235243]: 
+↓scope [variables.RequestableVariable-1776161235509]: 

@@ -1,0 +1,33 @@
+accessibility: Private
+comment: list all permissions
+↓Call_Transaction [steps.TransactionStep-1776161225297]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissions
+↓Iterator [steps.IteratorStep-1776161225582]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776161225297
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  ↓Permission [steps.XMLElementStep-1776161225594]: 
+    nodeName: permission
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776161225582
+          - java.lang.String: 
+            - ↑value: ./key/text()
+    ↓roles [steps.XMLAttributeStep-1776161225597]: 
+      nodeName: roles
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1776161225582
+            - java.lang.String: 
+              - ↑value: ./value/text()

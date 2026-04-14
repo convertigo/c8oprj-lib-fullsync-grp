@@ -1,0 +1,36 @@
+accessibility: Private
+comment: list roles of a permission
+↓jIf [steps.IfStep-1776163000050]: 
+  condition: (_use_key = permission) == undefined || permission.length < 1
+  ↓Error_structure [steps.XMLErrorStep-1776163000051]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "permission" parameter must be defined and not empty
+  ↓Return [steps.ReturnStep-1776163000052]: 
+↓Call_Transaction [steps.TransactionStep-1776163000053]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRolesByPermission
+  ↓_use_key [variables.StepVariable-1776163000054]: 
+    description: (string) – Return only documents that match the specified key. Optional
+↓Iterator [steps.IteratorStep-1776163000055]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1776163000053
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item/value
+  ↓Role [steps.XMLElementStep-1776163000056]: 
+    nodeName: role
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776163000055
+          - java.lang.String: 
+            - ↑value: ./text()
+↓permission [variables.RequestableVariable-1776163000057]: 

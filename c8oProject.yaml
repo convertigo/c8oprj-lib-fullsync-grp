@@ -6,9 +6,20 @@
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓Groups [sequences.GenericSequence]: 🗏 sequences/Groups.yaml
   ↓GroupsOf [sequences.GenericSequence]: 🗏 sequences/GroupsOf.yaml
+  ↓GroupsOfRole [sequences.GenericSequence]: 🗏 sequences/GroupsOfRole.yaml
+  ↓EffectivePermissionsOfUser [sequences.GenericSequence]: 🗏 sequences/EffectivePermissionsOfUser.yaml
+  ↓Permissions [sequences.GenericSequence]: 🗏 sequences/Permissions.yaml
+  ↓PermissionsOfRole [sequences.GenericSequence]: 🗏 sequences/PermissionsOfRole.yaml
   ↓RemoveGroup [sequences.GenericSequence]: 🗏 sequences/RemoveGroup.yaml
+  ↓RemovePermissionFromRole [sequences.GenericSequence]: 🗏 sequences/RemovePermissionFromRole.yaml
+  ↓RemoveRoleFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveRoleFromGroup.yaml
   ↓RemoveUserFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveUserFromGroup.yaml
   ↓RemoveUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/RemoveUserInGroupBulkV2.yaml
+  ↓Roles [sequences.GenericSequence]: 🗏 sequences/Roles.yaml
+  ↓RolesOfGroup [sequences.GenericSequence]: 🗏 sequences/RolesOfGroup.yaml
+  ↓RolesOfPermission [sequences.GenericSequence]: 🗏 sequences/RolesOfPermission.yaml
+  ↓SetPermissionInRole [sequences.GenericSequence]: 🗏 sequences/SetPermissionInRole.yaml
+  ↓SetRoleInGroup [sequences.GenericSequence]: 🗏 sequences/SetRoleInGroup.yaml
   ↓SetUserInGroup [sequences.GenericSequence]: 🗏 sequences/SetUserInGroup.yaml
   ↓SetUserInGroupBulk [sequences.GenericSequence]: 🗏 sequences/SetUserInGroupBulk.yaml
   ↓SetUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/SetUserInGroupBulkV2.yaml

@@ -1,0 +1,131 @@
+accessibility: Private
+comment: seed a complex RBAC demo dataset
+↓BuildSeed [steps.SimpleStep-1777363000001]: 
+  expression: |
+    var userGroups = [
+    	["alice", "engineering"],
+    	["alice", "product"],
+    	["bob", "engineering"],
+    	["bob", "support"],
+    	["carol", "finance"],
+    	["carol", "auditors"],
+    	["dave", "support"],
+    	["erin", "product"],
+    	["erin", "contractors"],
+    	["frank", "hr"],
+    	["frank", "finance"],
+    	["grace", "auditors"],
+    	["heidi", "engineering"],
+    	["heidi", "admins"],
+    	["ivan", "contractors"],
+    	["judy", "admins"]
+    ];
+    
+    var groupRoles = [
+    	["engineering", "project_viewer"],
+    	["engineering", "project_editor"],
+    	["product", "project_manager"],
+    	["product", "crm_reader"],
+    	["finance", "finance_reviewer"],
+    	["finance", "project_viewer"],
+    	["support", "crm_agent"],
+    	["support", "project_viewer"],
+    	["auditors", "audit_reader"],
+    	["auditors", "finance_reader"],
+    	["contractors", "project_limited"],
+    	["hr", "employee_reader"],
+    	["admins", "project_admin"],
+    	["admins", "crm_admin"],
+    	["admins", "finance_admin"]
+    ];
+    
+    var rolePermissions = [
+    	["project_viewer", "project", "read", "own"],
+    	["project_editor", "project", "write", "own"],
+    	["project_manager", "project", "read", "all"],
+    	["project_manager", "project", "write", "all"],
+    	["crm_reader", "gestioncrm", "read", "own"],
+    	["crm_agent", "gestioncrm", "read", "own"],
+    	["crm_agent", "gestioncrm", "write", "own"],
+    	["finance_reviewer", "finance", "read", "own"],
+    	["finance_reader", "finance", "read", "all"],
+    	["audit_reader", "audit", "read", "all"],
+    	["audit_reader", "finance", "read", "all"],
+    	["project_limited", "project", "read", "own"],
+    	["employee_reader", "employee", "read", "own"],
+    	["project_admin", "project", "read", "all"],
+    	["project_admin", "project", "write", "all"],
+    	["project_admin", "project", "delete", "all"],
+    	["crm_admin", "gestioncrm", "read", "all"],
+    	["crm_admin", "gestioncrm", "write", "all"],
+    	["finance_admin", "finance", "read", "all"],
+    	["finance_admin", "finance", "write", "all"]
+    ];
+    
+    var docs = [];
+    for (var i = 0; i < userGroups.length; i++) {
+    	var user = userGroups[i][0];
+    	var group = userGroups[i][1];
+    	docs.push({
+    		_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(user + ":" + group),
+    		type: "c8oGrp",
+    		user: user,
+    		group: group,
+    		"~c8oAcl": "c8o:admin"
+    	});
+    }
+    
+    for (var j = 0; j < groupRoles.length; j++) {
+    	var groupName = groupRoles[j][0];
+    	var role = groupRoles[j][1].trim().toLowerCase();
+    	docs.push({
+    		_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(groupName + ":" + role),
+    		type: "c8oGrpRole",
+    		group: groupName,
+    		role: role,
+    		"~c8oAcl": "c8o:admin"
+    	});
+    }
+    
+    for (var k = 0; k < rolePermissions.length; k++) {
+    	var permissionRole = rolePermissions[k][0].trim().toLowerCase();
+    	var element = rolePermissions[k][1].trim().toLowerCase();
+    	var action = rolePermissions[k][2].trim().toLowerCase();
+    	var scope = rolePermissions[k][3].trim().toLowerCase();
+    	var permission = element + "." + action + ":" + scope;
+    	docs.push({
+    		_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(permissionRole + ":" + permission),
+    		type: "c8oRolePerm",
+    		role: permissionRole,
+    		element: element,
+    		action: action,
+    		scope: scope,
+    		permission: permission,
+    		"~c8oAcl": "c8o:admin"
+    	});
+    }
+    
+    var docsCount = docs.length;
+    var userGroupCount = userGroups.length;
+    var groupRoleCount = groupRoles.length;
+    var rolePermissionCount = rolePermissions.length;
+    var _use_json_base = JSON.stringify(docs);
+↓Call_Bulk [steps.TransactionStep-1777363000002]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1777363000003]: 
+    description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
+↓Success [steps.ElementStep-1777363000004]: 
+  expression: '"RBAC demo dataset seeded"'
+  nodeName: success
+↓Docs [steps.ElementStep-1777363000005]: 
+  expression: docsCount
+  nodeName: documents
+↓UserGroups [steps.ElementStep-1777363000006]: 
+  expression: userGroupCount
+  nodeName: userGroupLinks
+↓GroupRoles [steps.ElementStep-1777363000007]: 
+  expression: groupRoleCount
+  nodeName: groupRoleLinks
+↓RolePermissions [steps.ElementStep-1777363000008]: 
+  expression: rolePermissionCount
+  nodeName: rolePermissionLinks

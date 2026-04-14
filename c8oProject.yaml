@@ -18,6 +18,7 @@
   ↓Roles [sequences.GenericSequence]: 🗏 sequences/Roles.yaml
   ↓RolesOfGroup [sequences.GenericSequence]: 🗏 sequences/RolesOfGroup.yaml
   ↓RolesOfPermission [sequences.GenericSequence]: 🗏 sequences/RolesOfPermission.yaml
+  ↓SeedRbacDemoData [sequences.GenericSequence]: 🗏 sequences/SeedRbacDemoData.yaml
   ↓SetPermissionInRole [sequences.GenericSequence]: 🗏 sequences/SetPermissionInRole.yaml
   ↓SetRoleInGroup [sequences.GenericSequence]: 🗏 sequences/SetRoleInGroup.yaml
   ↓SetUserInGroup [sequences.GenericSequence]: 🗏 sequences/SetUserInGroup.yaml

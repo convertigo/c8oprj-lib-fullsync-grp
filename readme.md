@@ -14,6 +14,7 @@ For more technical informations : [documentation](./project.md)
     - [Permission format](#permission-format)
     - [Role normalization](#role-normalization)
     - [Resolution rules](#resolution-rules)
+    - [Demo dataset](#demo-dataset)
     - [RBAC sequences](#rbac-sequences)
 - [Sequences](#sequences)
     - [Groups](#groups)
@@ -30,6 +31,7 @@ For more technical informations : [documentation](./project.md)
     - [Roles](#roles)
     - [RolesOfGroup](#rolesofgroup)
     - [RolesOfPermission](#rolesofpermission)
+    - [SeedRbacDemoData](#seedrbacdemodata)
     - [SetPermissionInRole](#setpermissioninrole)
     - [SetRoleInGroup](#setroleingroup)
     - [SetUserInGroup](#setuseringroup)
@@ -139,6 +141,29 @@ Effective result:
 
 `deny` is not implemented yet.
 
+### Demo dataset
+
+`SeedRbacDemoData()` loads a reusable RBAC demo dataset into FullSync.
+
+It creates a non-trivial graph with:
+
+- users assigned to multiple groups
+- groups assigned to multiple roles
+- roles assigned to multiple permissions
+- overlapping scopes such as `own` and `all`
+
+The dataset is designed to exercise:
+
+- effective permission aggregation
+- duplicate removal
+- strongest-scope selection for the same `element.action`
+
+The seed currently creates:
+
+- `16` user/group links
+- `15` group/role links
+- `20` role/permission links
+
 ### RBAC sequences
 
 The RBAC layer currently exposes these sequences:
@@ -154,6 +179,7 @@ The RBAC layer currently exposes these sequences:
 - `Roles()`
 - `Permissions()`
 - `EffectivePermissionsOfUser(user)`
+- `SeedRbacDemoData()`
 
 
 ## Sequences
@@ -350,6 +376,10 @@ list roles of a permission
 <td>permission</td><td></td>
 </tr>
 </table>
+
+### SeedRbacDemoData
+
+seed a complex RBAC demo dataset
 
 ### SetPermissionInRole
 

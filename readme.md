@@ -116,7 +116,7 @@ are treated as the same role.
 
 ### Resolution rules
 
-`EffectivePermissionsOfUser` resolves permissions through:
+`EffectivePermissionsOfUser` resolves permissions for the current authenticated user through:
 
 `user -> groups -> roles -> permissions`
 
@@ -178,7 +178,7 @@ The RBAC layer currently exposes these sequences:
 - `RolesOfPermission(permission)`
 - `Roles()`
 - `Permissions()`
-- `EffectivePermissionsOfUser(user)`
+- `EffectivePermissionsOfUser()`
 - `SeedRbacDemoData()`
 
 
@@ -205,18 +205,7 @@ list groups of a role
 
 ### EffectivePermissionsOfUser
 
-list effective permissions of a user through groups and roles
-
-**variables**
-
-<table>
-<tr>
-<th>name</th><th>comment</th>
-</tr>
-<tr>
-<td>user</td><td></td>
-</tr>
-</table>
+list effective permissions of the current authenticated user through groups and roles
 
 ### GroupsOf
 

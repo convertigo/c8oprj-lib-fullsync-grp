@@ -1,14 +1,27 @@
 accessibility: Private
-comment: list effective permissions of a user through groups and roles
+comment: list effective permissions of the current authenticated user through groups and roles
+↓getAuthenticatedUser [steps.GetAuthenticatedUserStep-1777364000001]: 
+  nodeName: authenticatedUserID
+  output: false
+↓CurrentUser [steps.SimpleSourceStep-1777364000002]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1777364000001
+        - java.lang.String: 
+          - ↑value: ./text()
+  variableName: currentUser
 ↓jIf [steps.IfStep-1777361000001]: 
-  condition: user == undefined || user.length < 1
+  condition: currentUser == undefined || currentUser.length < 1
   ↓Error_structure [steps.XMLErrorStep-1777361000002]: 
     message: 
       - xmlizable: 
         - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
         - SmartType: 
           - ↑mode: PLAIN
-          - →→: The "user" parameter must be defined and not empty
+          - →→: No authenticated user found in the current context
   ↓Return [steps.ReturnStep-1777361000003]: 
 ↓InitPermissions [steps.SimpleStep-1777362000001]: 
   expression: |
@@ -20,6 +33,14 @@ comment: list effective permissions of a user through groups and roles
 ↓Call_GroupsOf [steps.SequenceStep-1777361000004]: 
   sourceSequence: lib_FullSyncGrp.GroupsOf
   ↓user [variables.StepVariable-1777361000005]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1777364000002
+          - java.lang.String: 
+            - ↑value: .
 ↓IteratorGroups [steps.IteratorStep-1777361000006]: 
   sourceDefinition: 
     - xmlizable: 
@@ -104,4 +125,3 @@ comment: list effective permissions of a user through groups and roles
   ↓Permission [steps.ElementStep-1777362000006]: 
     expression: _effectivePermissions[index]
     nodeName: permission
-↓user [variables.RequestableVariable-1777361000014]: 

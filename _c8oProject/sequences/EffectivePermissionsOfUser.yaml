@@ -38,9 +38,9 @@ comment: list effective permissions of the current authenticated user through gr
         - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
         - com.twinsoft.convertigo.beans.common.XMLVector: 
           - java.lang.String: 
-            - ↑value: 1777364000002
+            - ↑value: 1777364000001
           - java.lang.String: 
-            - ↑value: .
+            - ↑value: ./text()
 ↓IteratorGroups [steps.IteratorStep-1777361000006]: 
   sourceDefinition: 
     - xmlizable: 

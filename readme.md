@@ -3,7 +3,7 @@
 
 # lib_FullSyncGrp
 
-Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering 
+Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering
 
 
 For more technical informations : [documentation](./project.md)
@@ -21,6 +21,7 @@ For more technical informations : [documentation](./project.md)
     - [Permissions](#permissions)
     - [PermissionsOfRole](#permissionsofrole)
     - [RemoveGroup](#removegroup)
+    - [RemovePermissionAttributes](#removepermissionattributes)
     - [RemovePermissionFromRole](#removepermissionfromrole)
     - [RemoveRoleFromGroup](#removerolefromgroup)
     - [RemoveUserFromGroup](#removeuserfromgroup)
@@ -81,7 +82,7 @@ Get attributes for a group. Parameter: group is the group name. The sequence rea
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name whose attributes document is read. The read document id is sha256("groupAttributes:" + group).</td>
 </tr>
 </table>
 
@@ -96,7 +97,7 @@ Get attributes for a permission. Parameter: permission is the canonical permissi
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>permission</td><td></td>
+<td>permission</td><td>Canonical permission string whose attributes document is read. The read document id is sha256("permissionAttributes:" + permission).</td>
 </tr>
 </table>
 
@@ -111,7 +112,7 @@ Get attributes for a role. Parameter: role is the role name. The sequence reads 
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name whose attributes document is read. The read document id is sha256("roleAttributes:" + role).</td>
 </tr>
 </table>
 
@@ -130,7 +131,7 @@ list groups of a user
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>user</td><td></td>
+<td>user</td><td>User identifier used as the lookup key. The sequence returns every group containing this user.</td>
 </tr>
 </table>
 
@@ -145,7 +146,7 @@ list groups of a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name used as the lookup key. It is normalized to lowercase before listing groups attached to this role.</td>
 </tr>
 </table>
 
@@ -168,11 +169,13 @@ list permissions of a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name used as the lookup key. It is normalized to lowercase before listing permissions attached to this role.</td>
 </tr>
 </table>
 
 ### RemoveGroup
+
+Remove a group by deleting all user-group links for this group, and also deleting the attached GroupAttributes document if it exists. The group attributes document id is sha256("groupAttributes:" + group).
 
 **variables**
 
@@ -181,7 +184,22 @@ list permissions of a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name to remove. RemoveGroup deletes all user-group links for this group and also deletes the attached GroupAttributes document if it exists.</td>
+</tr>
+</table>
+
+### RemovePermissionAttributes
+
+Remove attributes for a permission without removing any role-permission link. Parameter: permission is the canonical permission string. The sequence deletes the deterministic attribute document sha256("permissionAttributes:" + permission), whose type is c8oPermissionAttributes. This primitive is intentionally separate from RemovePermissionFromRole because a permission can be attached to several roles.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>permission</td><td>Canonical permission string whose attributes document must be removed. This does not remove role-permission links.</td>
 </tr>
 </table>
 
@@ -196,16 +214,16 @@ remove a permission from a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>action</td><td></td>
+<td>action</td><td>Permission action to remove. It is normalized to lowercase and combined with element and scope as element.action:scope.</td>
 </tr>
 <tr>
-<td>element</td><td></td>
+<td>element</td><td>Permission resource element to remove. It is normalized to lowercase and combined with action and scope as element.action:scope.</td>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name from which the permission is removed. The role is normalized to lowercase before the role-permission link id is computed.</td>
 </tr>
 <tr>
-<td>scope</td><td></td>
+<td>scope</td><td>Permission scope to remove. It is normalized to lowercase and combined with element and action as element.action:scope.</td>
 </tr>
 </table>
 
@@ -220,10 +238,10 @@ remove a role from a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name from which the role is removed. The group-role document id is sha256(group + ":" + normalized role).</td>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name to remove from the group. The role is normalized to lowercase before the group-role link id is computed.</td>
 </tr>
 </table>
 
@@ -238,10 +256,10 @@ remove a user from a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name from which the user membership is removed. The membership document id is sha256(user + ":" + group).</td>
 </tr>
 <tr>
-<td>user</td><td></td>
+<td>user</td><td>User identifier to remove from the group. The membership document id is sha256(user + ":" + group).</td>
 </tr>
 </table>
 
@@ -278,7 +296,7 @@ list roles of a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name used as the lookup key. The sequence returns every role attached to this group.</td>
 </tr>
 </table>
 
@@ -293,7 +311,7 @@ list roles of a permission
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>permission</td><td></td>
+<td>permission</td><td>Canonical permission string used as the lookup key, in the form element.action:scope. The sequence returns every role containing this permission.</td>
 </tr>
 </table>
 
@@ -312,13 +330,13 @@ Set or merge attributes for a group. Parameters: group is the group name; attrib
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>attributes</td><td></td>
+<td>attributes</td><td>JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.</td>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name owning the attributes document. The stored document id is sha256("groupAttributes:" + group).</td>
 </tr>
 <tr>
-<td>mergePolicy</td><td></td>
+<td>mergePolicy</td><td>Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.</td>
 </tr>
 </table>
 
@@ -333,13 +351,13 @@ Set or merge attributes for a permission. Parameters: permission is the canonica
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>attributes</td><td></td>
+<td>attributes</td><td>JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Can read all records","risk":"low"}.</td>
 </tr>
 <tr>
-<td>mergePolicy</td><td></td>
+<td>mergePolicy</td><td>Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.</td>
 </tr>
 <tr>
-<td>permission</td><td></td>
+<td>permission</td><td>Canonical permission string owning the attributes document, for example resource.action:scope. The stored document id is sha256("permissionAttributes:" + permission).</td>
 </tr>
 </table>
 
@@ -354,16 +372,16 @@ add a permission to a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>action</td><td></td>
+<td>action</td><td>Permission action. It is normalized to lowercase and combined with element and scope as element.action:scope.</td>
 </tr>
 <tr>
-<td>element</td><td></td>
+<td>element</td><td>Permission resource element. It is normalized to lowercase and combined with action and scope as element.action:scope.</td>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name receiving the permission. The role is normalized to lowercase before the role-permission link is stored.</td>
 </tr>
 <tr>
-<td>scope</td><td></td>
+<td>scope</td><td>Permission scope. It is normalized to lowercase and combined with element and action as element.action:scope.</td>
 </tr>
 </table>
 
@@ -378,13 +396,13 @@ Set or merge attributes for a role. Parameters: role is the role name; attribute
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>attributes</td><td></td>
+<td>attributes</td><td>JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Reader","priority":"10"}.</td>
 </tr>
 <tr>
-<td>mergePolicy</td><td></td>
+<td>mergePolicy</td><td>Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.</td>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name owning the attributes document. The stored document id is sha256("roleAttributes:" + role).</td>
 </tr>
 </table>
 
@@ -399,10 +417,10 @@ add a role to a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name receiving the role. The group-role document id is sha256(group + ":" + normalized role).</td>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>role</td><td>Role name to add to the group. The role is normalized to lowercase before the group-role link is stored.</td>
 </tr>
 </table>
 
@@ -417,10 +435,10 @@ add a user to a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name receiving the user membership. The membership document id is sha256(user + ":" + group).</td>
 </tr>
 <tr>
-<td>user</td><td></td>
+<td>user</td><td>User identifier to add to the group. The membership document id is sha256(user + ":" + group).</td>
 </tr>
 </table>
 
@@ -466,10 +484,10 @@ Bulk add of 1,n users to 1,n groups
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>new_group_name</td><td></td>
+<td>new_group_name</td><td>Target group name that receives the users previously attached to old_group_name.</td>
 </tr>
 <tr>
-<td>old_group_name</td><td></td>
+<td>old_group_name</td><td>Existing group name to replace. UpdateGroup moves its users to new_group_name, removes the old group links, and removes the old GroupAttributes document through RemoveGroup.</td>
 </tr>
 </table>
 
@@ -488,7 +506,7 @@ list users of a group
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>group</td><td></td>
+<td>group</td><td>Group name used as the lookup key. The sequence returns every user attached to this group.</td>
 </tr>
 </table>
 

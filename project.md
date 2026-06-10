@@ -1,7 +1,7 @@
 
 # ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/core/images/project_color_16x16.png?raw=true "Project") lib_FullSyncGrp
 
-Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering 
+Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering
 
 <details><summary><span style="color:DarkGoldenRod"><i>References</i></span></summary><blockquote><p>
 
@@ -468,6 +468,66 @@ comment
 
 </p></blockquote></details>
 
+<details><summary><b>RemoveGroupAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/deletedocument_color_16x16.png?raw=true "DeleteDocumentTransaction") RemoveGroupAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>RemovePermissionAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/deletedocument_color_16x16.png?raw=true "DeleteDocumentTransaction") RemovePermissionAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>RemovePermissionFromRole</b></summary><blockquote><p>
 
 
@@ -894,7 +954,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name whose attributes document is read. The read document id is sha256("groupAttributes:" + group).
 </td>
 </tr>
 </table>
@@ -924,7 +984,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
 </td>
 <td>
-
+Canonical permission string whose attributes document is read. The read document id is sha256("permissionAttributes:" + permission).
 </td>
 </tr>
 </table>
@@ -954,7 +1014,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name whose attributes document is read. The read document id is sha256("roleAttributes:" + role).
 </td>
 </tr>
 </table>
@@ -992,7 +1052,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;user
 </td>
 <td>
-
+User identifier used as the lookup key. The sequence returns every group containing this user.
 </td>
 </tr>
 </table>
@@ -1022,7 +1082,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name used as the lookup key. It is normalized to lowercase before listing groups attached to this role.
 </td>
 </tr>
 </table>
@@ -1068,19 +1128,19 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name used as the lookup key. It is normalized to lowercase before listing permissions attached to this role.
 </td>
 </tr>
 </table>
 
 </p></blockquote></details>
 
-<details><summary><b>RemoveGroup</b></summary><blockquote><p>
+<details><summary><b>RemoveGroup</b> : Remove a group by deleting all user-group links for this group, and also deleting the attached GroupAttributes document if it exists</summary><blockquote><p>
 
 
 ## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RemoveGroup
 
-
+Remove a group by deleting all user-group links for this group, and also deleting the attached GroupAttributes document if it exists. The group attributes document id is sha256("groupAttributes:" + group).
 
 <span style="color:DarkGoldenRod">Variables</span>
 
@@ -1098,7 +1158,37 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
+Group name to remove. RemoveGroup deletes all user-group links for this group and also deletes the attached GroupAttributes document if it exists.
+</td>
+</tr>
+</table>
 
+</p></blockquote></details>
+
+<details><summary><b>RemovePermissionAttributes</b> : Remove attributes for a permission without removing any role-permission link</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RemovePermissionAttributes
+
+Remove attributes for a permission without removing any role-permission link. Parameter: permission is the canonical permission string. The sequence deletes the deterministic attribute document sha256("permissionAttributes:" + permission), whose type is c8oPermissionAttributes. This primitive is intentionally separate from RemovePermissionFromRole because a permission can be attached to several roles.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
+</td>
+<td>
+Canonical permission string whose attributes document must be removed. This does not remove role-permission links.
 </td>
 </tr>
 </table>
@@ -1128,7 +1218,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;action
 </td>
 <td>
-
+Permission action to remove. It is normalized to lowercase and combined with element and scope as element.action:scope.
 </td>
 </tr>
 <tr>
@@ -1136,7 +1226,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;element
 </td>
 <td>
-
+Permission resource element to remove. It is normalized to lowercase and combined with action and scope as element.action:scope.
 </td>
 </tr>
 <tr>
@@ -1144,7 +1234,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name from which the permission is removed. The role is normalized to lowercase before the role-permission link id is computed.
 </td>
 </tr>
 <tr>
@@ -1152,7 +1242,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;scope
 </td>
 <td>
-
+Permission scope to remove. It is normalized to lowercase and combined with element and action as element.action:scope.
 </td>
 </tr>
 </table>
@@ -1182,7 +1272,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name from which the role is removed. The group-role document id is sha256(group + ":" + normalized role).
 </td>
 </tr>
 <tr>
@@ -1190,7 +1280,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name to remove from the group. The role is normalized to lowercase before the group-role link id is computed.
 </td>
 </tr>
 </table>
@@ -1220,7 +1310,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name from which the user membership is removed. The membership document id is sha256(user + ":" + group).
 </td>
 </tr>
 <tr>
@@ -1228,7 +1318,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;user
 </td>
 <td>
-
+User identifier to remove from the group. The membership document id is sha256(user + ":" + group).
 </td>
 </tr>
 </table>
@@ -1304,7 +1394,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name used as the lookup key. The sequence returns every role attached to this group.
 </td>
 </tr>
 </table>
@@ -1334,7 +1424,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
 </td>
 <td>
-
+Canonical permission string used as the lookup key, in the form element.action:scope. The sequence returns every role containing this permission.
 </td>
 </tr>
 </table>
@@ -1372,7 +1462,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
 </td>
 <td>
-
+JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.
 </td>
 </tr>
 <tr>
@@ -1380,7 +1470,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name owning the attributes document. The stored document id is sha256("groupAttributes:" + group).
 </td>
 </tr>
 <tr>
@@ -1388,7 +1478,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
 </td>
 <td>
-
+Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
 </td>
 </tr>
 </table>
@@ -1418,7 +1508,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
 </td>
 <td>
-
+JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Can read all records","risk":"low"}.
 </td>
 </tr>
 <tr>
@@ -1426,7 +1516,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
 </td>
 <td>
-
+Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
 </td>
 </tr>
 <tr>
@@ -1434,7 +1524,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
 </td>
 <td>
-
+Canonical permission string owning the attributes document, for example resource.action:scope. The stored document id is sha256("permissionAttributes:" + permission).
 </td>
 </tr>
 </table>
@@ -1464,7 +1554,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;action
 </td>
 <td>
-
+Permission action. It is normalized to lowercase and combined with element and scope as element.action:scope.
 </td>
 </tr>
 <tr>
@@ -1472,7 +1562,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;element
 </td>
 <td>
-
+Permission resource element. It is normalized to lowercase and combined with action and scope as element.action:scope.
 </td>
 </tr>
 <tr>
@@ -1480,7 +1570,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name receiving the permission. The role is normalized to lowercase before the role-permission link is stored.
 </td>
 </tr>
 <tr>
@@ -1488,7 +1578,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;scope
 </td>
 <td>
-
+Permission scope. It is normalized to lowercase and combined with element and action as element.action:scope.
 </td>
 </tr>
 </table>
@@ -1518,7 +1608,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
 </td>
 <td>
-
+JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Reader","priority":"10"}.
 </td>
 </tr>
 <tr>
@@ -1526,7 +1616,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
 </td>
 <td>
-
+Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
 </td>
 </tr>
 <tr>
@@ -1534,7 +1624,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name owning the attributes document. The stored document id is sha256("roleAttributes:" + role).
 </td>
 </tr>
 </table>
@@ -1564,7 +1654,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name receiving the role. The group-role document id is sha256(group + ":" + normalized role).
 </td>
 </tr>
 <tr>
@@ -1572,7 +1662,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
-
+Role name to add to the group. The role is normalized to lowercase before the group-role link is stored.
 </td>
 </tr>
 </table>
@@ -1602,7 +1692,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name receiving the user membership. The membership document id is sha256(user + ":" + group).
 </td>
 </tr>
 <tr>
@@ -1610,7 +1700,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;user
 </td>
 <td>
-
+User identifier to add to the group. The membership document id is sha256(user + ":" + group).
 </td>
 </tr>
 </table>
@@ -1708,7 +1798,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;new_group_name
 </td>
 <td>
-
+Target group name that receives the users previously attached to old_group_name.
 </td>
 </tr>
 <tr>
@@ -1716,7 +1806,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;old_group_name
 </td>
 <td>
-
+Existing group name to replace. UpdateGroup moves its users to new_group_name, removes the old group links, and removes the old GroupAttributes document through RemoveGroup.
 </td>
 </tr>
 </table>
@@ -1754,7 +1844,7 @@ comment
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
 </td>
 <td>
-
+Group name used as the lookup key. The sequence returns every user attached to this group.
 </td>
 </tr>
 </table>

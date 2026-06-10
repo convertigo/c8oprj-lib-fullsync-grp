@@ -52,13 +52,13 @@ For more technical informations : [documentation](./project.md)
      <tr><td>To contribute</td><td>
 
      ```
-     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp.git:branch=RBAC
+     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp.git:branch=8.0.0
      ```
      </td></tr>
      <tr><td>To simply use</td><td>
 
      ```
-     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp/archive/RBAC.zip
+     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp/archive/8.0.0.zip
      ```
      </td></tr>
     </table>

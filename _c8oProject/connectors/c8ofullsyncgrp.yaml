@@ -1,5 +1,4 @@
 ↑default: true
-anonymousReplication: allow
 databaseName: c8ofullsyncgrp
 ↓GetGroupAttributes [transactions.couchdb.GetDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1781090038050]: 

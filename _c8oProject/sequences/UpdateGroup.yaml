@@ -25,13 +25,10 @@ accessibility: Private
   expression: |
     'var users = [];
     if (typeof usersOfGroup === ''object'' && !Array.isArray(usersOfGroup) && usersOfGroup !== null) {
-    	users.push(usersOfGroup)
+    	users.push(usersOfGroup);
     } else {
-    	users = usersOfGroup
-    }
-    
-    log.warn("users")
-    log.warn(users)'
+    	users = usersOfGroup;
+    }'
 ↓Call_Sequence_1 [steps.SequenceStep-1672311974676]: 
   sourceSequence: lib_FullSyncGrp.RemoveGroup
   ↓group [variables.StepVariable-1672311985680]: 

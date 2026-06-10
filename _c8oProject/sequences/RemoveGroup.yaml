@@ -12,6 +12,8 @@ comment: Remove a group by deleting all user-group links for this group, and als
             - ↑value: 1672247955826
           - java.lang.String: 
             - ↑value: ./group/text()
+↓InitGroupRemoved [steps.SimpleStep-1781094164403]: 
+  expression: var groupRemoved = false;
 ↓Iterator [steps.IteratorStep-1672247399637]: 
   sourceDefinition: 
     - xmlizable: 
@@ -55,54 +57,27 @@ comment: Remove a group by deleting all user-group links for this group, and als
         nodeName: success
         nodeText: true
         output: false
+      ↓MarkGroupRemoved [steps.SimpleStep-1781094164418]: 
+        expression: groupRemoved = true;
     ↓jElse [steps.ElseStep-1672247559962]: 
       ↓Element1 [steps.XMLElementStep-1672247712612]: 
         nodeName: success
         nodeText: false
         output: false
-↓jSimpleSource [steps.SimpleSourceStep-1672248147763]: 
-  isEnabled: false
-  sourceDefinition: 
-    - xmlizable: 
-      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
-      - com.twinsoft.convertigo.beans.common.XMLVector: 
-        - java.lang.String: 
-          - ↑value: 1672247559959
-        - java.lang.String: 
-          - ↑value: ./text()
-  variableName: success
-↓jIfThenElse [steps.IfThenElseStep-1672248169991]: 
-  condition: success == "true"
-  isEnabled: false
-  ↓jThen [steps.ThenStep-1672248169993]: 
-    ↓Element1 [steps.XMLElementStep-1672248188228]: 
-      nodeName: success
-      nodeText: true
-  ↓jElse [steps.ElseStep-1672248169995]: 
-    ↓Element1 [steps.XMLElementStep-1672248190228]: 
-      nodeName: success
-      nodeText: false
 ↓CalcGroupAttributesID [steps.SimpleStep-1781092956890]: 
   expression: var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
 ↓Call_RemoveGroupAttributes [steps.TransactionStep-1781092956901]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveGroupAttributes
   ↓_use_docid [variables.StepVariable-1781092956903]: 
     description: Group attributes document ID
-↓IfExistThenElse [steps.IfExistThenElseStep-1672248304507]: 
-  sourceDefinition: 
-    - xmlizable: 
-      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
-      - com.twinsoft.convertigo.beans.common.XMLVector: 
-        - java.lang.String: 
-          - ↑value: 1672247559959
-        - java.lang.String: 
-          - ↑value: .
-  ↓jThen [steps.ThenStep-1672248304856]: 
-    ↓Element1 [steps.XMLElementStep-1672248333508]: 
+↓SetFinalSuccess [steps.IfThenElseStep-1781094164458]: 
+  condition: groupRemoved == true
+  ↓jThen [steps.ThenStep-1781094164460]: 
+    ↓Element1 [steps.XMLElementStep-1781094164462]: 
       nodeName: success
       nodeText: true
-  ↓jElse [steps.ElseStep-1672248304858]: 
-    ↓Element1 [steps.XMLElementStep-1672248336788]: 
+  ↓jElse [steps.ElseStep-1781094164464]: 
+    ↓Element1 [steps.XMLElementStep-1781094164466]: 
       nodeName: success
       nodeText: false
 ↓group [variables.RequestableVariable-1672246912669]: 

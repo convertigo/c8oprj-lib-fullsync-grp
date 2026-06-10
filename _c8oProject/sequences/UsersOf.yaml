@@ -34,3 +34,4 @@ comment: list users of a group
           - java.lang.String: 
             - ↑value: ./text()
 ↓group [variables.RequestableVariable-1485253641739]: 
+  comment: Group name used as the lookup key. The sequence returns every user attached to this group.

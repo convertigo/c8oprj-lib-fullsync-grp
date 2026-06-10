@@ -98,6 +98,10 @@ comment: remove a permission from a role
                 - ↑mode: JS
                 - →→: '"Unexpected error while removing the permission ''" + permission + "'' in the ''" + role + "'' role"'
 ↓role [variables.RequestableVariable-1776161234720]: 
+  comment: Role name from which the permission is removed. The role is normalized to lowercase before the role-permission link id is computed.
 ↓element [variables.RequestableVariable-1776161234917]: 
+  comment: Permission resource element to remove. It is normalized to lowercase and combined with action and scope as element.action:scope.
 ↓action [variables.RequestableVariable-1776161235243]: 
+  comment: Permission action to remove. It is normalized to lowercase and combined with element and scope as element.action:scope.
 ↓scope [variables.RequestableVariable-1776161235509]: 
+  comment: Permission scope to remove. It is normalized to lowercase and combined with element and action as element.action:scope.

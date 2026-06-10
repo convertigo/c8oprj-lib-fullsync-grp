@@ -53,4 +53,5 @@ comment: 'Remove attributes for a permission without removing any role-permissio
                 - ↑mode: JS
                 - →→: '"Unexpected error while removing attributes for permission ''" + permission + "''"'
 ↓permission [variables.RequestableVariable-1781092940298]: 
+  comment: Canonical permission string whose attributes document must be removed. This does not remove role-permission links.
   description: Canonical permission string whose attributes document must be removed.

@@ -75,4 +75,6 @@ comment: remove a role from a group
                 - ↑mode: JS
                 - →→: '"Unexpected error while removing the role ''" + role + "'' in the ''" + group + "'' group"'
 ↓role [variables.RequestableVariable-1776161238399]: 
+  comment: Role name to remove from the group. The role is normalized to lowercase before the group-role link id is computed.
 ↓group [variables.RequestableVariable-1776161238658]: 
+  comment: Group name from which the role is removed. The group-role document id is sha256(group + ":" + normalized role).

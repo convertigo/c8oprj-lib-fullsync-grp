@@ -19,8 +19,11 @@ comment: 'Set or merge attributes for a group. Parameters: group is the group na
   ↓_use_json_base [variables.StepVariable-1781090099909]: 
   ↓_use_merge [variables.StepVariable-1781090099911]: 
 ↓group [variables.RequestableVariable-1781090099913]: 
+  comment: Group name owning the attributes document. The stored document id is sha256("groupAttributes:" + group).
   description: Group name owning the attributes document.
 ↓attributes [variables.RequestableVariable-1781090099915]: 
+  comment: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.
   description: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.
 ↓mergePolicy [variables.RequestableVariable-1781090099917]: 
+  comment: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
   description: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.

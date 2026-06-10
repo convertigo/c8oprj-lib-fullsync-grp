@@ -108,6 +108,10 @@ comment: add a permission to a role
                 - ↑mode: JS
                 - →→: '"Unexpected error while adding the permission ''" + permission + "'' in the ''" + role + "'' role"'
 ↓role [variables.RequestableVariable-1776163000151]: 
+  comment: Role name receiving the permission. The role is normalized to lowercase before the role-permission link is stored.
 ↓element [variables.RequestableVariable-1776163000152]: 
+  comment: Permission resource element. It is normalized to lowercase and combined with action and scope as element.action:scope.
 ↓action [variables.RequestableVariable-1776163000153]: 
+  comment: Permission action. It is normalized to lowercase and combined with element and scope as element.action:scope.
 ↓scope [variables.RequestableVariable-1776163000154]: 
+  comment: Permission scope. It is normalized to lowercase and combined with element and action as element.action:scope.

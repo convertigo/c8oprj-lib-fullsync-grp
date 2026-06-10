@@ -106,6 +106,7 @@ comment: Remove a group by deleting all user-group links for this group, and als
       nodeName: success
       nodeText: false
 ↓group [variables.RequestableVariable-1672246912669]: 
+  comment: Group name to remove. RemoveGroup deletes all user-group links for this group and also deletes the attached GroupAttributes document if it exists.
 ↓Test_Case [core.TestCase]: 
   ↓group [variables.TestCaseVariable-1672247301818]: 
     value: aa

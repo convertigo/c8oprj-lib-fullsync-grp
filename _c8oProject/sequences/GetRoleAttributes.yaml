@@ -10,4 +10,5 @@ comment: 'Get attributes for a role. Parameter: role is the role name. The seque
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoleAttributes
   ↓_use_docid [variables.StepVariable-1781090099974]: 
 ↓role [variables.RequestableVariable-1781090099976]: 
+  comment: Role name whose attributes document is read. The read document id is sha256("roleAttributes:" + role).
   description: Role name whose attributes document is read.

@@ -82,4 +82,6 @@ comment: add a role to a group
                 - ↑mode: JS
                 - →→: '"Unexpected error while adding the role ''" + role + "'' in the ''" + group + "'' group"'
 ↓role [variables.RequestableVariable-1776163000082]: 
+  comment: Role name to add to the group. The role is normalized to lowercase before the group-role link is stored.
 ↓group [variables.RequestableVariable-1776163000083]: 
+  comment: Group name receiving the role. The group-role document id is sha256(group + ":" + normalized role).

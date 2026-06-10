@@ -10,4 +10,5 @@ comment: 'Get attributes for a permission. Parameter: permission is the canonica
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissionAttributes
   ↓_use_docid [variables.StepVariable-1781090099986]: 
 ↓permission [variables.RequestableVariable-1781090099988]: 
+  comment: Canonical permission string whose attributes document is read. The read document id is sha256("permissionAttributes:" + permission).
   description: Canonical permission string whose attributes document is read.

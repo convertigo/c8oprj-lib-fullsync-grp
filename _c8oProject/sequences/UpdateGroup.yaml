@@ -107,7 +107,9 @@ accessibility: Private
               - java.lang.String: 
                 - ↑value: .
 ↓old_group_name [variables.RequestableVariable-1672311727372]: 
+  comment: Existing group name to replace. UpdateGroup moves its users to new_group_name, removes the old group links, and removes the old GroupAttributes document through RemoveGroup.
 ↓new_group_name [variables.RequestableVariable-1672311755642]: 
+  comment: Target group name that receives the users previously attached to old_group_name.
 ↓Test_Case [core.TestCase]: 
   ↓old_group_name [variables.TestCaseVariable-1672311867557]: 
     value: aa

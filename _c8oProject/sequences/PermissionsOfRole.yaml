@@ -36,3 +36,4 @@ comment: list permissions of a role
           - java.lang.String: 
             - ↑value: ./text()
 ↓role [variables.RequestableVariable-1776161227449]: 
+  comment: Role name used as the lookup key. It is normalized to lowercase before listing permissions attached to this role.

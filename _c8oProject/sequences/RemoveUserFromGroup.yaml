@@ -78,4 +78,6 @@ comment: remove a user from a group
                 - ↑mode: JS
                 - →→: '"Unexpected error while removing the user ''" + user + "'' in the ''" + group + "'' group"'
 ↓user [variables.RequestableVariable-1485253635044]: 
+  comment: User identifier to remove from the group. The membership document id is sha256(user + ":" + group).
 ↓group [variables.RequestableVariable-1485253650790]: 
+  comment: Group name from which the user membership is removed. The membership document id is sha256(user + ":" + group).

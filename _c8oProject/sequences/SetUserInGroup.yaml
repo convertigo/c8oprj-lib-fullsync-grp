@@ -79,4 +79,6 @@ comment: add a user to a group
                 - ↑mode: JS
                 - →→: '"Unexpected error while adding the user ''" + user + "'' in the ''" + group + "'' group"'
 ↓user [variables.RequestableVariable-1485253636340]: 
+  comment: User identifier to add to the group. The membership document id is sha256(user + ":" + group).
 ↓group [variables.RequestableVariable-1485253649924]: 
+  comment: Group name receiving the user membership. The membership document id is sha256(user + ":" + group).

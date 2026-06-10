@@ -19,8 +19,11 @@ comment: 'Set or merge attributes for a permission. Parameters: permission is th
   ↓_use_json_base [variables.StepVariable-1781090099939]: 
   ↓_use_merge [variables.StepVariable-1781090099941]: 
 ↓permission [variables.RequestableVariable-1781090099943]: 
+  comment: Canonical permission string owning the attributes document, for example resource.action:scope. The stored document id is sha256("permissionAttributes:" + permission).
   description: Canonical permission string owning the attributes document, for example resource.action:scope.
 ↓attributes [variables.RequestableVariable-1781090099945]: 
+  comment: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Can read all records","risk":"low"}.
   description: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Can read all records","risk":"low"}.
 ↓mergePolicy [variables.RequestableVariable-1781090099947]: 
+  comment: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
   description: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.

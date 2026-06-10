@@ -10,4 +10,5 @@ comment: 'Get attributes for a group. Parameter: group is the group name. The se
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributes
   ↓_use_docid [variables.StepVariable-1781090099954]: 
 ↓group [variables.RequestableVariable-1781090099956]: 
+  comment: Group name whose attributes document is read. The read document id is sha256("groupAttributes:" + group).
   description: Group name whose attributes document is read.

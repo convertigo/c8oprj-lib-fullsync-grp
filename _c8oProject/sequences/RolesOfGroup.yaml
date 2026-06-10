@@ -34,3 +34,4 @@ comment: list roles of a group
           - java.lang.String: 
             - ↑value: ./text()
 ↓group [variables.RequestableVariable-1776163000017]: 
+  comment: Group name used as the lookup key. The sequence returns every role attached to this group.

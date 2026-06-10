@@ -1,7 +1,6 @@
 accessibility: Private
 comment: list effective permissions of the current authenticated user through groups and roles
 ↓getAuthenticatedUser [steps.GetAuthenticatedUserStep-1777364000001]: 
-  nodeName: authenticatedUserID
   output: false
 ↓CurrentUser [steps.SimpleSourceStep-1777364000002]: 
   sourceDefinition: 
@@ -25,11 +24,11 @@ comment: list effective permissions of the current authenticated user through gr
   ↓Return [steps.ReturnStep-1777361000003]: 
 ↓InitPermissions [steps.SimpleStep-1777362000001]: 
   expression: |
-    var effectivePermissions = {};
+    'var effectivePermissions = {};
     var scopePriorities = {
     	own: 1,
     	all: 2
-    };
+    };'
 ↓Call_GroupsOf [steps.SequenceStep-1777361000004]: 
   sourceSequence: lib_FullSyncGrp.GroupsOf
   ↓user [variables.StepVariable-1777361000005]: 
@@ -102,7 +101,7 @@ comment: list effective permissions of the current authenticated user through gr
         variableName: currentPermission
       ↓MergePermission [steps.SimpleStep-1777362000003]: 
         expression: |
-          var splitPermission = currentPermission.split(":");
+          'var splitPermission = currentPermission.split(":");
           if (splitPermission.length == 2) {
           	var resourceAction = splitPermission[0];
           	var scope = splitPermission[1];
@@ -114,12 +113,12 @@ comment: list effective permissions of the current authenticated user through gr
           			rank: rank
           		};
           	}
-          }
+          }'
 ↓BuildPermissions [steps.SimpleStep-1777362000004]: 
   expression: |
-    var _effectivePermissions = Object.keys(effectivePermissions).map(function(resourceAction) {
+    'var _effectivePermissions = Object.keys(effectivePermissions).map(function(resourceAction) {
     	return resourceAction + ":" + effectivePermissions[resourceAction].scope;
-    }).sort();
+    }).sort();'
 ↓IteratorEffectivePermissions [steps.SimpleIteratorStep-1777362000005]: 
   expression: _effectivePermissions
   ↓Permission [steps.ElementStep-1777362000006]: 

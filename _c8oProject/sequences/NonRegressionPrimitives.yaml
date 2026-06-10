@@ -1,0 +1,835 @@
+accessibility: Private
+comment: Non-regression sequence covering FullSync group and RBAC primitives with isolated nr_* data
+↓InitCleanup [steps.SimpleStep-1781088803510]: 
+  expression: |
+    'var nrUserA = "nr_user_a";
+    var nrUserB = "nr_user_b";
+    var nrGroupA = "nr_group_a";
+    var nrGroupB = "nr_group_b";
+    var nrGroupBulk = "nr_group_bulk";
+    var nrGroupOld = "nr_group_old";
+    var nrGroupNew = "nr_group_new";
+    var nrBulkUser1 = "nr_bulk_1";
+    var nrBulkUser2 = "nr_bulk_2";
+    var nrRoleReader = "nr_reader";
+    var nrRoleWriter = "nr_writer";
+    var nrPermissionOwn = "nr_feature.read:own";
+    var nrPermissionAll = "nr_feature.read:all";
+    
+    function nrId(left, right) {
+    	return org.apache.commons.codec.digest.DigestUtils.sha256Hex(left + ":" + right);
+    }
+    
+    function nrUserGroupDoc(userName, groupName, deleted) {
+    	var doc = {_id: nrId(userName, groupName)};
+    	if (deleted) {
+    		doc._deleted = true;
+    	} else {
+    		doc.type = "c8oGrp";
+    		doc.user = userName;
+    		doc.group = groupName;
+    		doc["~c8oAcl"] = "c8o:admin";
+    	}
+    	return doc;
+    }
+    
+    function nrGroupRoleDoc(groupName, roleName, deleted) {
+    	roleName = roleName.trim().toLowerCase();
+    	var doc = {_id: nrId(groupName, roleName)};
+    	if (deleted) {
+    		doc._deleted = true;
+    	} else {
+    		doc.type = "c8oGrpRole";
+    		doc.group = groupName;
+    		doc.role = roleName;
+    		doc["~c8oAcl"] = "c8o:admin";
+    	}
+    	return doc;
+    }
+    
+    function nrRolePermissionDoc(roleName, elementName, actionName, scopeName, deleted) {
+    	roleName = roleName.trim().toLowerCase();
+    	elementName = elementName.trim().toLowerCase();
+    	actionName = actionName.trim().toLowerCase();
+    	scopeName = scopeName.trim().toLowerCase();
+    	var permissionName = elementName + "." + actionName + ":" + scopeName;
+    	var doc = {_id: nrId(roleName, permissionName)};
+    	if (deleted) {
+    		doc._deleted = true;
+    	} else {
+    		doc.type = "c8oRolePerm";
+    		doc.role = roleName;
+    		doc.element = elementName;
+    		doc.action = actionName;
+    		doc.scope = scopeName;
+    		doc.permission = permissionName;
+    		doc["~c8oAcl"] = "c8o:admin";
+    	}
+    	return doc;
+    }
+    
+    var cleanupDocs = [
+    	nrUserGroupDoc(nrUserA, nrGroupA, true),
+    	nrUserGroupDoc(nrUserA, nrGroupB, true),
+    	nrUserGroupDoc(nrUserB, nrGroupB, true),
+    	nrUserGroupDoc(nrBulkUser1, nrGroupBulk, true),
+    	nrUserGroupDoc(nrBulkUser2, nrGroupBulk, true),
+    	nrUserGroupDoc(nrUserA, nrGroupOld, true),
+    	nrUserGroupDoc(nrUserA, nrGroupNew, true),
+    	nrGroupRoleDoc(nrGroupA, nrRoleReader, true),
+    	nrGroupRoleDoc(nrGroupB, nrRoleReader, true),
+    	nrGroupRoleDoc(nrGroupB, nrRoleWriter, true),
+    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "own", true),
+    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "all", true),
+    	nrRolePermissionDoc(nrRoleWriter, "nr_feature", "write", "all", true)
+    ];
+    var _use_json_base = JSON.stringify(cleanupDocs);'
+↓ExtendCleanupForBulkUpdate [steps.SimpleStep-1781089048942]: 
+  expression: |
+    cleanupDocs.push(nrUserGroupDoc(nrUserB, nrGroupOld, true));
+    cleanupDocs.push(nrUserGroupDoc(nrUserB, nrGroupNew, true));
+    var _use_json_base = JSON.stringify(cleanupDocs);
+↓CleanupBefore [steps.TransactionStep-1781088803512]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1781088803514]: 
+↓BuildBaseDocs [steps.SimpleStep-1781088803516]: 
+  expression: |
+    'var baseDocs = [
+    	nrUserGroupDoc(nrUserA, nrGroupA, false),
+    	nrUserGroupDoc(nrUserA, nrGroupB, false),
+    	nrGroupRoleDoc(nrGroupA, nrRoleReader, false),
+    	nrGroupRoleDoc(nrGroupB, nrRoleReader, false),
+    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "own", false),
+    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "all", false)
+    ];
+    var _use_json_base = JSON.stringify(baseDocs);'
+↓SetupBase [steps.TransactionStep-1781088803518]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1781088803520]: 
+↓CallGroups [steps.SequenceStep-1781088803522]: 
+  sourceSequence: lib_FullSyncGrp.Groups
+↓CallUsers [steps.SequenceStep-1781088803524]: 
+  sourceSequence: lib_FullSyncGrp.Users
+↓UseGroupA [steps.SimpleStep-1781088803526]: 
+  expression: var group = nrGroupA;
+↓CallUsersOfGroupA [steps.SequenceStep-1781088803528]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088803530]: 
+↓UseUserA [steps.SimpleStep-1781088803532]: 
+  expression: var user = nrUserA;
+↓CallGroupsOfUserA [steps.SequenceStep-1781088803534]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOf
+  ↓user [variables.StepVariable-1781088803536]: 
+↓CallRoles [steps.SequenceStep-1781088803538]: 
+  sourceSequence: lib_FullSyncGrp.Roles
+↓UseGroupAForRoles [steps.SimpleStep-1781088803540]: 
+  expression: var group = nrGroupA;
+↓CallRolesOfGroupA [steps.SequenceStep-1781088803542]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1781088803544]: 
+↓UseReaderRole [steps.SimpleStep-1781088803546]: 
+  expression: var role = nrRoleReader;
+↓CallGroupsOfReader [steps.SequenceStep-1781088803548]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOfRole
+  ↓role [variables.StepVariable-1781088803550]: 
+↓CallPermissions [steps.SequenceStep-1781088803552]: 
+  sourceSequence: lib_FullSyncGrp.Permissions
+↓UseReaderForPermissions [steps.SimpleStep-1781088803554]: 
+  expression: var role = nrRoleReader;
+↓CallPermissionsOfReader [steps.SequenceStep-1781088803556]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+  ↓role [variables.StepVariable-1781088803558]: 
+↓UseOwnPermission [steps.SimpleStep-1781088803560]: 
+  expression: var permission = nrPermissionOwn;
+↓CallRolesOfPermissionOwn [steps.SequenceStep-1781088803562]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfPermission
+  ↓permission [variables.StepVariable-1781088803564]: 
+↓SetAuthUserA [steps.SetAuthenticatedUserStep-1781088803566]: 
+  userid: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: nrUserA
+↓CallEffectivePermissions [steps.SequenceStep-1781088803568]: 
+  sourceSequence: lib_FullSyncGrp.EffectivePermissionsOfUser
+↓UseWriterPermission [steps.SimpleStep-1781088803570]: 
+  expression: |
+    var role = nrRoleWriter;
+    var element = "nr_feature";
+    var action = "write";
+    var scope = "all";
+↓CallSetPermissionInRole [steps.SequenceStep-1781088803572]: 
+  sourceSequence: lib_FullSyncGrp.SetPermissionInRole
+  ↓role [variables.StepVariable-1781088803574]: 
+  ↓element [variables.StepVariable-1781088803576]: 
+  ↓action [variables.StepVariable-1781088803578]: 
+  ↓scope [variables.StepVariable-1781088803580]: 
+↓UseWriterRole [steps.SimpleStep-1781088803582]: 
+  expression: var role = nrRoleWriter;
+↓CallPermissionsOfWriter [steps.SequenceStep-1781088803584]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+  ↓role [variables.StepVariable-1781088803586]: 
+↓UseWriterPermissionForRemove [steps.SimpleStep-1781088803588]: 
+  expression: |
+    var role = nrRoleWriter;
+    var element = "nr_feature";
+    var action = "write";
+    var scope = "all";
+↓CallRemovePermissionFromRole [steps.SequenceStep-1781088803590]: 
+  sourceSequence: lib_FullSyncGrp.RemovePermissionFromRole
+  ↓role [variables.StepVariable-1781088803592]: 
+  ↓element [variables.StepVariable-1781088803594]: 
+  ↓action [variables.StepVariable-1781088803596]: 
+  ↓scope [variables.StepVariable-1781088803598]: 
+↓UseWriterRoleAfterRemove [steps.SimpleStep-1781088844767]: 
+  expression: var role = nrRoleWriter;
+↓CallPermissionsOfWriterAfterRemove [steps.SequenceStep-1781088850291]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+  ↓role [variables.StepVariable-1781088850294]: 
+↓UseGroupBWriter [steps.SimpleStep-1781088803600]: 
+  expression: |
+    var group = nrGroupB;
+    var role = nrRoleWriter;
+↓CallSetRoleInGroup [steps.SequenceStep-1781088803602]: 
+  sourceSequence: lib_FullSyncGrp.SetRoleInGroup
+  ↓group [variables.StepVariable-1781088803604]: 
+  ↓role [variables.StepVariable-1781088803606]: 
+↓UseGroupBForRoles [steps.SimpleStep-1781088803608]: 
+  expression: var group = nrGroupB;
+↓CallRolesOfGroupB [steps.SequenceStep-1781088803610]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1781088803612]: 
+↓UseGroupBWriterForRemove [steps.SimpleStep-1781088803614]: 
+  expression: |
+    var group = nrGroupB;
+    var role = nrRoleWriter;
+↓CallRemoveRoleFromGroup [steps.SequenceStep-1781088803616]: 
+  sourceSequence: lib_FullSyncGrp.RemoveRoleFromGroup
+  ↓group [variables.StepVariable-1781088803618]: 
+  ↓role [variables.StepVariable-1781088803620]: 
+↓UseGroupBForRolesAfterRemove [steps.SimpleStep-1781088862835]: 
+  expression: var group = nrGroupB;
+↓CallRolesOfGroupBAfterRemove [steps.SequenceStep-1781088862856]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1781088862859]: 
+↓UseUserBGroupB [steps.SimpleStep-1781088803622]: 
+  expression: |
+    var user = nrUserB;
+    var group = nrGroupB;
+↓CallSetUserInGroup [steps.SequenceStep-1781088803624]: 
+  sourceSequence: lib_FullSyncGrp.SetUserInGroup
+  ↓user [variables.StepVariable-1781088803626]: 
+  ↓group [variables.StepVariable-1781088803628]: 
+↓UseGroupBForUsers [steps.SimpleStep-1781088803630]: 
+  expression: var group = nrGroupB;
+↓CallUsersOfGroupB [steps.SequenceStep-1781088803632]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088803634]: 
+↓UseUserBGroupBForRemove [steps.SimpleStep-1781088803636]: 
+  expression: |
+    var user = nrUserB;
+    var group = nrGroupB;
+↓CallRemoveUserFromGroup [steps.SequenceStep-1781088803638]: 
+  sourceSequence: lib_FullSyncGrp.RemoveUserFromGroup
+  ↓user [variables.StepVariable-1781088803640]: 
+  ↓group [variables.StepVariable-1781088803642]: 
+↓UseGroupBForUsersAfterRemove [steps.SimpleStep-1781088862901]: 
+  expression: var group = nrGroupB;
+↓CallUsersOfGroupBAfterRemove [steps.SequenceStep-1781088862914]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088862916]: 
+↓UseBulkAdd [steps.SimpleStep-1781088803644]: 
+  expression: |
+    var users = JSON.stringify([nrBulkUser1, nrBulkUser2]);
+    var groups = JSON.stringify([nrGroupBulk]);
+↓CallSetUserInGroupBulkV2 [steps.SequenceStep-1781088803646]: 
+  sourceSequence: lib_FullSyncGrp.SetUserInGroupBulkV2
+  ↓users [variables.StepVariable-1781088803648]: 
+  ↓groups [variables.StepVariable-1781088803650]: 
+↓UseBulkGroup [steps.SimpleStep-1781088803652]: 
+  expression: var group = nrGroupBulk;
+↓CallUsersOfBulkGroup [steps.SequenceStep-1781088803654]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088803656]: 
+↓UseBulkRemove [steps.SimpleStep-1781088803658]: 
+  expression: |
+    var users = JSON.stringify([nrBulkUser1, nrBulkUser2]);
+    var groups = JSON.stringify([nrGroupBulk]);
+↓CallRemoveUserInGroupBulkV2 [steps.SequenceStep-1781088803660]: 
+  sourceSequence: lib_FullSyncGrp.RemoveUserInGroupBulkV2
+  ↓users [variables.StepVariable-1781088803662]: 
+  ↓groups [variables.StepVariable-1781088803664]: 
+↓UseBulkGroupAfterRemove [steps.SimpleStep-1781088862926]: 
+  expression: var group = nrGroupBulk;
+↓CallUsersOfBulkGroupAfterRemove [steps.SequenceStep-1781088862939]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088862941]: 
+↓UseUpdateGroupSeed [steps.SimpleStep-1781088803666]: 
+  expression: |
+    var user = nrUserA;
+    var group = nrGroupOld;
+↓CallSetUserInOldGroup [steps.SequenceStep-1781088803668]: 
+  sourceSequence: lib_FullSyncGrp.SetUserInGroup
+  ↓user [variables.StepVariable-1781088803670]: 
+  ↓group [variables.StepVariable-1781088803672]: 
+↓UseUpdateGroupSeedB [steps.SimpleStep-1781089048959]: 
+  expression: |
+    var user = nrUserB;
+    var group = nrGroupOld;
+↓CallSetUserBInOldGroup [steps.SequenceStep-1781089048978]: 
+  sourceSequence: lib_FullSyncGrp.SetUserInGroup
+  ↓user [variables.StepVariable-1781089048980]: 
+  ↓group [variables.StepVariable-1781089048982]: 
+↓UseUpdateGroup [steps.SimpleStep-1781088803674]: 
+  expression: |
+    var old_group_name = nrGroupOld;
+    var new_group_name = nrGroupNew;
+↓CallUpdateGroup [steps.SequenceStep-1781088803676]: 
+  sourceSequence: lib_FullSyncGrp.UpdateGroup
+  ↓old_group_name [variables.StepVariable-1781088803678]: 
+  ↓new_group_name [variables.StepVariable-1781088803680]: 
+↓UseNewGroup [steps.SimpleStep-1781088803682]: 
+  expression: var group = nrGroupNew;
+↓CallUsersOfNewGroup [steps.SequenceStep-1781088803684]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1781088803686]: 
+↓Checks [steps.XMLComplexStep-1781088953479]: 
+  nodeName: checks
+  ↓CheckGroupsList [steps.XMLComplexStep-1781088953484]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953486]: 
+      expression: '"Groups lists nr_group_a"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953488]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803522
+            - java.lang.String: 
+              - ↑value: ./document/group[.="nr_group_a"]
+      ↓jThen [steps.ThenStep-1781088953490]: 
+        ↓Status [steps.ElementStep-1781088953492]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953494]: 
+        ↓Status [steps.ElementStep-1781088953496]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckUsersList [steps.XMLComplexStep-1781088953498]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953500]: 
+      expression: '"Users lists nr_user_a"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953502]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803524
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_a"]
+      ↓jThen [steps.ThenStep-1781088953504]: 
+        ↓Status [steps.ElementStep-1781088953506]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953508]: 
+        ↓Status [steps.ElementStep-1781088953510]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckUsersOf [steps.XMLComplexStep-1781088953512]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953514]: 
+      expression: '"UsersOf returns nr_user_a for nr_group_a"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953516]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803528
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_a"]
+      ↓jThen [steps.ThenStep-1781088953518]: 
+        ↓Status [steps.ElementStep-1781088953520]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953522]: 
+        ↓Status [steps.ElementStep-1781088953524]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsOf [steps.XMLComplexStep-1781088953526]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953528]: 
+      expression: '"GroupsOf returns nr_group_b for nr_user_a"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953530]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803534
+            - java.lang.String: 
+              - ↑value: ./document/group[.="nr_group_b"]
+      ↓jThen [steps.ThenStep-1781088953532]: 
+        ↓Status [steps.ElementStep-1781088953534]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953536]: 
+        ↓Status [steps.ElementStep-1781088953538]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesList [steps.XMLComplexStep-1781088953540]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953542]: 
+      expression: '"Roles lists nr_reader"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953544]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803538
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_reader"]
+      ↓jThen [steps.ThenStep-1781088953546]: 
+        ↓Status [steps.ElementStep-1781088953548]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953550]: 
+        ↓Status [steps.ElementStep-1781088953552]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesOfGroup [steps.XMLComplexStep-1781088953554]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953556]: 
+      expression: '"RolesOfGroup returns nr_reader"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953558]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803542
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_reader"]
+      ↓jThen [steps.ThenStep-1781088953560]: 
+        ↓Status [steps.ElementStep-1781088953562]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953564]: 
+        ↓Status [steps.ElementStep-1781088953566]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsOfRole [steps.XMLComplexStep-1781088953568]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953570]: 
+      expression: '"GroupsOfRole returns nr_group_b"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953572]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803548
+            - java.lang.String: 
+              - ↑value: ./document/group[.="nr_group_b"]
+      ↓jThen [steps.ThenStep-1781088953574]: 
+        ↓Status [steps.ElementStep-1781088953576]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953578]: 
+        ↓Status [steps.ElementStep-1781088953580]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsList [steps.XMLComplexStep-1781088953582]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953584]: 
+      expression: '"Permissions lists nr_feature.read:all"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953586]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803552
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_feature.read:all"]
+      ↓jThen [steps.ThenStep-1781088953588]: 
+        ↓Status [steps.ElementStep-1781088953590]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953592]: 
+        ↓Status [steps.ElementStep-1781088953594]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsOfRole [steps.XMLComplexStep-1781088953596]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953598]: 
+      expression: '"PermissionsOfRole returns own scope"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953600]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803556
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_feature.read:own"]
+      ↓jThen [steps.ThenStep-1781088953602]: 
+        ↓Status [steps.ElementStep-1781088953604]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953606]: 
+        ↓Status [steps.ElementStep-1781088953608]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesOfPermission [steps.XMLComplexStep-1781088953610]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953612]: 
+      expression: '"RolesOfPermission returns nr_reader"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953614]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803562
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_reader"]
+      ↓jThen [steps.ThenStep-1781088953616]: 
+        ↓Status [steps.ElementStep-1781088953618]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953620]: 
+        ↓Status [steps.ElementStep-1781088953622]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckEffectivePermissions [steps.XMLComplexStep-1781088953624]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953626]: 
+      expression: '"EffectivePermissions keeps strongest all scope"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953628]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803568
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_feature.read:all"]
+      ↓jThen [steps.ThenStep-1781088953630]: 
+        ↓Status [steps.ElementStep-1781088953632]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953634]: 
+        ↓Status [steps.ElementStep-1781088953636]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckSetPermission [steps.XMLComplexStep-1781088953638]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953640]: 
+      expression: '"SetPermissionInRole creates write permission"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953642]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803584
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_feature.write:all"]
+      ↓jThen [steps.ThenStep-1781088953644]: 
+        ↓Status [steps.ElementStep-1781088953646]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953648]: 
+        ↓Status [steps.ElementStep-1781088953650]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemovePermissionResponse [steps.XMLComplexStep-1781088953652]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953654]: 
+      expression: '"RemovePermissionFromRole returns success"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953656]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803590
+            - java.lang.String: 
+              - ↑value: ./document/success
+      ↓jThen [steps.ThenStep-1781088953658]: 
+        ↓Status [steps.ElementStep-1781088953660]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953662]: 
+        ↓Status [steps.ElementStep-1781088953664]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemovePermissionEffect [steps.XMLComplexStep-1781088953666]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953668]: 
+      expression: '"RemovePermissionFromRole removes write permission"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953670]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088850291
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_feature.write:all"]
+      ↓jThen [steps.ThenStep-1781088953672]: 
+        ↓Status [steps.ElementStep-1781088953674]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953676]: 
+        ↓Status [steps.ElementStep-1781088953678]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckSetRole [steps.XMLComplexStep-1781088953680]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953682]: 
+      expression: '"SetRoleInGroup creates nr_writer link"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953684]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803610
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_writer"]
+      ↓jThen [steps.ThenStep-1781088953686]: 
+        ↓Status [steps.ElementStep-1781088953688]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953690]: 
+        ↓Status [steps.ElementStep-1781088953692]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveRoleResponse [steps.XMLComplexStep-1781088953694]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953696]: 
+      expression: '"RemoveRoleFromGroup returns success"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953698]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803616
+            - java.lang.String: 
+              - ↑value: ./document/success
+      ↓jThen [steps.ThenStep-1781088953700]: 
+        ↓Status [steps.ElementStep-1781088953702]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953704]: 
+        ↓Status [steps.ElementStep-1781088953706]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveRoleEffect [steps.XMLComplexStep-1781088953708]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953710]: 
+      expression: '"RemoveRoleFromGroup removes nr_writer link"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953712]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088862856
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_writer"]
+      ↓jThen [steps.ThenStep-1781088953714]: 
+        ↓Status [steps.ElementStep-1781088953716]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953718]: 
+        ↓Status [steps.ElementStep-1781088953720]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckSetUser [steps.XMLComplexStep-1781088953722]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953724]: 
+      expression: '"SetUserInGroup creates nr_user_b link"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953726]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803632
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_b"]
+      ↓jThen [steps.ThenStep-1781088953728]: 
+        ↓Status [steps.ElementStep-1781088953730]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953732]: 
+        ↓Status [steps.ElementStep-1781088953734]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveUser [steps.XMLComplexStep-1781088953736]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953738]: 
+      expression: '"RemoveUserFromGroup removes nr_user_b link"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953740]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088862914
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_b"]
+      ↓jThen [steps.ThenStep-1781088953742]: 
+        ↓Status [steps.ElementStep-1781088953744]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953746]: 
+        ↓Status [steps.ElementStep-1781088953748]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckBulkAdd [steps.XMLComplexStep-1781088953750]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953752]: 
+      expression: '"SetUserInGroupBulkV2 creates bulk links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953754]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803654
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_bulk_1"]
+      ↓jThen [steps.ThenStep-1781088953756]: 
+        ↓Status [steps.ElementStep-1781088953758]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953760]: 
+        ↓Status [steps.ElementStep-1781088953762]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckBulkRemove [steps.XMLComplexStep-1781088953764]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953766]: 
+      expression: '"RemoveUserInGroupBulkV2 removes bulk links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953768]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088862939
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_bulk_1"]
+      ↓jThen [steps.ThenStep-1781088953770]: 
+        ↓Status [steps.ElementStep-1781088953772]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953774]: 
+        ↓Status [steps.ElementStep-1781088953776]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckUpdateGroup [steps.XMLComplexStep-1781088953778]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781088953780]: 
+      expression: '"UpdateGroup moves nr_user_a to new group"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781088953782]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803684
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_a"]
+      ↓jThen [steps.ThenStep-1781088953784]: 
+        ↓Status [steps.ElementStep-1781088953786]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781088953788]: 
+        ↓Status [steps.ElementStep-1781088953790]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckUpdateGroupBulkLegacy [steps.XMLComplexStep-1781089049017]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781089049019]: 
+      expression: '"UpdateGroup moves second user through legacy bulk"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781089049021]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803684
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_user_b"]
+      ↓jThen [steps.ThenStep-1781089049023]: 
+        ↓Status [steps.ElementStep-1781089049025]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781089049027]: 
+        ↓Status [steps.ElementStep-1781089049029]: 
+          expression: '"fail"'
+          nodeName: status
+↓PrepareFinalCleanup [steps.SimpleStep-1781088803688]: 
+  expression: var _use_json_base = JSON.stringify(cleanupDocs);
+↓CleanupAfter [steps.TransactionStep-1781088803690]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1781088803692]: 
+↓Summary [steps.ElementStep-1781088803694]: 
+  expression: '"Non-regression primitives executed with isolated nr_* data"'
+  nodeName: summary

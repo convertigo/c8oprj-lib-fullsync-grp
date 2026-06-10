@@ -58,7 +58,7 @@ comment: remove a permission from a role
       - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
       - com.twinsoft.convertigo.beans.common.XMLVector: 
         - java.lang.String: 
-          - ↑value: 1776163000173
+          - ↑value: 1776161231932
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/ok
   ↓jThen [steps.ThenStep-1776161234064]: 
@@ -74,7 +74,7 @@ comment: remove a permission from a role
           - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
           - com.twinsoft.convertigo.beans.common.XMLVector: 
             - java.lang.String: 
-              - ↑value: 1776163000173
+              - ↑value: 1776161231932
             - java.lang.String: 
               - ↑value: ./document/couchdb_output/error[.="not_found"]
       ↓jThen [steps.ThenStep-1776161234188]: 

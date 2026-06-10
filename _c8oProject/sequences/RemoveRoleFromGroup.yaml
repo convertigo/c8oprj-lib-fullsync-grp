@@ -35,7 +35,7 @@ comment: remove a role from a group
       - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
       - com.twinsoft.convertigo.beans.common.XMLVector: 
         - java.lang.String: 
-          - ↑value: 1776163000097
+          - ↑value: 1776161237429
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/ok
   ↓jThen [steps.ThenStep-1776161237729]: 
@@ -51,7 +51,7 @@ comment: remove a role from a group
           - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
           - com.twinsoft.convertigo.beans.common.XMLVector: 
             - java.lang.String: 
-              - ↑value: 1776163000097
+              - ↑value: 1776161237429
             - java.lang.String: 
               - ↑value: ./document/couchdb_output/error[.="not_found"]
       ↓jThen [steps.ThenStep-1776161237744]: 

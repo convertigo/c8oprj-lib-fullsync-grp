@@ -2,7 +2,7 @@ accessibility: Private
 comment: seed a complex RBAC demo dataset
 ↓BuildSeed [steps.SimpleStep-1777363000001]: 
   expression: |
-    var userGroups = [
+    'var userGroups = [
     	["alice", "engineering"],
     	["alice", "product"],
     	["bob", "engineering"],
@@ -109,7 +109,7 @@ comment: seed a complex RBAC demo dataset
     var userGroupCount = userGroups.length;
     var groupRoleCount = groupRoles.length;
     var rolePermissionCount = rolePermissions.length;
-    var _use_json_base = JSON.stringify(docs);
+    var _use_json_base = JSON.stringify(docs);'
 ↓Call_Bulk [steps.TransactionStep-1777363000002]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
   ↓_use_json_base [variables.StepVariable-1777363000003]: 

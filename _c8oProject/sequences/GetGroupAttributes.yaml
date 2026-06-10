@@ -1,0 +1,13 @@
+accessibility: Private
+comment: 'Get attributes for a group. Parameter: group is the group name. The sequence reads the deterministic attribute document sha256("groupAttributes:" + group), whose type is c8oGroupAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetGroupAttributes.'
+↓BuildDocId [steps.SimpleStep-1781090099950]: 
+  expression: |
+    if (group == undefined || ('' + group).trim().length < 1) { throw 'The "group" parameter must be defined and not empty'; }
+    group = ('' + group).trim();
+    var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
+↓Call_GetGroupAttributes [steps.TransactionStep-1781090099952]: 
+  output: true
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributes
+  ↓_use_docid [variables.StepVariable-1781090099954]: 
+↓group [variables.RequestableVariable-1781090099956]: 
+  description: Group name whose attributes document is read.

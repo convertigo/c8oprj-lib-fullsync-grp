@@ -1,7 +1,7 @@
 
 # ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/core/images/project_color_16x16.png?raw=true "Project") lib_FullSyncGrp
 
-Library to define users and groups for fullsync replication filtering
+Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering 
 
 <details><summary><span style="color:DarkGoldenRod"><i>References</i></span></summary><blockquote><p>
 
@@ -22,6 +22,36 @@ see [documentation](http://localhost:18080/convertigo/xsd/couchdb/CouchDb.xsd)
 <details><summary><span style="color:DarkGoldenRod"><i>Transactions</i></span></summary><blockquote><p>
 
 
+<details><summary><b>GetGroupAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getdocument_color_16x16.png?raw=true "GetDocumentTransaction") GetGroupAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>GetGroups</b></summary><blockquote><p>
 
 
@@ -30,10 +60,206 @@ see [documentation](http://localhost:18080/convertigo/xsd/couchdb/CouchDb.xsd)
 
 </p></blockquote></details>
 
+<details><summary><b>GetGroupsByRole</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetGroupsByRole
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_key
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>GetGroupsByUser</b></summary><blockquote><p>
 
 
 ### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetGroupsByUser
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_key
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetPermissionAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getdocument_color_16x16.png?raw=true "GetDocumentTransaction") GetPermissionAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetPermissions</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetPermissions
+
+
+</p></blockquote></details>
+
+<details><summary><b>GetPermissionsByRole</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetPermissionsByRole
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_key
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetRoleAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getdocument_color_16x16.png?raw=true "GetDocumentTransaction") GetRoleAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetRoles</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetRoles
+
+
+</p></blockquote></details>
+
+<details><summary><b>GetRolesByGroup</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetRolesByGroup
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_key
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetRolesByPermission</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetRolesByPermission
 
 
 
@@ -242,6 +468,66 @@ comment
 
 </p></blockquote></details>
 
+<details><summary><b>RemovePermissionFromRole</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/deletedocument_color_16x16.png?raw=true "DeleteDocumentTransaction") RemovePermissionFromRole
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>RemoveRoleFromGroup</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/deletedocument_color_16x16.png?raw=true "DeleteDocumentTransaction") RemoveRoleFromGroup
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>RemoveUserFromGroup</b></summary><blockquote><p>
 
 
@@ -263,6 +549,252 @@ comment
 <tr>
 <td>
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_docid
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetGroupAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/postdocument_color_16x16.png?raw=true "PostDocumentTransaction") SetGroupAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_json_base
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_merge
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetPermissionAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/postdocument_color_16x16.png?raw=true "PostDocumentTransaction") SetPermissionAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_json_base
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_merge
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetPermissionInRole</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/postdocument_color_16x16.png?raw=true "PostDocumentTransaction") SetPermissionInRole
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_c8oAcl
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_id
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;action
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;element
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;scope
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetRoleAttributes</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/postdocument_color_16x16.png?raw=true "PostDocumentTransaction") SetRoleAttributes
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_json_base
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_merge
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetRoleInGroup</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/postdocument_color_16x16.png?raw=true "PostDocumentTransaction") SetRoleInGroup
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_c8oAcl
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_id
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
 
@@ -331,6 +863,104 @@ comment
 <details><summary><span style="color:DarkGoldenRod"><i>Sequences</i></span></summary><blockquote><p>
 
 
+<details><summary><b>EffectivePermissionsOfUser</b> : list effective permissions of the current authenticated user through groups and roles</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") EffectivePermissionsOfUser
+
+list effective permissions of the current authenticated user through groups and roles
+</p></blockquote></details>
+
+<details><summary><b>GetGroupAttributes</b> : Get attributes for a group</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") GetGroupAttributes
+
+Get attributes for a group. Parameter: group is the group name. The sequence reads the deterministic attribute document sha256("groupAttributes:" + group), whose type is c8oGroupAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetGroupAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetPermissionAttributes</b> : Get attributes for a permission</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") GetPermissionAttributes
+
+Get attributes for a permission. Parameter: permission is the canonical permission string. The sequence reads the deterministic attribute document sha256("permissionAttributes:" + permission), whose type is c8oPermissionAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetPermissionAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetRoleAttributes</b> : Get attributes for a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") GetRoleAttributes
+
+Get attributes for a role. Parameter: role is the role name. The sequence reads the deterministic attribute document sha256("roleAttributes:" + role), whose type is c8oRoleAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetRoleAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>Groups</b> : list all groups</summary><blockquote><p>
 
 
@@ -369,6 +999,82 @@ comment
 
 </p></blockquote></details>
 
+<details><summary><b>GroupsOfRole</b> : list groups of a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") GroupsOfRole
+
+list groups of a role
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>NonRegressionPrimitives</b> : Non-regression sequence covering FullSync group and RBAC primitives with isolated nr_* data</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") NonRegressionPrimitives
+
+Non-regression sequence covering FullSync group and RBAC primitives with isolated nr_* data
+</p></blockquote></details>
+
+<details><summary><b>Permissions</b> : list all permissions</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") Permissions
+
+list all permissions
+</p></blockquote></details>
+
+<details><summary><b>PermissionsOfRole</b> : list permissions of a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") PermissionsOfRole
+
+list permissions of a role
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
 <details><summary><b>RemoveGroup</b></summary><blockquote><p>
 
 
@@ -390,6 +1096,98 @@ comment
 <tr>
 <td>
 <img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>RemovePermissionFromRole</b> : remove a permission from a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RemovePermissionFromRole
+
+remove a permission from a role
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;action
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;element
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;scope
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>RemoveRoleFromGroup</b> : remove a role from a group</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RemoveRoleFromGroup
+
+remove a role from a group
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
 </td>
 <td>
 
@@ -469,6 +1267,312 @@ Array<String> groups -- should be stringified from front-end
 </td>
 <td>
 Array<String> users -- should be stringified from front-end
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>Roles</b> : list all roles</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") Roles
+
+list all roles
+</p></blockquote></details>
+
+<details><summary><b>RolesOfGroup</b> : list roles of a group</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RolesOfGroup
+
+list roles of a group
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>RolesOfPermission</b> : list roles of a permission</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") RolesOfPermission
+
+list roles of a permission
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SeedRbacDemoData</b> : seed a complex RBAC demo dataset</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SeedRbacDemoData
+
+seed a complex RBAC demo dataset
+</p></blockquote></details>
+
+<details><summary><b>SetGroupAttributes</b> : Set or merge attributes for a group</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SetGroupAttributes
+
+Set or merge attributes for a group. Parameters: group is the group name; attributes is a JSON object encoded as a string, for example {"label":"Managers","level":"2"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("groupAttributes:" + group). Stored document type is c8oGroupAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetPermissionAttributes</b> : Set or merge attributes for a permission</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SetPermissionAttributes
+
+Set or merge attributes for a permission. Parameters: permission is the canonical permission string, for example resource.action:scope; attributes is a JSON object encoded as a string, for example {"label":"Can read all records","risk":"low"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("permissionAttributes:" + permission). Stored document type is c8oPermissionAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;permission
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetPermissionInRole</b> : add a permission to a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SetPermissionInRole
+
+add a permission to a role
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;action
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;element
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;scope
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetRoleAttributes</b> : Set or merge attributes for a role</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SetRoleAttributes
+
+Set or merge attributes for a role. Parameters: role is the role name; attributes is a JSON object encoded as a string, for example {"label":"Reader","priority":"10"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("roleAttributes:" + role). Stored document type is c8oRoleAttributes.
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;attributes
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;mergePolicy
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
+
+<details><summary><b>SetRoleInGroup</b> : add a role to a group</summary><blockquote><p>
+
+
+## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") SetRoleInGroup
+
+add a role to a group
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;group
+</td>
+<td>
+
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;role
+</td>
+<td>
+
 </td>
 </tr>
 </table>

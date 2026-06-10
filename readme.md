@@ -3,24 +3,21 @@
 
 # lib_FullSyncGrp
 
-Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering
+Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering 
 
 
 For more technical informations : [documentation](./project.md)
 
 - [Installation](#installation)
-- [RBAC](#rbac)
-    - [Model](#model)
-    - [Permission format](#permission-format)
-    - [Role normalization](#role-normalization)
-    - [Resolution rules](#resolution-rules)
-    - [Demo dataset](#demo-dataset)
-    - [RBAC sequences](#rbac-sequences)
 - [Sequences](#sequences)
-    - [Groups](#groups)
-    - [GroupsOfRole](#groupsofrole)
     - [EffectivePermissionsOfUser](#effectivepermissionsofuser)
+    - [GetGroupAttributes](#getgroupattributes)
+    - [GetPermissionAttributes](#getpermissionattributes)
+    - [GetRoleAttributes](#getroleattributes)
+    - [Groups](#groups)
     - [GroupsOf](#groupsof)
+    - [GroupsOfRole](#groupsofrole)
+    - [NonRegressionPrimitives](#nonregressionprimitives)
     - [Permissions](#permissions)
     - [PermissionsOfRole](#permissionsofrole)
     - [RemoveGroup](#removegroup)
@@ -32,7 +29,10 @@ For more technical informations : [documentation](./project.md)
     - [RolesOfGroup](#rolesofgroup)
     - [RolesOfPermission](#rolesofpermission)
     - [SeedRbacDemoData](#seedrbacdemodata)
+    - [SetGroupAttributes](#setgroupattributes)
+    - [SetPermissionAttributes](#setpermissionattributes)
     - [SetPermissionInRole](#setpermissioninrole)
+    - [SetRoleAttributes](#setroleattributes)
     - [SetRoleInGroup](#setroleingroup)
     - [SetUserInGroup](#setuseringroup)
     - [SetUserInGroupBulk](#setuseringroupbulk)
@@ -51,142 +51,88 @@ For more technical informations : [documentation](./project.md)
      <tr><td>To contribute</td><td>
 
      ```
-     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp.git:branch=8.0.0
+     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp.git:branch=RBAC
      ```
      </td></tr>
      <tr><td>To simply use</td><td>
 
      ```
-     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp/archive/8.0.0.zip
+     lib_FullSyncGrp=https://github.com/convertigo/c8oprj-lib-fullsync-grp/archive/RBAC.zip
      ```
      </td></tr>
     </table>
 3. Click the `Finish` button. This will automatically import the __lib_FullSyncGrp__ project
 
 
-## RBAC
-
-This library now supports a simple RBAC layer on top of the existing `user -> group` model.
-
-### Model
-
-The current authorization model is based on 3 relations:
-
-- `user -> group`
-- `group -> role`
-- `role -> permission`
-
-The library stores these relations as link documents in FullSync:
-
-- `c8oGrp` for `user -> group`
-- `c8oGrpRole` for `group -> role`
-- `c8oRolePerm` for `role -> permission`
-
-This keeps the implementation aligned with the original project design: users, groups, roles, and permissions are resolved from link documents rather than from heavy standalone entities.
-
-### Permission format
-
-Permissions use the canonical format:
-
-`element.action:scope`
-
-Examples:
-
-- `project.read:own`
-- `project.read:all`
-- `gestioncrm.read:all`
-
-`SetPermissionInRole` builds this permission string from 4 inputs:
-
-- `role`
-- `element`
-- `action`
-- `scope`
-
-### Role normalization
-
-Roles are normalized in lowercase at write and lookup time.
-
-This means:
-
-- `MonSuperRole`
-- `monsuperrole`
-
-are treated as the same role.
-
-### Resolution rules
-
-`EffectivePermissionsOfUser` resolves permissions for the current authenticated user through:
-
-`user -> groups -> roles -> permissions`
-
-The sequence applies two rules:
-
-1. Duplicate permissions are removed.
-2. For the same `element.action`, only the strongest scope is kept.
-
-Current scope priority:
-
-- `all`
-- `own`
-
-Example:
-
-- `project.read:own`
-- `project.read:all`
-
-Effective result:
-
-- `project.read:all`
-
-`deny` is not implemented yet.
-
-### Demo dataset
-
-`SeedRbacDemoData()` loads a reusable RBAC demo dataset into FullSync.
-
-It creates a non-trivial graph with:
-
-- users assigned to multiple groups
-- groups assigned to multiple roles
-- roles assigned to multiple permissions
-- overlapping scopes such as `own` and `all`
-
-The dataset is designed to exercise:
-
-- effective permission aggregation
-- duplicate removal
-- strongest-scope selection for the same `element.action`
-
-The seed currently creates:
-
-- `16` user/group links
-- `15` group/role links
-- `20` role/permission links
-
-### RBAC sequences
-
-The RBAC layer currently exposes these sequences:
-
-- `SetRoleInGroup(group, role)`
-- `RemoveRoleFromGroup(group, role)`
-- `RolesOfGroup(group)`
-- `GroupsOfRole(role)`
-- `SetPermissionInRole(role, element, action, scope)`
-- `RemovePermissionFromRole(role, element, action, scope)`
-- `PermissionsOfRole(role)`
-- `RolesOfPermission(permission)`
-- `Roles()`
-- `Permissions()`
-- `EffectivePermissionsOfUser()`
-- `SeedRbacDemoData()`
-
-
 ## Sequences
+
+### EffectivePermissionsOfUser
+
+list effective permissions of the current authenticated user through groups and roles
+
+### GetGroupAttributes
+
+Get attributes for a group. Parameter: group is the group name. The sequence reads the deterministic attribute document sha256("groupAttributes:" + group), whose type is c8oGroupAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetGroupAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>group</td><td></td>
+</tr>
+</table>
+
+### GetPermissionAttributes
+
+Get attributes for a permission. Parameter: permission is the canonical permission string. The sequence reads the deterministic attribute document sha256("permissionAttributes:" + permission), whose type is c8oPermissionAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetPermissionAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>permission</td><td></td>
+</tr>
+</table>
+
+### GetRoleAttributes
+
+Get attributes for a role. Parameter: role is the role name. The sequence reads the deterministic attribute document sha256("roleAttributes:" + role), whose type is c8oRoleAttributes. The response is the FullSync document returned by GetDocument and contains couchdb_output.attributes as the JSON object previously written by SetRoleAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>role</td><td></td>
+</tr>
+</table>
 
 ### Groups
 
 list all groups
+
+### GroupsOf
+
+list groups of a user
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>user</td><td></td>
+</tr>
+</table>
 
 ### GroupsOfRole
 
@@ -203,24 +149,9 @@ list groups of a role
 </tr>
 </table>
 
-### EffectivePermissionsOfUser
+### NonRegressionPrimitives
 
-list effective permissions of the current authenticated user through groups and roles
-
-### GroupsOf
-
-list groups of a user
-
-**variables**
-
-<table>
-<tr>
-<th>name</th><th>comment</th>
-</tr>
-<tr>
-<td>user</td><td></td>
-</tr>
-</table>
+Non-regression sequence covering FullSync group and RBAC primitives with isolated nr_* data
 
 ### Permissions
 
@@ -265,13 +196,13 @@ remove a permission from a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>action</td><td></td>
 </tr>
 <tr>
 <td>element</td><td></td>
 </tr>
 <tr>
-<td>action</td><td></td>
+<td>role</td><td></td>
 </tr>
 <tr>
 <td>scope</td><td></td>
@@ -370,6 +301,48 @@ list roles of a permission
 
 seed a complex RBAC demo dataset
 
+### SetGroupAttributes
+
+Set or merge attributes for a group. Parameters: group is the group name; attributes is a JSON object encoded as a string, for example {"label":"Managers","level":"2"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("groupAttributes:" + group). Stored document type is c8oGroupAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>attributes</td><td></td>
+</tr>
+<tr>
+<td>group</td><td></td>
+</tr>
+<tr>
+<td>mergePolicy</td><td></td>
+</tr>
+</table>
+
+### SetPermissionAttributes
+
+Set or merge attributes for a permission. Parameters: permission is the canonical permission string, for example resource.action:scope; attributes is a JSON object encoded as a string, for example {"label":"Can read all records","risk":"low"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("permissionAttributes:" + permission). Stored document type is c8oPermissionAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>attributes</td><td></td>
+</tr>
+<tr>
+<td>mergePolicy</td><td></td>
+</tr>
+<tr>
+<td>permission</td><td></td>
+</tr>
+</table>
+
 ### SetPermissionInRole
 
 add a permission to a role
@@ -381,16 +354,37 @@ add a permission to a role
 <th>name</th><th>comment</th>
 </tr>
 <tr>
-<td>role</td><td></td>
+<td>action</td><td></td>
 </tr>
 <tr>
 <td>element</td><td></td>
 </tr>
 <tr>
-<td>action</td><td></td>
+<td>role</td><td></td>
 </tr>
 <tr>
 <td>scope</td><td></td>
+</tr>
+</table>
+
+### SetRoleAttributes
+
+Set or merge attributes for a role. Parameters: role is the role name; attributes is a JSON object encoded as a string, for example {"label":"Reader","priority":"10"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("roleAttributes:" + role). Stored document type is c8oRoleAttributes.
+
+**variables**
+
+<table>
+<tr>
+<th>name</th><th>comment</th>
+</tr>
+<tr>
+<td>attributes</td><td></td>
+</tr>
+<tr>
+<td>mergePolicy</td><td></td>
+</tr>
+<tr>
+<td>role</td><td></td>
 </tr>
 </table>
 
@@ -497,3 +491,6 @@ list users of a group
 <td>group</td><td></td>
 </tr>
 </table>
+
+
+

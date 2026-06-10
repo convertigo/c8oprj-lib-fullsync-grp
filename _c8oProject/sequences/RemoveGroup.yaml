@@ -1,4 +1,5 @@
 accessibility: Private
+comment: Remove a group by deleting all user-group links for this group, and also deleting the attached GroupAttributes document if it exists. The group attributes document id is sha256("groupAttributes:" + group).
 ↓Input_variables [steps.InputVariablesStep-1672247955826]: 
 ↓Call_Sequence_1 [steps.SequenceStep-1672247363978]: 
   sourceSequence: lib_FullSyncGrp.UsersOf
@@ -81,6 +82,12 @@ accessibility: Private
     ↓Element1 [steps.XMLElementStep-1672248190228]: 
       nodeName: success
       nodeText: false
+↓CalcGroupAttributesID [steps.SimpleStep-1781092956890]: 
+  expression: var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
+↓Call_RemoveGroupAttributes [steps.TransactionStep-1781092956901]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveGroupAttributes
+  ↓_use_docid [variables.StepVariable-1781092956903]: 
+    description: Group attributes document ID
 ↓IfExistThenElse [steps.IfExistThenElseStep-1672248304507]: 
   sourceDefinition: 
     - xmlizable: 

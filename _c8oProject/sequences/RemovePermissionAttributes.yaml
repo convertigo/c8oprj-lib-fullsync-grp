@@ -1,0 +1,56 @@
+accessibility: Private
+comment: 'Remove attributes for a permission without removing any role-permission link. Parameter: permission is the canonical permission string. The sequence deletes the deterministic attribute document sha256("permissionAttributes:" + permission), whose type is c8oPermissionAttributes. This primitive is intentionally separate from RemovePermissionFromRole because a permission can be attached to several roles.'
+↓BuildDocId [steps.SimpleStep-1781092940270]: 
+  expression: |
+    if (permission == undefined || ('' + permission).trim().length < 1) { throw 'The "permission" parameter must be defined and not empty'; }
+    permission = ('' + permission).trim();
+    var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('permissionAttributes:' + permission);
+↓Call_RemovePermissionAttributes [steps.TransactionStep-1781092940272]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemovePermissionAttributes
+  ↓_use_docid [variables.StepVariable-1781092940274]: 
+    description: Permission attributes document ID
+↓IfRemoved [steps.IfExistThenElseStep-1781092940276]: 
+  condition: IfRemoved
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1781092940272
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok
+  ↓jThen [steps.ThenStep-1781092940278]: 
+    ↓Success [steps.ElementStep-1781092940280]: 
+      expression: '"The attributes for permission ''" + permission + "'' are removed"'
+      nodeName: success
+    ↓Removed [steps.XMLElementStep-1781092940282]: 
+      nodeName: removed
+      nodeText: true
+  ↓jElse [steps.ElseStep-1781092940284]: 
+    ↓IfNotFound [steps.IfExistThenElseStep-1781092940286]: 
+      condition: IfNotFound
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781092940272
+            - java.lang.String: 
+              - ↑value: ./document/couchdb_output/error[.="not_found"]
+      ↓jThen [steps.ThenStep-1781092940288]: 
+        ↓Success [steps.ElementStep-1781092940290]: 
+          expression: '"The attributes for permission ''" + permission + "'' do not exist"'
+          nodeName: success
+        ↓Removed [steps.XMLElementStep-1781092940292]: 
+          nodeName: removed
+          nodeText: false
+      ↓jElse [steps.ElseStep-1781092940294]: 
+        ↓Error_structure [steps.XMLErrorStep-1781092940296]: 
+          message: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+              - SmartType: 
+                - ↑mode: JS
+                - →→: '"Unexpected error while removing attributes for permission ''" + permission + "''"'
+↓permission [variables.RequestableVariable-1781092940298]: 
+  description: Canonical permission string whose attributes document must be removed.

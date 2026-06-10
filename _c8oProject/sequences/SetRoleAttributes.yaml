@@ -1,0 +1,26 @@
+accessibility: Private
+comment: 'Set or merge attributes for a role. Parameters: role is the role name; attributes is a JSON object encoded as a string, for example {"label":"Reader","priority":"10"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("roleAttributes:" + role). Stored document type is c8oRoleAttributes.'
+↓BuildDocument [steps.SimpleStep-1781090099920]: 
+  expression: |
+    'if (role == undefined || ('''' + role).trim().length < 1) { throw ''The "role" parameter must be defined and not empty''; }
+    role = ('''' + role).trim();
+    var attrs = {};
+    var rawAttributes = attributes == undefined ? '''' : ('''' + attributes).trim();
+    if (rawAttributes.length > 0) {
+        attrs = JSON.parse(rawAttributes);
+    }
+    if (attrs == null || typeof attrs != ''object'' || attrs instanceof Array) { throw ''The "attributes" parameter must be a JSON object''; }
+    var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(''roleAttributes:'' + role);
+    var _use_json_base = JSON.stringify({_id: _id, type: ''c8oRoleAttributes'', role: role, attributes: attrs});
+    var _use_merge = mergePolicy == undefined ? '''' : ('''' + mergePolicy);'
+↓Call_SetRoleAttributes [steps.TransactionStep-1781090099922]: 
+  output: true
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetRoleAttributes
+  ↓_use_json_base [variables.StepVariable-1781090099924]: 
+  ↓_use_merge [variables.StepVariable-1781090099926]: 
+↓role [variables.RequestableVariable-1781090099928]: 
+  description: Role name owning the attributes document.
+↓attributes [variables.RequestableVariable-1781090099930]: 
+  description: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Reader","priority":"10"}.
+↓mergePolicy [variables.RequestableVariable-1781090099932]: 
+  description: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.

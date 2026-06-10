@@ -89,6 +89,16 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
     cleanupDocs.push(nrUserGroupDoc(nrUserB, nrGroupOld, true));
     cleanupDocs.push(nrUserGroupDoc(nrUserB, nrGroupNew, true));
     var _use_json_base = JSON.stringify(cleanupDocs);
+↓ExtendCleanupForAttributes [steps.SimpleStep-1781090257884]: 
+  expression: |
+    'function nrAttributeDoc(prefix, name) {
+    	return {_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(prefix + '':'' + name), _deleted: true};
+    }
+    cleanupDocs.push(nrAttributeDoc(''groupAttributes'', nrGroupA));
+    cleanupDocs.push(nrAttributeDoc(''groupAttributes'', nrGroupOld));
+    cleanupDocs.push(nrAttributeDoc(''roleAttributes'', nrRoleReader));
+    cleanupDocs.push(nrAttributeDoc(''permissionAttributes'', nrPermissionAll));
+    var _use_json_base = JSON.stringify(cleanupDocs);'
 ↓CleanupBefore [steps.TransactionStep-1781088803512]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
   ↓_use_json_base [variables.StepVariable-1781088803514]: 
@@ -281,6 +291,16 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
   sourceSequence: lib_FullSyncGrp.SetUserInGroup
   ↓user [variables.StepVariable-1781089048980]: 
   ↓group [variables.StepVariable-1781089048982]: 
+↓UseOldGroupAttributes [steps.SimpleStep-1781092996707]: 
+  expression: |
+    'var group = nrGroupOld;
+    var attributes = JSON.stringify({alpha: ''1''});
+    var mergePolicy = '''';'
+↓CallSetOldGroupAttributes [steps.SequenceStep-1781092996718]: 
+  sourceSequence: lib_FullSyncGrp.SetGroupAttributes
+  ↓group [variables.StepVariable-1781092996720]: 
+  ↓attributes [variables.StepVariable-1781092996722]: 
+  ↓mergePolicy [variables.StepVariable-1781092996724]: 
 ↓UseUpdateGroup [steps.SimpleStep-1781088803674]: 
   expression: |
     var old_group_name = nrGroupOld;
@@ -289,11 +309,116 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
   sourceSequence: lib_FullSyncGrp.UpdateGroup
   ↓old_group_name [variables.StepVariable-1781088803678]: 
   ↓new_group_name [variables.StepVariable-1781088803680]: 
+↓UseOldGroupAttributesGetAfterRemove [steps.SimpleStep-1781092996730]: 
+  expression: var group = nrGroupOld;
+↓CallGetOldGroupAttributesAfterRemove [steps.SequenceStep-1781092996746]: 
+  sourceSequence: lib_FullSyncGrp.GetGroupAttributes
+  ↓group [variables.StepVariable-1781092996748]: 
 ↓UseNewGroup [steps.SimpleStep-1781088803682]: 
   expression: var group = nrGroupNew;
 ↓CallUsersOfNewGroup [steps.SequenceStep-1781088803684]: 
   sourceSequence: lib_FullSyncGrp.UsersOf
   ↓group [variables.StepVariable-1781088803686]: 
+↓UseGroupAttributesAlpha [steps.SimpleStep-1781090257895]: 
+  expression: |
+    'var group = nrGroupA;
+    var attributes = JSON.stringify({alpha: ''1''});
+    var mergePolicy = '''';'
+↓CallSetGroupAttributesAlpha [steps.SequenceStep-1781090257910]: 
+  sourceSequence: lib_FullSyncGrp.SetGroupAttributes
+  ↓group [variables.StepVariable-1781090257912]: 
+  ↓attributes [variables.StepVariable-1781090257914]: 
+  ↓mergePolicy [variables.StepVariable-1781090257916]: 
+↓UseGroupAttributesBeta [steps.SimpleStep-1781090257925]: 
+  expression: |
+    'var group = nrGroupA;
+    var attributes = JSON.stringify({beta: ''2''});
+    var mergePolicy = '''';'
+↓CallSetGroupAttributesBeta [steps.SequenceStep-1781090257936]: 
+  sourceSequence: lib_FullSyncGrp.SetGroupAttributes
+  ↓group [variables.StepVariable-1781090257938]: 
+  ↓attributes [variables.StepVariable-1781090257940]: 
+  ↓mergePolicy [variables.StepVariable-1781090257942]: 
+↓UseGroupAttributesGet [steps.SimpleStep-1781090257952]: 
+  expression: var group = nrGroupA;
+↓CallGetGroupAttributes [steps.SequenceStep-1781090257964]: 
+  sourceSequence: lib_FullSyncGrp.GetGroupAttributes
+  ↓group [variables.StepVariable-1781090257966]: 
+↓UseGroupAttributesDeleteAlpha [steps.SimpleStep-1781090257980]: 
+  expression: |
+    'var group = nrGroupA;
+    var attributes = JSON.stringify({});
+    var mergePolicy = JSON.stringify({''attributes.alpha'': ''delete''});'
+↓CallDeleteGroupAttributeAlpha [steps.SequenceStep-1781090257996]: 
+  sourceSequence: lib_FullSyncGrp.SetGroupAttributes
+  ↓group [variables.StepVariable-1781090257998]: 
+  ↓attributes [variables.StepVariable-1781090258000]: 
+  ↓mergePolicy [variables.StepVariable-1781090258002]: 
+↓UseGroupAttributesGetAfterDelete [steps.SimpleStep-1781090258013]: 
+  expression: var group = nrGroupA;
+↓CallGetGroupAttributesAfterDelete [steps.SequenceStep-1781090258030]: 
+  sourceSequence: lib_FullSyncGrp.GetGroupAttributes
+  ↓group [variables.StepVariable-1781090258032]: 
+↓UseRoleAttributesAlpha [steps.SimpleStep-1781090258047]: 
+  expression: |
+    'var role = nrRoleReader;
+    var attributes = JSON.stringify({alpha: ''1''});
+    var mergePolicy = '''';'
+↓CallSetRoleAttributesAlpha [steps.SequenceStep-1781090258063]: 
+  sourceSequence: lib_FullSyncGrp.SetRoleAttributes
+  ↓role [variables.StepVariable-1781090258065]: 
+  ↓attributes [variables.StepVariable-1781090258067]: 
+  ↓mergePolicy [variables.StepVariable-1781090258069]: 
+↓UseRoleAttributesBeta [steps.SimpleStep-1781090258097]: 
+  expression: |
+    'var role = nrRoleReader;
+    var attributes = JSON.stringify({beta: ''2''});
+    var mergePolicy = '''';'
+↓CallSetRoleAttributesBeta [steps.SequenceStep-1781090258117]: 
+  sourceSequence: lib_FullSyncGrp.SetRoleAttributes
+  ↓role [variables.StepVariable-1781090258119]: 
+  ↓attributes [variables.StepVariable-1781090258121]: 
+  ↓mergePolicy [variables.StepVariable-1781090258123]: 
+↓UseRoleAttributesGet [steps.SimpleStep-1781090258133]: 
+  expression: var role = nrRoleReader;
+↓CallGetRoleAttributes [steps.SequenceStep-1781090258147]: 
+  sourceSequence: lib_FullSyncGrp.GetRoleAttributes
+  ↓role [variables.StepVariable-1781090258149]: 
+↓UsePermissionAttributesAlpha [steps.SimpleStep-1781090258165]: 
+  expression: |
+    'var permission = nrPermissionAll;
+    var attributes = JSON.stringify({alpha: ''1''});
+    var mergePolicy = '''';'
+↓CallSetPermissionAttributesAlpha [steps.SequenceStep-1781090258181]: 
+  sourceSequence: lib_FullSyncGrp.SetPermissionAttributes
+  ↓permission [variables.StepVariable-1781090258183]: 
+  ↓attributes [variables.StepVariable-1781090258185]: 
+  ↓mergePolicy [variables.StepVariable-1781090258187]: 
+↓UsePermissionAttributesBeta [steps.SimpleStep-1781090258198]: 
+  expression: |
+    'var permission = nrPermissionAll;
+    var attributes = JSON.stringify({beta: ''2''});
+    var mergePolicy = '''';'
+↓CallSetPermissionAttributesBeta [steps.SequenceStep-1781090258214]: 
+  sourceSequence: lib_FullSyncGrp.SetPermissionAttributes
+  ↓permission [variables.StepVariable-1781090258216]: 
+  ↓attributes [variables.StepVariable-1781090258218]: 
+  ↓mergePolicy [variables.StepVariable-1781090258220]: 
+↓UsePermissionAttributesGet [steps.SimpleStep-1781090258232]: 
+  expression: var permission = nrPermissionAll;
+↓CallGetPermissionAttributes [steps.SequenceStep-1781090258247]: 
+  sourceSequence: lib_FullSyncGrp.GetPermissionAttributes
+  ↓permission [variables.StepVariable-1781090258249]: 
+↓UsePermissionAttributesRemove [steps.SimpleStep-1781092996767]: 
+  expression: var permission = nrPermissionAll;
+↓CallRemovePermissionAttributes [steps.SequenceStep-1781092996788]: 
+  sourceSequence: lib_FullSyncGrp.RemovePermissionAttributes
+  ↓permission [variables.StepVariable-1781092996790]: 
+↓UsePermissionAttributesGetAfterRemove [steps.SimpleStep-1781092996800]: 
+  expression: var permission = nrPermissionAll;
+↓CallGetPermissionAttributesAfterRemove [steps.SequenceStep-1781092996812]: 
+  sourceSequence: lib_FullSyncGrp.GetPermissionAttributes
+  ↓permission [variables.StepVariable-1781092996814]: 
 ↓Checks [steps.XMLComplexStep-1781088953479]: 
   nodeName: checks
   ↓CheckGroupsList [steps.XMLComplexStep-1781088953484]: 
@@ -823,6 +948,144 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
           nodeName: status
       ↓jElse [steps.ElseStep-1781089049027]: 
         ↓Status [steps.ElementStep-1781089049029]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupAttributesMerge [steps.XMLComplexStep-1781090290768]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781090290770]: 
+      expression: '"Set/Get GroupAttributes merges object attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781090290772]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781090257964
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+      ↓jThen [steps.ThenStep-1781090290774]: 
+        ↓Status [steps.ElementStep-1781090290776]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781090290778]: 
+        ↓Status [steps.ElementStep-1781090290780]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupAttributesDelete [steps.XMLComplexStep-1781090290789]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781090290791]: 
+      expression: '"Set GroupAttributes supports p_merge delete"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781090290793]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781090258030
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/attributes[beta="2" and not(alpha)]
+      ↓jThen [steps.ThenStep-1781090290795]: 
+        ↓Status [steps.ElementStep-1781090290797]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781090290799]: 
+        ↓Status [steps.ElementStep-1781090290801]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRoleAttributesMerge [steps.XMLComplexStep-1781090290810]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781090290812]: 
+      expression: '"Set/Get RoleAttributes merges object attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781090290814]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781090258147
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+      ↓jThen [steps.ThenStep-1781090290816]: 
+        ↓Status [steps.ElementStep-1781090290818]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781090290820]: 
+        ↓Status [steps.ElementStep-1781090290822]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionAttributesMerge [steps.XMLComplexStep-1781090290824]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781090290826]: 
+      expression: '"Set/Get PermissionAttributes merges object attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781090290828]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781090258247
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+      ↓jThen [steps.ThenStep-1781090290830]: 
+        ↓Status [steps.ElementStep-1781090290832]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781090290834]: 
+        ↓Status [steps.ElementStep-1781090290836]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveGroupDeletesAttributes [steps.XMLComplexStep-1781093017996]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781093017998]: 
+      expression: '"RemoveGroup deletes attached GroupAttributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781093018000]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781092996746
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/error[.="not_found"]
+      ↓jThen [steps.ThenStep-1781093018002]: 
+        ↓Status [steps.ElementStep-1781093018004]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781093018006]: 
+        ↓Status [steps.ElementStep-1781093018008]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemovePermissionAttributes [steps.XMLComplexStep-1781093018012]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1781093018014]: 
+      expression: '"RemovePermissionAttributes deletes permission attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1781093018016]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781092996812
+            - java.lang.String: 
+              - ↑value: ./document/transaction/document/couchdb_output/error[.="not_found"]
+      ↓jThen [steps.ThenStep-1781093018018]: 
+        ↓Status [steps.ElementStep-1781093018020]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1781093018022]: 
+        ↓Status [steps.ElementStep-1781093018024]: 
           expression: '"fail"'
           nodeName: status
 ↓PrepareFinalCleanup [steps.SimpleStep-1781088803688]: 

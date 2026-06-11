@@ -67,6 +67,7 @@ comment: remove a permission from a role
       nodeName: success
     ↓Element [steps.XMLElementStep-1776161234073]: 
       nodeName: removed
+      nodeText: true
   ↓jElse [steps.ElseStep-1776161234106]: 
     ↓IfExistThenElse [steps.IfExistThenElseStep-1776161234132]: 
       sourceDefinition: 
@@ -83,6 +84,7 @@ comment: remove a permission from a role
           nodeName: success
         ↓Element [steps.XMLElementStep-1776161234201]: 
           nodeName: removed
+          nodeText: false
       ↓jElse [steps.ElseStep-1776161234208]: 
         ↓Error_structure [steps.XMLErrorStep-1776161234212]: 
           details: 

@@ -44,6 +44,7 @@ comment: remove a role from a group
       nodeName: success
     ↓Element [steps.XMLElementStep-1776161237733]: 
       nodeName: removed
+      nodeText: true
   ↓jElse [steps.ElseStep-1776161237740]: 
     ↓IfExistThenElse [steps.IfExistThenElseStep-1776161237742]: 
       sourceDefinition: 
@@ -60,6 +61,7 @@ comment: remove a role from a group
           nodeName: success
         ↓Element [steps.XMLElementStep-1776161237748]: 
           nodeName: removed
+          nodeText: false
       ↓jElse [steps.ElseStep-1776161237765]: 
         ↓Error_structure [steps.XMLErrorStep-1776161237779]: 
           details: 

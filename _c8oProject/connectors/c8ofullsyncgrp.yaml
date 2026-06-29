@@ -1,8 +1,16 @@
 ↑default: true
 databaseName: c8ofullsyncgrp
+↓GetAttributesByKindNameValue [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_attributes_by_kind_name_value
+  ↓_use_key [variables.RequestableVariable-1782730347704]: 
+    description: Composite key [kind, attributeName, attributeValue] used to search entities by attribute.
 ↓GetGroupAttributes [transactions.couchdb.GetDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1781090038050]: 
     description: Document ID
+↓GetGroupAttributesList [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_group_attributes_by_group
 ↓GetGroups [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
@@ -20,6 +28,9 @@ databaseName: c8ofullsyncgrp
 ↓GetPermissionAttributes [transactions.couchdb.GetDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1781090038084]: 
     description: Document ID
+↓GetPermissionAttributesList [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_permission_attributes_by_permission
 ↓GetPermissions [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
@@ -32,6 +43,9 @@ databaseName: c8ofullsyncgrp
 ↓GetRoleAttributes [transactions.couchdb.GetDocumentTransaction]: 
   ↓_use_docid [variables.RequestableVariable-1781090038067]: 
     description: Document ID
+↓GetRoleAttributesList [transactions.couchdb.GetViewTransaction]: 
+  q_reduce: false
+  viewname: design/get_role_attributes_by_role
 ↓GetRoles [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
@@ -266,6 +280,99 @@ databaseName: c8ofullsyncgrp
           }\r\n
       }",
             "reduce": "_count"
+          },
+          "get_group_attributes_by_group": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGroupAttributes\" && doc.group) {\r\n
+                  var attrs = doc.attributes || {};\r\n
+                  if (!doc.attributes) {\r\n
+                      for (var p in doc) {\r\n
+                          if (doc.hasOwnProperty(p) && p.charAt(0) != \"_\" && p != \"type\" && p != \"group\") {\r\n
+                              attrs[p] = doc[p];\r\n
+                          }\r\n
+                      }\r\n
+                  }\r\n
+                  emit(doc.group, attrs);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_role_attributes_by_role": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oRoleAttributes\" && doc.role) {\r\n
+                  var attrs = doc.attributes || {};\r\n
+                  if (!doc.attributes) {\r\n
+                      for (var p in doc) {\r\n
+                          if (doc.hasOwnProperty(p) && p.charAt(0) != \"_\" && p != \"type\" && p != \"role\") {\r\n
+                              attrs[p] = doc[p];\r\n
+                          }\r\n
+                      }\r\n
+                  }\r\n
+                  emit(doc.role, attrs);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_permission_attributes_by_permission": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oPermissionAttributes\" && doc.permission) {\r\n
+                  var attrs = doc.attributes || {};\r\n
+                  if (!doc.attributes) {\r\n
+                      for (var p in doc) {\r\n
+                          if (doc.hasOwnProperty(p) && p.charAt(0) != \"_\" && p != \"type\" && p != \"permission\") {\r\n
+                              attrs[p] = doc[p];\r\n
+                          }\r\n
+                      }\r\n
+                  }\r\n
+                  emit(doc.permission, attrs);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
+          },
+          "get_attributes_by_kind_name_value": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              var kind = null;\r\n
+              var entity = null;\r\n
+              if (doc.type == \"c8oGroupAttributes\" && doc.group) {\r\n
+                  kind = \"group\";\r\n
+                  entity = doc.group;\r\n
+              } else if (doc.type == \"c8oRoleAttributes\" && doc.role) {\r\n
+                  kind = \"role\";\r\n
+                  entity = doc.role;\r\n
+              } else if (doc.type == \"c8oPermissionAttributes\" && doc.permission) {\r\n
+                  kind = \"permission\";\r\n
+                  entity = doc.permission;\r\n
+              }\r\n
+              if (kind && entity) {\r\n
+                  var attrs = doc.attributes || null;\r\n
+                  if (attrs) {\r\n
+                      for (var a in attrs) {\r\n
+                          if (attrs.hasOwnProperty(a)) {\r\n
+                              emit([kind, a, attrs[a]], entity);\r\n
+                          }\r\n
+                      }\r\n
+                  } else {\r\n
+                      for (var p in doc) {\r\n
+                          if (doc.hasOwnProperty(p) && p.charAt(0) != \"_\" && p != \"type\" && p != \"group\" && p != \"role\" && p != \"permission\") {\r\n
+                              emit([kind, p, doc[p]], entity);\r\n
+                          }\r\n
+                      }\r\n
+                  }\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }"
           }
         }
       }'

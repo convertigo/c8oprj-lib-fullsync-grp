@@ -16,6 +16,33 @@ comment: list groups of a role
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupsByRole
   ↓_use_key [variables.StepVariable-1776161223533]: 
     description: (string) – Return only documents that match the specified key. Optional
+↓InitWithAttributes [steps.SimpleStep-1782730617255]: 
+  expression: |
+    var withAttributesEnabled = withAttributes == true || ('' + withAttributes).toLowerCase() == 'true';
+    var groupAttributesByName = {};
+↓IfWithAttributes [steps.IfStep-1782730667564]: 
+  condition: withAttributesEnabled
+  ↓Call_GroupAttributesList [steps.TransactionStep-1782730667566]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributesList
+  ↓GroupAttributeRows [steps.JsonSourceStep-1782730765646]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1782730667566
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/rows/item
+    variableName: groupAttributeRows
+  ↓BuildGroupAttributesMap [steps.SimpleStep-1782730765805]: 
+    expression: |
+      'var rows = groupAttributeRows;
+      if (rows == undefined || rows == null) { rows = []; } else if (!Array.isArray(rows)) { rows = [rows]; }
+      for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].key != undefined && rows[i].value != undefined) {
+              groupAttributesByName['''' + rows[i].key] = rows[i].value;
+          }
+      }'
 ↓Iterator [steps.IteratorStep-1776161223786]: 
   sourceDefinition: 
     - xmlizable: 
@@ -25,6 +52,16 @@ comment: list groups of a role
           - ↑value: 1776161223529
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/rows/item/value
+  ↓CurrentGroup [steps.SimpleSourceStep-1782730828090]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776161223786
+          - java.lang.String: 
+            - ↑value: ./text()
+    variableName: currentGroup
   ↓Group [steps.XMLElementStep-1776161223795]: 
     nodeName: group
     sourceDefinition: 
@@ -35,5 +72,26 @@ comment: list groups of a role
             - ↑value: 1776161223786
           - java.lang.String: 
             - ↑value: ./text()
+    ↓IfGroupHasAttributes [steps.IfStep-1782730828184]: 
+      condition: withAttributesEnabled && groupAttributesByName[currentGroup] != undefined
+      ↓name [steps.AttributeStep-1782730828186]: 
+        expression: currentGroup
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1782730828188]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: groupAttributesByName[currentGroup]
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
 ↓role [variables.RequestableVariable-1776161224148]: 
   comment: Role name used as the lookup key. It is normalized to lowercase before listing groups attached to this role.
+↓withAttributes [variables.RequestableVariable-1782730693856]: 
+  comment: Optional boolean, default false. Set to true to include attributes for each returned group when an attributes document exists. The sequence loads group attributes in one view query, not one query per group.
+  value: false

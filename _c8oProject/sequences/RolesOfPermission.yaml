@@ -14,6 +14,33 @@ comment: list roles of a permission
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRolesByPermission
   ↓_use_key [variables.StepVariable-1776163000054]: 
     description: (string) – Return only documents that match the specified key. Optional
+↓InitWithAttributes [steps.SimpleStep-1782730643023]: 
+  expression: |
+    var withAttributesEnabled = withAttributes == true || ('' + withAttributes).toLowerCase() == 'true';
+    var roleAttributesByName = {};
+↓IfWithAttributes [steps.IfStep-1782730678889]: 
+  condition: withAttributesEnabled
+  ↓Call_RoleAttributesList [steps.TransactionStep-1782730678891]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoleAttributesList
+  ↓RoleAttributeRows [steps.JsonSourceStep-1782730781648]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1782730678891
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/rows/item
+    variableName: roleAttributeRows
+  ↓BuildRoleAttributesMap [steps.SimpleStep-1782730781758]: 
+    expression: |
+      'var rows = roleAttributeRows;
+      if (rows == undefined || rows == null) { rows = []; } else if (!Array.isArray(rows)) { rows = [rows]; }
+      for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].key != undefined && rows[i].value != undefined) {
+              roleAttributesByName['''' + rows[i].key] = rows[i].value;
+          }
+      }'
 ↓Iterator [steps.IteratorStep-1776163000055]: 
   sourceDefinition: 
     - xmlizable: 
@@ -23,6 +50,16 @@ comment: list roles of a permission
           - ↑value: 1776163000053
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/rows/item/value
+  ↓CurrentRole [steps.SimpleSourceStep-1782730845081]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776163000055
+          - java.lang.String: 
+            - ↑value: ./text()
+    variableName: currentRole
   ↓Role [steps.XMLElementStep-1776163000056]: 
     nodeName: role
     sourceDefinition: 
@@ -33,5 +70,26 @@ comment: list roles of a permission
             - ↑value: 1776163000055
           - java.lang.String: 
             - ↑value: ./text()
+    ↓IfRoleHasAttributes [steps.IfStep-1782730845232]: 
+      condition: withAttributesEnabled && roleAttributesByName[currentRole] != undefined
+      ↓name [steps.AttributeStep-1782730845234]: 
+        expression: currentRole
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1782730845236]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: roleAttributesByName[currentRole]
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
 ↓permission [variables.RequestableVariable-1776163000057]: 
   comment: Canonical permission string used as the lookup key, in the form element.action:scope. The sequence returns every role containing this permission.
+↓withAttributes [variables.RequestableVariable-1782730706761]: 
+  comment: Optional boolean, default false. Set to true to include attributes for each returned role when an attributes document exists. The sequence loads role attributes in one view query, not one query per role.
+  value: false

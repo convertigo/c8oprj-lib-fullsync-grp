@@ -2,6 +2,37 @@ accessibility: Private
 comment: list all groups
 ↓Call_Transaction [steps.TransactionStep-1487150590996]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroups
+↓InitWithAttributes [steps.SimpleStep-1782730520630]: 
+  expression: |
+    var withAttributesEnabled = withAttributes == true || ('' + withAttributes).toLowerCase() == 'true';
+    var groupAttributesByName = {};
+↓IfWithAttributes [steps.IfStep-1782730520804]: 
+  condition: withAttributesEnabled
+  ↓Call_GroupAttributesList [steps.TransactionStep-1782730520806]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributesList
+  ↓GroupAttributeRows [steps.JsonSourceStep-1782730544442]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1782730520806
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/rows/item
+    variableName: groupAttributeRows
+  ↓BuildGroupAttributesMap [steps.SimpleStep-1782730544567]: 
+    expression: |
+      'var rows = groupAttributeRows;
+      if (rows == undefined || rows == null) {
+          rows = [];
+      } else if (!Array.isArray(rows)) {
+          rows = [rows];
+      }
+      for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].key != undefined && rows[i].value != undefined) {
+              groupAttributesByName['''' + rows[i].key] = rows[i].value;
+          }
+      }'
 ↓Iterator [steps.IteratorStep-1487150591004]: 
   sourceDefinition: 
     - xmlizable: 
@@ -11,6 +42,16 @@ comment: list all groups
           - ↑value: 1487150590996
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/rows/item
+  ↓CurrentGroup [steps.SimpleSourceStep-1782730544677]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1487150591004
+          - java.lang.String: 
+            - ↑value: ./key/text()
+    variableName: currentGroup
   ↓User [steps.XMLElementStep-1487150591011]: 
     nodeName: group
     sourceDefinition: 
@@ -31,3 +72,24 @@ comment: list all groups
               - ↑value: 1487150591004
             - java.lang.String: 
               - ↑value: ./value/text()
+    ↓IfGroupHasAttributes [steps.IfStep-1782730544776]: 
+      condition: withAttributesEnabled && groupAttributesByName[currentGroup] != undefined
+      ↓name [steps.AttributeStep-1782730574598]: 
+        expression: currentGroup
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1782730544778]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: groupAttributesByName[currentGroup]
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
+↓withAttributes [variables.RequestableVariable-1782730520907]: 
+  comment: Optional boolean, default false. Set to true to include each group's attributes object when an attributes document exists. The legacy response is preserved when false.
+  value: false

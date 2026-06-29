@@ -2,6 +2,33 @@ accessibility: Private
 comment: list all permissions
 ↓Call_Transaction [steps.TransactionStep-1776161225297]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissions
+↓InitWithAttributes [steps.SimpleStep-1782730616960]: 
+  expression: |
+    var withAttributesEnabled = withAttributes == true || ('' + withAttributes).toLowerCase() == 'true';
+    var permissionAttributesByName = {};
+↓IfWithAttributes [steps.IfStep-1782730667362]: 
+  condition: withAttributesEnabled
+  ↓Call_PermissionAttributesList [steps.TransactionStep-1782730667364]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissionAttributesList
+  ↓PermissionAttributeRows [steps.JsonSourceStep-1782730747145]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1782730667364
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/rows/item
+    variableName: permissionAttributeRows
+  ↓BuildPermissionAttributesMap [steps.SimpleStep-1782730747245]: 
+    expression: |
+      'var rows = permissionAttributeRows;
+      if (rows == undefined || rows == null) { rows = []; } else if (!Array.isArray(rows)) { rows = [rows]; }
+      for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].key != undefined && rows[i].value != undefined) {
+              permissionAttributesByName['''' + rows[i].key] = rows[i].value;
+          }
+      }'
 ↓Iterator [steps.IteratorStep-1776161225582]: 
   sourceDefinition: 
     - xmlizable: 
@@ -11,6 +38,16 @@ comment: list all permissions
           - ↑value: 1776161225297
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/rows/item
+  ↓CurrentPermission [steps.SimpleSourceStep-1782730813988]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1776161225582
+          - java.lang.String: 
+            - ↑value: ./key/text()
+    variableName: currentPermission
   ↓Permission [steps.XMLElementStep-1776161225594]: 
     nodeName: permission
     sourceDefinition: 
@@ -31,3 +68,24 @@ comment: list all permissions
               - ↑value: 1776161225582
             - java.lang.String: 
               - ↑value: ./value/text()
+    ↓IfPermissionHasAttributes [steps.IfStep-1782730814078]: 
+      condition: withAttributesEnabled && permissionAttributesByName[currentPermission] != undefined
+      ↓name [steps.AttributeStep-1782730814080]: 
+        expression: currentPermission
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1782730814082]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: permissionAttributesByName[currentPermission]
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
+↓withAttributes [variables.RequestableVariable-1782730693649]: 
+  comment: Optional boolean, default false. Set to true to include each permission's attributes object when an attributes document exists. The legacy response is preserved when false.
+  value: false

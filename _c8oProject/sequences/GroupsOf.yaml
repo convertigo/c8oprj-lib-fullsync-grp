@@ -14,6 +14,33 @@ comment: list groups of a user
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupsByUser
   ↓_use_key [variables.StepVariable-1486393576615]: 
     description: (string) – Return only documents that match the specified key. Optional
+↓InitWithAttributes [steps.SimpleStep-1782730617126]: 
+  expression: |
+    var withAttributesEnabled = withAttributes == true || ('' + withAttributes).toLowerCase() == 'true';
+    var groupAttributesByName = {};
+↓IfWithAttributes [steps.IfStep-1782730667461]: 
+  condition: withAttributesEnabled
+  ↓Call_GroupAttributesList [steps.TransactionStep-1782730667463]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributesList
+  ↓GroupAttributeRows [steps.JsonSourceStep-1782730765398]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1782730667463
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/rows/item
+    variableName: groupAttributeRows
+  ↓BuildGroupAttributesMap [steps.SimpleStep-1782730765536]: 
+    expression: |
+      'var rows = groupAttributeRows;
+      if (rows == undefined || rows == null) { rows = []; } else if (!Array.isArray(rows)) { rows = [rows]; }
+      for (var i = 0; i < rows.length; i++) {
+          if (rows[i] && rows[i].key != undefined && rows[i].value != undefined) {
+              groupAttributesByName['''' + rows[i].key] = rows[i].value;
+          }
+      }'
 ↓Iterator [steps.IteratorStep-1486393600786]: 
   sourceDefinition: 
     - xmlizable: 
@@ -23,6 +50,16 @@ comment: list groups of a user
           - ↑value: 1486393576613
         - java.lang.String: 
           - ↑value: ./document/couchdb_output/rows/item/value
+  ↓CurrentGroup [steps.SimpleSourceStep-1782730827852]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1486393600786
+          - java.lang.String: 
+            - ↑value: ./text()
+    variableName: currentGroup
   ↓Group [steps.XMLElementStep-1486393600795]: 
     nodeName: group
     sourceDefinition: 
@@ -33,5 +70,26 @@ comment: list groups of a user
             - ↑value: 1486393600786
           - java.lang.String: 
             - ↑value: ./text()
+    ↓IfGroupHasAttributes [steps.IfStep-1782730827976]: 
+      condition: withAttributesEnabled && groupAttributesByName[currentGroup] != undefined
+      ↓name [steps.AttributeStep-1782730827978]: 
+        expression: currentGroup
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1782730827980]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: groupAttributesByName[currentGroup]
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
 ↓user [variables.RequestableVariable-1485253622273]: 
   comment: User identifier used as the lookup key. The sequence returns every group containing this user.
+↓withAttributes [variables.RequestableVariable-1782730693749]: 
+  comment: Optional boolean, default false. Set to true to include attributes for each returned group when an attributes document exists. The sequence loads group attributes in one view query, not one query per group.
+  value: false

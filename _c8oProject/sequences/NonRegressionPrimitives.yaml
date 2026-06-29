@@ -409,6 +409,59 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
 ↓CallGetPermissionAttributes [steps.SequenceStep-1781090258247]: 
   sourceSequence: lib_FullSyncGrp.GetPermissionAttributes
   ↓permission [variables.StepVariable-1781090258249]: 
+↓UseWithAttributesForGroups [steps.SimpleStep-1782746291385]: 
+  expression: var withAttributes = "true";
+↓CallGroupsWithAttributes [steps.SequenceStep-1782746125320]: 
+  sourceSequence: lib_FullSyncGrp.Groups
+  ↓withAttributes [variables.StepVariable-1782746125324]: 
+↓UseUserAWithAttributes [steps.SimpleStep-1782746125342]: 
+  expression: |
+    var user = nrUserA;
+    var withAttributes = "true";
+↓CallGroupsOfUserAWithAttributes [steps.SequenceStep-1782746125358]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOf
+  ↓user [variables.StepVariable-1782746125360]: 
+  ↓withAttributes [variables.StepVariable-1782746125362]: 
+↓UseReaderRoleWithAttributes [steps.SimpleStep-1782746125373]: 
+  expression: |
+    var role = nrRoleReader;
+    var withAttributes = "true";
+↓CallGroupsOfReaderWithAttributes [steps.SequenceStep-1782746125386]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOfRole
+  ↓role [variables.StepVariable-1782746125388]: 
+  ↓withAttributes [variables.StepVariable-1782746125390]: 
+↓CallRolesWithAttributes [steps.SequenceStep-1782746125404]: 
+  sourceSequence: lib_FullSyncGrp.Roles
+  ↓withAttributes [variables.StepVariable-1782746125406]: 
+    value: true
+↓UseGroupAForRolesWithAttributes [steps.SimpleStep-1782746125419]: 
+  expression: |
+    var group = nrGroupA;
+    var withAttributes = "true";
+↓CallRolesOfGroupAWithAttributes [steps.SequenceStep-1782746125443]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1782746125445]: 
+  ↓withAttributes [variables.StepVariable-1782746125447]: 
+↓UsePermissionAllWithAttributes [steps.SimpleStep-1782746125460]: 
+  expression: |
+    var permission = nrPermissionAll;
+    var withAttributes = "true";
+↓CallRolesOfPermissionAllWithAttributes [steps.SequenceStep-1782746125479]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfPermission
+  ↓permission [variables.StepVariable-1782746125481]: 
+  ↓withAttributes [variables.StepVariable-1782746125483]: 
+↓CallPermissionsWithAttributes [steps.SequenceStep-1782746125499]: 
+  sourceSequence: lib_FullSyncGrp.Permissions
+  ↓withAttributes [variables.StepVariable-1782746125501]: 
+    value: true
+↓UseReaderForPermissionsWithAttributes [steps.SimpleStep-1782746125519]: 
+  expression: |
+    var role = nrRoleReader;
+    var withAttributes = "true";
+↓CallPermissionsOfReaderWithAttributes [steps.SequenceStep-1782746125536]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+  ↓role [variables.StepVariable-1782746125538]: 
+  ↓withAttributes [variables.StepVariable-1782746125540]: 
 ↓UsePermissionAttributesRemove [steps.SimpleStep-1781092996767]: 
   expression: var permission = nrPermissionAll;
 ↓CallRemovePermissionAttributes [steps.SequenceStep-1781092996788]: 
@@ -1086,6 +1139,190 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
           nodeName: status
       ↓jElse [steps.ElseStep-1781093018022]: 
         ↓Status [steps.ElementStep-1781093018024]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsWithAttributes [steps.XMLComplexStep-1782746179724]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179726]: 
+      expression: '"Groups withAttributes includes group attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179729]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125320
+            - java.lang.String: 
+              - ↑value: ./document/group/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179734]: 
+        ↓Status [steps.ElementStep-1782746179736]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179738]: 
+        ↓Status [steps.ElementStep-1782746179740]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsOfWithAttributes [steps.XMLComplexStep-1782746179751]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179753]: 
+      expression: '"GroupsOf withAttributes includes group attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179755]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125358
+            - java.lang.String: 
+              - ↑value: ./document/group[@name="nr_group_a"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179757]: 
+        ↓Status [steps.ElementStep-1782746179759]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179761]: 
+        ↓Status [steps.ElementStep-1782746179763]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsOfRoleWithAttributes [steps.XMLComplexStep-1782746179769]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179771]: 
+      expression: '"GroupsOfRole withAttributes includes group attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179773]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125386
+            - java.lang.String: 
+              - ↑value: ./document/group[@name="nr_group_a"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179775]: 
+        ↓Status [steps.ElementStep-1782746179777]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179779]: 
+        ↓Status [steps.ElementStep-1782746179781]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesWithAttributes [steps.XMLComplexStep-1782746179792]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179794]: 
+      expression: '"Roles withAttributes includes role attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179796]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125404
+            - java.lang.String: 
+              - ↑value: ./document/role[@name="nr_reader"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179798]: 
+        ↓Status [steps.ElementStep-1782746179800]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179802]: 
+        ↓Status [steps.ElementStep-1782746179804]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesOfGroupWithAttributes [steps.XMLComplexStep-1782746179811]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179813]: 
+      expression: '"RolesOfGroup withAttributes includes role attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179815]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125443
+            - java.lang.String: 
+              - ↑value: ./document/role[@name="nr_reader"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179817]: 
+        ↓Status [steps.ElementStep-1782746179819]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179821]: 
+        ↓Status [steps.ElementStep-1782746179823]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesOfPermissionWithAttributes [steps.XMLComplexStep-1782746179836]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179838]: 
+      expression: '"RolesOfPermission withAttributes includes role attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179840]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125479
+            - java.lang.String: 
+              - ↑value: ./document/role[@name="nr_reader"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179842]: 
+        ↓Status [steps.ElementStep-1782746179844]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179846]: 
+        ↓Status [steps.ElementStep-1782746179848]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsWithAttributes [steps.XMLComplexStep-1782746179853]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179855]: 
+      expression: '"Permissions withAttributes includes permission attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179857]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125499
+            - java.lang.String: 
+              - ↑value: ./document/permission[@name="nr_feature.read:all"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179859]: 
+        ↓Status [steps.ElementStep-1782746179861]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179863]: 
+        ↓Status [steps.ElementStep-1782746179865]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsOfRoleWithAttributes [steps.XMLComplexStep-1782746179875]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1782746179877]: 
+      expression: '"PermissionsOfRole withAttributes includes permission attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1782746179879]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125536
+            - java.lang.String: 
+              - ↑value: ./document/permission[@name="nr_feature.read:all"]/attributes/beta[.="2"]
+      ↓jThen [steps.ThenStep-1782746179881]: 
+        ↓Status [steps.ElementStep-1782746179883]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1782746179885]: 
+        ↓Status [steps.ElementStep-1782746179887]: 
           expression: '"fail"'
           nodeName: status
 ↓PrepareFinalCleanup [steps.SimpleStep-1781088803688]: 

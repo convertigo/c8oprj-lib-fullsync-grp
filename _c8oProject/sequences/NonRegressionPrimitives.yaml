@@ -1017,7 +1017,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781090257964
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+              - ↑value: ./document/attributes[alpha="1" and beta="2"]
       ↓jThen [steps.ThenStep-1781090290774]: 
         ↓Status [steps.ElementStep-1781090290776]: 
           expression: '"pass"'
@@ -1040,7 +1040,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781090258030
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/attributes[beta="2" and not(alpha)]
+              - ↑value: ./document/attributes[beta="2" and not(alpha)]
       ↓jThen [steps.ThenStep-1781090290795]: 
         ↓Status [steps.ElementStep-1781090290797]: 
           expression: '"pass"'
@@ -1063,7 +1063,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781090258147
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+              - ↑value: ./document/attributes[alpha="1" and beta="2"]
       ↓jThen [steps.ThenStep-1781090290816]: 
         ↓Status [steps.ElementStep-1781090290818]: 
           expression: '"pass"'
@@ -1086,7 +1086,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781090258247
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/attributes[alpha="1" and beta="2"]
+              - ↑value: ./document/attributes[alpha="1" and beta="2"]
       ↓jThen [steps.ThenStep-1781090290830]: 
         ↓Status [steps.ElementStep-1781090290832]: 
           expression: '"pass"'
@@ -1109,7 +1109,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781092996746
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/error[.="not_found"]
+              - ↑value: ./document/error/details[.="not_found"]
       ↓jThen [steps.ThenStep-1781093018002]: 
         ↓Status [steps.ElementStep-1781093018004]: 
           expression: '"pass"'
@@ -1132,7 +1132,7 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
             - java.lang.String: 
               - ↑value: 1781092996812
             - java.lang.String: 
-              - ↑value: ./document/transaction/document/couchdb_output/error[.="not_found"]
+              - ↑value: ./document/error/details[.="not_found"]
       ↓jThen [steps.ThenStep-1781093018018]: 
         ↓Status [steps.ElementStep-1781093018020]: 
           expression: '"pass"'

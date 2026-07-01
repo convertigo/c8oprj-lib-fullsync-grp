@@ -6,9 +6,45 @@ comment: 'Get attributes for a role. Parameter: role is the role name. The seque
     role = ('' + role).trim().toLowerCase();
     var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('roleAttributes:' + role);
 ↓Call_GetRoleAttributes [steps.TransactionStep-1781090099972]: 
-  output: true
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoleAttributes
   ↓_use_docid [variables.StepVariable-1781090099974]: 
+↓IfExistThenElse [steps.IfExistThenElseStep-1782901209531]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1781090099972
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/attributes
+  ↓jThen [steps.ThenStep-1782901209941]: 
+    ↓Copy [steps.XMLCopyStep-1782898476295]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781090099972
+            - java.lang.String: 
+              - ↑value: ./document/couchdb_output/attributes
+  ↓jElse [steps.ElseStep-1782901209943]: 
+    ↓Error_structure [steps.XMLErrorStep-1782901381507]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1781090099972
+              - java.lang.String: 
+                - ↑value: ./document/couchdb_output/*
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"Unexpected error while retrieving attributes for the ''" + role + "'' role"'
 ↓role [variables.RequestableVariable-1781090099976]: 
   comment: Role name whose attributes document is read. The read document id is sha256("roleAttributes:" + role).
   description: Role name whose attributes document is read.

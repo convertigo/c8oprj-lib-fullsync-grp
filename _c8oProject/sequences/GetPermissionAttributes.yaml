@@ -3,7 +3,7 @@ comment: 'Get attributes for a permission. Parameter: permission is the canonica
 ↓BuildDocId [steps.SimpleStep-1781090099982]: 
   expression: |
     if (permission == undefined || ('' + permission).trim().length < 1) { throw 'The "permission" parameter must be defined and not empty'; }
-    permission = ('' + permission).trim();
+    permission = ('' + permission).trim().toLowerCase();
     var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('permissionAttributes:' + permission);
 ↓Call_GetPermissionAttributes [steps.TransactionStep-1781090099984]: 
   output: true

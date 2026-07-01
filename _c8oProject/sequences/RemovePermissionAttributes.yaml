@@ -3,7 +3,7 @@ comment: 'Remove attributes for a permission without removing any role-permissio
 ↓BuildDocId [steps.SimpleStep-1781092940270]: 
   expression: |
     if (permission == undefined || ('' + permission).trim().length < 1) { throw 'The "permission" parameter must be defined and not empty'; }
-    permission = ('' + permission).trim();
+    permission = ('' + permission).trim().toLowerCase();
     var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('permissionAttributes:' + permission);
 ↓Call_RemovePermissionAttributes [steps.TransactionStep-1781092940272]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemovePermissionAttributes

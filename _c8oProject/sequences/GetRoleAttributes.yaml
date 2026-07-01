@@ -3,7 +3,7 @@ comment: 'Get attributes for a role. Parameter: role is the role name. The seque
 ↓BuildDocId [steps.SimpleStep-1781090099970]: 
   expression: |
     if (role == undefined || ('' + role).trim().length < 1) { throw 'The "role" parameter must be defined and not empty'; }
-    role = ('' + role).trim();
+    role = ('' + role).trim().toLowerCase();
     var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('roleAttributes:' + role);
 ↓Call_GetRoleAttributes [steps.TransactionStep-1781090099972]: 
   output: true

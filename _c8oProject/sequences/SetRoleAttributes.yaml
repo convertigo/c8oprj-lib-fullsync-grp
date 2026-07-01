@@ -3,7 +3,7 @@ comment: 'Set or merge attributes for a role. Parameters: role is the role name;
 ↓BuildDocument [steps.SimpleStep-1781090099920]: 
   expression: |
     'if (role == undefined || ('''' + role).trim().length < 1) { throw ''The "role" parameter must be defined and not empty''; }
-    role = ('''' + role).trim();
+    role = ('''' + role).trim().toLowerCase();
     var attrs = {};
     var rawAttributes = attributes == undefined ? '''' : ('''' + attributes).trim();
     if (rawAttributes.length > 0) {

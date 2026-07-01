@@ -10,6 +10,8 @@ comment: list roles of a permission
           - ↑mode: PLAIN
           - →→: The "permission" parameter must be defined and not empty
   ↓Return [steps.ReturnStep-1776163000052]: 
+↓NormalizePermission [steps.SimpleStep-1782893784367]: 
+  expression: _use_key = permission.trim().toLowerCase();
 ↓Call_Transaction [steps.TransactionStep-1776163000053]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRolesByPermission
   ↓_use_key [variables.StepVariable-1776163000054]: 

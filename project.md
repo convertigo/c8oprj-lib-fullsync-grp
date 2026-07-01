@@ -1,7 +1,7 @@
 
 # ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/core/images/project_color_16x16.png?raw=true "Project") lib_FullSyncGrp
 
-Library to define users, groups, roles, and permissions (RBAC) for fullsync replication filtering
+Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include the attributes object for each returned group, role, or permission.
 
 <details><summary><span style="color:DarkGoldenRod"><i>References</i></span></summary><blockquote><p>
 
@@ -21,6 +21,36 @@ see [documentation](http://localhost:18080/convertigo/xsd/couchdb/CouchDb.xsd)
 
 <details><summary><span style="color:DarkGoldenRod"><i>Transactions</i></span></summary><blockquote><p>
 
+
+<details><summary><b>GetAttributesByKindNameValue</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetAttributesByKindNameValue
+
+
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;_use_key
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+</p></blockquote></details>
 
 <details><summary><b>GetGroupAttributes</b></summary><blockquote><p>
 
@@ -49,6 +79,14 @@ comment
 </td>
 </tr>
 </table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetGroupAttributesList</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetGroupAttributesList
+
 
 </p></blockquote></details>
 
@@ -150,6 +188,14 @@ comment
 
 </p></blockquote></details>
 
+<details><summary><b>GetPermissionAttributesList</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetPermissionAttributesList
+
+
+</p></blockquote></details>
+
 <details><summary><b>GetPermissions</b></summary><blockquote><p>
 
 
@@ -215,6 +261,14 @@ comment
 </td>
 </tr>
 </table>
+
+</p></blockquote></details>
+
+<details><summary><b>GetRoleAttributesList</b></summary><blockquote><p>
+
+
+### ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/transactions/couchdb/images/getview_color_16x16.png?raw=true "GetViewTransaction") GetRoleAttributesList
+
 
 </p></blockquote></details>
 
@@ -1027,6 +1081,28 @@ Role name whose attributes document is read. The read document id is sha256("rol
 ## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") Groups
 
 list all groups
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include each group's attributes object when an attributes document exists. The legacy response is preserved when false.
+</td>
+</tr>
+</table>
+
 </p></blockquote></details>
 
 <details><summary><b>GroupsOf</b> : list groups of a user</summary><blockquote><p>
@@ -1053,6 +1129,14 @@ comment
 </td>
 <td>
 User identifier used as the lookup key. The sequence returns every group containing this user.
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include attributes for each returned group when an attributes document exists. The sequence loads group attributes in one view query, not one query per group.
 </td>
 </tr>
 </table>
@@ -1085,6 +1169,14 @@ comment
 Role name used as the lookup key. It is normalized to lowercase before listing groups attached to this role.
 </td>
 </tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include attributes for each returned group when an attributes document exists. The sequence loads group attributes in one view query, not one query per group.
+</td>
+</tr>
 </table>
 
 </p></blockquote></details>
@@ -1103,6 +1195,28 @@ Non-regression sequence covering FullSync group and RBAC primitives with isolate
 ## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") Permissions
 
 list all permissions
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include each permission's attributes object when an attributes document exists. The legacy response is preserved when false.
+</td>
+</tr>
+</table>
+
 </p></blockquote></details>
 
 <details><summary><b>PermissionsOfRole</b> : list permissions of a role</summary><blockquote><p>
@@ -1129,6 +1243,14 @@ comment
 </td>
 <td>
 Role name used as the lookup key. It is normalized to lowercase before listing permissions attached to this role.
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include attributes for each returned permission when an attributes document exists. The sequence loads permission attributes in one view query, not one query per permission.
 </td>
 </tr>
 </table>
@@ -1369,6 +1491,28 @@ Array<String> users -- should be stringified from front-end
 ## ![](https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/sequences/images/genericsequence_color_16x16.png?raw=true "GenericSequence") Roles
 
 list all roles
+
+<span style="color:DarkGoldenRod">Variables</span>
+
+<table>
+<tr>
+<th>
+name
+</th>
+<th>
+comment
+</th>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include each role's attributes object when an attributes document exists. The legacy response is preserved when false.
+</td>
+</tr>
+</table>
+
 </p></blockquote></details>
 
 <details><summary><b>RolesOfGroup</b> : list roles of a group</summary><blockquote><p>
@@ -1395,6 +1539,14 @@ comment
 </td>
 <td>
 Group name used as the lookup key. The sequence returns every role attached to this group.
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include attributes for each returned role when an attributes document exists. The sequence loads role attributes in one view query, not one query per role.
 </td>
 </tr>
 </table>
@@ -1425,6 +1577,14 @@ comment
 </td>
 <td>
 Canonical permission string used as the lookup key, in the form element.action:scope. The sequence returns every role containing this permission.
+</td>
+</tr>
+<tr>
+<td>
+<img src="https://github.com/convertigo/convertigo/blob/develop/engine/src/com/twinsoft/convertigo/beans/variables/images/variable_color_16x16.png?raw=true "  alt="RequestableVariable" >&nbsp;withAttributes
+</td>
+<td>
+Optional boolean, default false. Set to true to include attributes for each returned role when an attributes document exists. The sequence loads role attributes in one view query, not one query per role.
 </td>
 </tr>
 </table>

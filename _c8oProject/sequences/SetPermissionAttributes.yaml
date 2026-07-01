@@ -3,7 +3,7 @@ comment: 'Set or merge attributes for a permission. Parameters: permission is th
 ↓BuildDocument [steps.SimpleStep-1781090099935]: 
   expression: |
     'if (permission == undefined || ('''' + permission).trim().length < 1) { throw ''The "permission" parameter must be defined and not empty''; }
-    permission = ('''' + permission).trim();
+    permission = ('''' + permission).trim().toLowerCase();
     var attrs = {};
     var rawAttributes = attributes == undefined ? '''' : ('''' + attributes).trim();
     if (rawAttributes.length > 0) {

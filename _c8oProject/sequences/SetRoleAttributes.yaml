@@ -14,10 +14,40 @@ comment: 'Set or merge attributes for a role. Parameters: role is the role name;
     var _use_json_base = JSON.stringify({_id: _id, type: ''c8oRoleAttributes'', role: role, attributes: attrs});
     var _use_merge = mergePolicy == undefined ? '''' : ('''' + mergePolicy);'
 ↓Call_SetRoleAttributes [steps.TransactionStep-1781090099922]: 
-  output: true
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetRoleAttributes
   ↓_use_json_base [variables.StepVariable-1781090099924]: 
   ↓_use_merge [variables.StepVariable-1781090099926]: 
+↓IfExistThenElse [steps.IfExistThenElseStep-1782897224211]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1781090099922
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok[.="true"]
+  ↓jThen [steps.ThenStep-1782897224214]: 
+    ↓jElement [steps.ElementStep-1782897224217]: 
+      expression: '"Attributes added to the ''" + role + "'' role"'
+      nodeName: success
+  ↓jElse [steps.ElseStep-1782897224220]: 
+    ↓Error_structure [steps.XMLErrorStep-1782897224223]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1781090099922
+              - java.lang.String: 
+                - ↑value: ./document/couchdb_output/*
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"Unexpected error while adding attributes to the ''" + role + "'' role"'
 ↓role [variables.RequestableVariable-1781090099928]: 
   comment: Role name owning the attributes document. The stored document id is sha256("roleAttributes:" + role).
   description: Role name owning the attributes document.

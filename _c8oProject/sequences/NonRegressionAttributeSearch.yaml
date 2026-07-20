@@ -1,0 +1,192 @@
+accessibility: Private
+comment: Non-regression sequence covering exact indexed searches by group, role and permission attributes.
+↓InitCleanup [steps.SimpleStep-1784565601074]: 
+  expression: |
+    'var nrGroup = "nr_search_attr_group";
+    var nrRole = "nr_search_attr_role";
+    var nrPermission = "nr_search.attr:read";
+    
+    function attributesDoc(kind, name, attrs, deleted) {
+        var prefix = kind + "Attributes";
+        name = kind == "group" ? name : name.trim().toLowerCase();
+        var doc = {_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(prefix + ":" + name)};
+        if (deleted) {
+            doc._deleted = true;
+            return doc;
+        }
+        if (kind == "group") {
+            doc.type = "c8oGroupAttributes";
+            doc.group = name;
+        } else if (kind == "role") {
+            doc.type = "c8oRoleAttributes";
+            doc.role = name;
+        } else if (kind == "permission") {
+            doc.type = "c8oPermissionAttributes";
+            doc.permission = name;
+        }
+        doc.attributes = attrs || {};
+        return doc;
+    }
+    
+    var cleanupDocs = [
+        attributesDoc("group", nrGroup, {}, true),
+        attributesDoc("role", nrRole, {}, true),
+        attributesDoc("permission", nrPermission, {}, true)
+    ];
+    var _use_json_base = JSON.stringify(cleanupDocs);'
+↓CleanupBefore [steps.TransactionStep-1784565601076]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784565601078]: 
+↓BuildFixtures [steps.SimpleStep-1784565601080]: 
+  expression: |
+    'var fixtures = [
+        attributesDoc("group", nrGroup, {kind: "phase1-nr", enabled: true, rank: 7}, false),
+        attributesDoc("role", nrRole, {kind: "phase1-nr", enabled: true, rank: 7}, false),
+        attributesDoc("permission", nrPermission, {kind: "phase1-nr", enabled: true, rank: 7}, false)
+    ];
+    var _use_json_base = JSON.stringify(fixtures);'
+↓SetupFixtures [steps.TransactionStep-1784565601082]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784565601084]: 
+↓UseGroupSearch [steps.SimpleStep-1784565601086]: 
+  expression: |
+    var name = "kind";
+    var value = "phase1-nr";
+    var withAttributes = "true";
+↓CallGroupsByAttribute [steps.SequenceStep-1784565601088]: 
+  sourceSequence: lib_FullSyncGrp.GroupsByAttribute
+  ↓name [variables.StepVariable-1784565601090]: 
+  ↓value [variables.StepVariable-1784565601092]: 
+  ↓withAttributes [variables.StepVariable-1784565601094]: 
+↓UseRoleSearch [steps.SimpleStep-1784565601096]: 
+  expression: |
+    var name = "enabled";
+    var value = "true";
+    var withAttributes = "true";
+↓CallRolesByAttribute [steps.SequenceStep-1784565601098]: 
+  sourceSequence: lib_FullSyncGrp.RolesByAttribute
+  ↓name [variables.StepVariable-1784565601100]: 
+  ↓value [variables.StepVariable-1784565601102]: 
+  ↓withAttributes [variables.StepVariable-1784565601104]: 
+↓UsePermissionSearch [steps.SimpleStep-1784565601106]: 
+  expression: |
+    var name = "rank";
+    var value = "7";
+    var withAttributes = "true";
+↓CallPermissionsByAttribute [steps.SequenceStep-1784565601108]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsByAttribute
+  ↓name [variables.StepVariable-1784565601110]: 
+  ↓value [variables.StepVariable-1784565601112]: 
+  ↓withAttributes [variables.StepVariable-1784565601114]: 
+↓UseGroupSearchLegacy [steps.SimpleStep-1784565601116]: 
+  expression: |
+    var name = "kind";
+    var value = "phase1-nr";
+    var withAttributes = "false";
+↓CallGroupsByAttributeLegacy [steps.SequenceStep-1784565601118]: 
+  sourceSequence: lib_FullSyncGrp.GroupsByAttribute
+  ↓name [variables.StepVariable-1784565601120]: 
+  ↓value [variables.StepVariable-1784565601122]: 
+  ↓withAttributes [variables.StepVariable-1784565601124]: 
+↓Checks [steps.XMLComplexStep-1784565601126]: 
+  nodeName: checks
+  ↓CheckGroupStringWithAttributes [steps.XMLComplexStep-1784565601128]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784565601130]: 
+      expression: '"GroupsByAttribute finds string value with attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784565601132]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784565601088
+            - java.lang.String: 
+              - ↑value: ./document/group[@name="nr_search_attr_group"]/attributes/kind[.="phase1-nr"]
+      ↓jThen [steps.ThenStep-1784565601134]: 
+        ↓Status [steps.ElementStep-1784565601136]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784565601138]: 
+        ↓Status [steps.ElementStep-1784565601140]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRoleBooleanWithAttributes [steps.XMLComplexStep-1784565601142]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784565601144]: 
+      expression: '"RolesByAttribute finds boolean value with attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784565601146]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784565601098
+            - java.lang.String: 
+              - ↑value: ./document/role[@name="nr_search_attr_role"]/attributes/enabled[.="true"]
+      ↓jThen [steps.ThenStep-1784565601148]: 
+        ↓Status [steps.ElementStep-1784565601150]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784565601152]: 
+        ↓Status [steps.ElementStep-1784565601154]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionNumberWithAttributes [steps.XMLComplexStep-1784565601156]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784565601158]: 
+      expression: '"PermissionsByAttribute finds numeric value with attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784565601160]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784565601108
+            - java.lang.String: 
+              - ↑value: ./document/permission[@name="nr_search.attr:read"]/attributes/rank[.="7"]
+      ↓jThen [steps.ThenStep-1784565601162]: 
+        ↓Status [steps.ElementStep-1784565601164]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784565601166]: 
+        ↓Status [steps.ElementStep-1784565601168]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupLegacyResponse [steps.XMLComplexStep-1784565601170]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784565601172]: 
+      expression: '"GroupsByAttribute keeps default response without attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784565601174]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784565601118
+            - java.lang.String: 
+              - ↑value: ./document/group[.="nr_search_attr_group" and not(attributes)]
+      ↓jThen [steps.ThenStep-1784565601176]: 
+        ↓Status [steps.ElementStep-1784565601178]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784565601180]: 
+        ↓Status [steps.ElementStep-1784565601182]: 
+          expression: '"fail"'
+          nodeName: status
+↓PrepareCleanupAfter [steps.SimpleStep-1784565601184]: 
+  expression: var _use_json_base = JSON.stringify(cleanupDocs);
+↓CleanupAfter [steps.TransactionStep-1784565601186]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784565601188]: 
+↓Summary [steps.ElementStep-1784565601190]: 
+  expression: '"Non-regression attribute search executed with isolated nr_search_* data"'
+  nodeName: summary

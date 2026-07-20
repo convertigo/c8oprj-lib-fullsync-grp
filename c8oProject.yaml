@@ -2,18 +2,21 @@
 ↓lib_FullSyncGrp [core.Project]: 
   comment: Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include the attributes object for each returned group, role, or permission.
   contextTimeout: 1800
-  version: 8.0.0.16
+  version: 8.0.0.17
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓EffectivePermissionsOfUser [sequences.GenericSequence]: 🗏 sequences/EffectivePermissionsOfUser.yaml
   ↓GetGroupAttributes [sequences.GenericSequence]: 🗏 sequences/GetGroupAttributes.yaml
   ↓GetPermissionAttributes [sequences.GenericSequence]: 🗏 sequences/GetPermissionAttributes.yaml
   ↓GetRoleAttributes [sequences.GenericSequence]: 🗏 sequences/GetRoleAttributes.yaml
   ↓Groups [sequences.GenericSequence]: 🗏 sequences/Groups.yaml
+  ↓GroupsByAttribute [sequences.GenericSequence]: 🗏 sequences/GroupsByAttribute.yaml
   ↓GroupsOf [sequences.GenericSequence]: 🗏 sequences/GroupsOf.yaml
   ↓GroupsOfRole [sequences.GenericSequence]: 🗏 sequences/GroupsOfRole.yaml
+  ↓NonRegressionAttributeSearch [sequences.GenericSequence]: 🗏 sequences/NonRegressionAttributeSearch.yaml
   ↓NonRegressionCleanDeletes [sequences.GenericSequence]: 🗏 sequences/NonRegressionCleanDeletes.yaml
   ↓NonRegressionPrimitives [sequences.GenericSequence]: 🗏 sequences/NonRegressionPrimitives.yaml
   ↓Permissions [sequences.GenericSequence]: 🗏 sequences/Permissions.yaml
+  ↓PermissionsByAttribute [sequences.GenericSequence]: 🗏 sequences/PermissionsByAttribute.yaml
   ↓PermissionsOfRole [sequences.GenericSequence]: 🗏 sequences/PermissionsOfRole.yaml
   ↓RemoveGroup [sequences.GenericSequence]: 🗏 sequences/RemoveGroup.yaml
   ↓RemovePermission [sequences.GenericSequence]: 🗏 sequences/RemovePermission.yaml
@@ -24,6 +27,7 @@
   ↓RemoveUserFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveUserFromGroup.yaml
   ↓RemoveUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/RemoveUserInGroupBulkV2.yaml
   ↓Roles [sequences.GenericSequence]: 🗏 sequences/Roles.yaml
+  ↓RolesByAttribute [sequences.GenericSequence]: 🗏 sequences/RolesByAttribute.yaml
   ↓RolesOfGroup [sequences.GenericSequence]: 🗏 sequences/RolesOfGroup.yaml
   ↓RolesOfPermission [sequences.GenericSequence]: 🗏 sequences/RolesOfPermission.yaml
   ↓SeedRbacDemoData [sequences.GenericSequence]: 🗏 sequences/SeedRbacDemoData.yaml

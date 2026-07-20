@@ -1,0 +1,92 @@
+accessibility: Private
+comment: Search groups by exact top-level attribute value using the indexed attributes view. Set withAttributes=true to include the matching group's attributes object.
+↓InitSearch [steps.SimpleStep-1784565340993]: 
+  expression: |
+    'if (name == undefined || ('''' + name).trim().length < 1) { throw ''The "name" parameter must be defined and not empty''; }
+    if (value == undefined) { throw ''The "value" parameter must be defined''; }
+    function parseSearchValue(v) {
+        var text = '''' + v;
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            return text;
+        }
+    }
+    var attributeName = ('''' + name).trim();
+    var attributeValue = parseSearchValue(value);
+    var withAttributesEnabled = withAttributes == true || ('''' + withAttributes).toLowerCase() == ''true'';
+    var _use_key = JSON.stringify([''group'', attributeName, attributeValue]);'
+↓Call_GetAttributesByKindNameValue [steps.TransactionStep-1784565340995]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetAttributesByKindNameValue
+  ↓_use_key [variables.StepVariable-1784565340997]: 
+↓Iterator [steps.IteratorStep-1784565340999]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784565340995
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  ↓CurrentGroup [steps.SimpleSourceStep-1784565341001]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565340999
+          - java.lang.String: 
+            - ↑value: ./value/name/text()
+    variableName: currentGroup
+  ↓CurrentAttributes [steps.JsonSourceStep-1784565341003]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565340999
+          - java.lang.String: 
+            - ↑value: ./value/attributes
+    variableName: currentAttributes
+  ↓Group [steps.XMLElementStep-1784565341005]: 
+    nodeName: group
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565340999
+          - java.lang.String: 
+            - ↑value: ./value/name/text()
+    ↓IfWithAttributes [steps.IfStep-1784565341007]: 
+      condition: withAttributesEnabled
+      ↓name [steps.AttributeStep-1784565341009]: 
+        expression: currentGroup
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1784565341011]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: currentAttributes
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
+↓name [variables.RequestableVariable-1784565341013]: 
+  comment: Top-level attribute name to match exactly.
+↓value [variables.RequestableVariable-1784565341015]: 
+  comment: 'Exact attribute value to match. JSON literals keep their type: true, 42, null; non-JSON input is matched as a string.'
+↓withAttributes [variables.RequestableVariable-1784565341017]: 
+  comment: Optional boolean, default false. Set to true to include each matching group's attributes object.
+  value: false
+↓Test_Case [core.TestCase]: 
+  ↓name [variables.TestCaseVariable-1784565341020]: 
+    value: kind
+  ↓value [variables.TestCaseVariable-1784565341022]: 
+    value: manual-test
+  ↓withAttributes [variables.TestCaseVariable-1784565341024]: 
+    value: true

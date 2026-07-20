@@ -400,13 +400,13 @@ databaseName: c8ofullsyncgrp
                   if (attrs) {\r\n
                       for (var a in attrs) {\r\n
                           if (attrs.hasOwnProperty(a)) {\r\n
-                              emit([kind, a, attrs[a]], entity);\r\n
+                              emit([kind, a, attrs[a]], {name: entity, attributes: attrs});\r\n
                           }\r\n
                       }\r\n
                   } else {\r\n
                       for (var p in doc) {\r\n
                           if (doc.hasOwnProperty(p) && p.charAt(0) != \"_\" && p != \"type\" && p != \"group\" && p != \"role\" && p != \"permission\") {\r\n
-                              emit([kind, p, doc[p]], entity);\r\n
+                              emit([kind, p, doc[p]], {name: entity, attributes: doc});\r\n
                           }\r\n
                       }\r\n
                   }\r\n

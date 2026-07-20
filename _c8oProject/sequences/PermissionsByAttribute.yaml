@@ -1,0 +1,92 @@
+accessibility: Private
+comment: Search permissions by exact top-level attribute value using the indexed attributes view. Set withAttributes=true to include the matching permission's attributes object.
+↓InitSearch [steps.SimpleStep-1784565372897]: 
+  expression: |
+    'if (name == undefined || ('''' + name).trim().length < 1) { throw ''The "name" parameter must be defined and not empty''; }
+    if (value == undefined) { throw ''The "value" parameter must be defined''; }
+    function parseSearchValue(v) {
+        var text = '''' + v;
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            return text;
+        }
+    }
+    var attributeName = ('''' + name).trim();
+    var attributeValue = parseSearchValue(value);
+    var withAttributesEnabled = withAttributes == true || ('''' + withAttributes).toLowerCase() == ''true'';
+    var _use_key = JSON.stringify([''permission'', attributeName, attributeValue]);'
+↓Call_GetAttributesByKindNameValue [steps.TransactionStep-1784565372899]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetAttributesByKindNameValue
+  ↓_use_key [variables.StepVariable-1784565372901]: 
+↓Iterator [steps.IteratorStep-1784565372903]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784565372899
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  ↓CurrentPermission [steps.SimpleSourceStep-1784565372905]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565372903
+          - java.lang.String: 
+            - ↑value: ./value/name/text()
+    variableName: currentPermission
+  ↓CurrentAttributes [steps.JsonSourceStep-1784565372907]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565372903
+          - java.lang.String: 
+            - ↑value: ./value/attributes
+    variableName: currentAttributes
+  ↓Permission [steps.XMLElementStep-1784565372909]: 
+    nodeName: permission
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1784565372903
+          - java.lang.String: 
+            - ↑value: ./value/name/text()
+    ↓IfWithAttributes [steps.IfStep-1784565372911]: 
+      condition: withAttributesEnabled
+      ↓name [steps.AttributeStep-1784565372913]: 
+        expression: currentPermission
+        nodeName: name
+      ↓attributes [steps.JsonToXmlStep-1784565372915]: 
+        jsonObject: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: JS
+              - →→: currentAttributes
+        key: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+            - SmartType: 
+              - ↑mode: PLAIN
+              - →→: attributes
+↓name [variables.RequestableVariable-1784565372917]: 
+  comment: Top-level attribute name to match exactly.
+↓value [variables.RequestableVariable-1784565372919]: 
+  comment: 'Exact attribute value to match. JSON literals keep their type: true, 42, null; non-JSON input is matched as a string.'
+↓withAttributes [variables.RequestableVariable-1784565372921]: 
+  comment: Optional boolean, default false. Set to true to include each matching permission's attributes object.
+  value: false
+↓Test_Case [core.TestCase]: 
+  ↓name [variables.TestCaseVariable-1784565372924]: 
+    value: kind
+  ↓value [variables.TestCaseVariable-1784565372926]: 
+    value: manual-test
+  ↓withAttributes [variables.TestCaseVariable-1784565372928]: 
+    value: true

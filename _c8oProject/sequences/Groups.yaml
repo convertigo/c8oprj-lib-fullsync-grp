@@ -1,5 +1,5 @@
 accessibility: Private
-comment: list all groups
+comment: list all groups known from user-group links or group attributes documents
 ↓Call_Transaction [steps.TransactionStep-1487150590996]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroups
 ↓InitWithAttributes [steps.SimpleStep-1782730520630]: 

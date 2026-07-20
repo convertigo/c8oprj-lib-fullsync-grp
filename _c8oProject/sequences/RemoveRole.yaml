@@ -1,0 +1,100 @@
+accessibility: Private
+comment: Remove a role and cleanup all related group-role links, role-permission links and role attributes documents in bulk
+↓ValidateRole [steps.IfStep-1784562152336]: 
+  condition: role == undefined || ('' + role).trim().length < 1
+  ↓Error_empty_role [steps.XMLErrorStep-1784562152338]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "role" parameter must be defined and not empty
+  ↓Return_empty_role [steps.ReturnStep-1784562152340]: 
+↓NormalizeRole [steps.SimpleStep-1784562152342]: 
+  expression: |
+    role = ('' + role).trim().toLowerCase();
+    var _use_key = role;
+    var roleAttributesDocId = org.apache.commons.codec.digest.DigestUtils.sha256Hex('roleAttributes:' + role);
+    var _use_docid = roleAttributesDocId;
+↓Call_GetGroupsByRole [steps.TransactionStep-1784562152344]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupsByRole
+  ↓_use_key [variables.StepVariable-1784562152346]: 
+↓GroupRoleRows [steps.JsonSourceStep-1784562152348]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784562152344
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  variableName: groupRoleRows
+↓Call_GetPermissionsByRole [steps.TransactionStep-1784562152350]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissionsByRole
+  ↓_use_key [variables.StepVariable-1784562152352]: 
+↓RolePermissionRows [steps.JsonSourceStep-1784562152354]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784562152350
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  variableName: rolePermissionRows
+↓Call_GetRoleAttributes [steps.TransactionStep-1784563288904]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoleAttributes
+  ↓_use_docid [variables.StepVariable-1784563288906]: 
+↓RoleAttributeDocumentId [steps.SimpleSourceStep-1784563292236]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784563288904
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/_id/text()
+  variableName: roleAttributeDocumentId
+↓BuildDeleteDocs [steps.SimpleStep-1784562152356]: 
+  expression: |
+    'function asArray(rows) {
+        if (rows == undefined || rows == null) {
+            return [];
+        }
+        return Array.isArray(rows) ? rows : [rows];
+    }
+    
+    function addRows(rows) {
+        rows = asArray(rows);
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i] && rows[i].id != undefined) {
+                deleteDocs.push({_id: '''' + rows[i].id, _deleted: true});
+            }
+        }
+    }
+    
+    var deleteDocs = [];
+    addRows(groupRoleRows);
+    addRows(rolePermissionRows);
+    if (roleAttributeDocumentId != undefined && ('''' + roleAttributeDocumentId).length > 0) {
+        deleteDocs.push({_id: '''' + roleAttributeDocumentId, _deleted: true});
+    }
+    var deletedCount = deleteDocs.length;
+    var _use_json_base = JSON.stringify(deleteDocs);'
+↓Call_PostBulkDocumentsOverride [steps.TransactionStep-1784562152358]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562152360]: 
+↓Success [steps.ElementStep-1784562152362]: 
+  expression: '"Role ''" + role + "'' removal requested"'
+  nodeName: success
+↓Removed [steps.ElementStep-1784562152364]: 
+  expression: 'deletedCount > 0 ? "true" : "false"'
+  nodeName: removed
+↓Deleted [steps.ElementStep-1784562152366]: 
+  expression: '"" + deletedCount'
+  nodeName: deleted
+↓role [variables.RequestableVariable-1784562152368]: 
+  comment: Role name to remove. The role is normalized to lowercase, then group-role links, role-permission links and role attributes are deleted in bulk.
+↓Test_Case [core.TestCase]: 
+  ↓role [variables.TestCaseVariable-1784562152371]: 
+    value: reader

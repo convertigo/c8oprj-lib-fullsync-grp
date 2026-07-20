@@ -9,12 +9,15 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
     var nrGroupBulk = "nr_group_bulk";
     var nrGroupOld = "nr_group_old";
     var nrGroupNew = "nr_group_new";
+    var nrGroupAttrOnly = "nr_attr_only_group";
     var nrBulkUser1 = "nr_bulk_1";
     var nrBulkUser2 = "nr_bulk_2";
     var nrRoleReader = "nr_reader";
     var nrRoleWriter = "nr_writer";
+    var nrRoleAttrOnly = "nr_attr_only_role";
     var nrPermissionOwn = "nr_feature.read:own";
     var nrPermissionAll = "nr_feature.read:all";
+    var nrPermissionAttrOnly = "nr_attr_only.resource:read";
     
     function nrId(left, right) {
     	return org.apache.commons.codec.digest.DigestUtils.sha256Hex(left + ":" + right);
@@ -68,6 +71,27 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
     	return doc;
     }
     
+    function nrAttributesDoc(kind, name, attrs, deleted) {
+    	var prefix = kind + "Attributes";
+    	var doc = {_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(prefix + '':'' + name)};
+    	if (deleted) {
+    		doc._deleted = true;
+    		return doc;
+    	}
+    	if (kind == "group") {
+    		doc.type = "c8oGroupAttributes";
+    		doc.group = name;
+    	} else if (kind == "role") {
+    		doc.type = "c8oRoleAttributes";
+    		doc.role = name.trim().toLowerCase();
+    	} else if (kind == "permission") {
+    		doc.type = "c8oPermissionAttributes";
+    		doc.permission = name.trim().toLowerCase();
+    	}
+    	doc.attributes = attrs || {};
+    	return doc;
+    }
+    
     var cleanupDocs = [
     	nrUserGroupDoc(nrUserA, nrGroupA, true),
     	nrUserGroupDoc(nrUserA, nrGroupB, true),
@@ -91,14 +115,15 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
     var _use_json_base = JSON.stringify(cleanupDocs);
 ↓ExtendCleanupForAttributes [steps.SimpleStep-1781090257884]: 
   expression: |
-    'function nrAttributeDoc(prefix, name) {
-    	return {_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(prefix + '':'' + name), _deleted: true};
-    }
-    cleanupDocs.push(nrAttributeDoc(''groupAttributes'', nrGroupA));
-    cleanupDocs.push(nrAttributeDoc(''groupAttributes'', nrGroupOld));
-    cleanupDocs.push(nrAttributeDoc(''roleAttributes'', nrRoleReader));
-    cleanupDocs.push(nrAttributeDoc(''permissionAttributes'', nrPermissionAll));
-    var _use_json_base = JSON.stringify(cleanupDocs);'
+    cleanupDocs.push(nrAttributesDoc('group', nrGroupA, {}, true));
+    cleanupDocs.push(nrAttributesDoc('group', nrGroupB, {}, true));
+    cleanupDocs.push(nrAttributesDoc('group', nrGroupOld, {}, true));
+    cleanupDocs.push(nrAttributesDoc('group', nrGroupAttrOnly, {}, true));
+    cleanupDocs.push(nrAttributesDoc('role', nrRoleReader, {}, true));
+    cleanupDocs.push(nrAttributesDoc('role', nrRoleAttrOnly, {}, true));
+    cleanupDocs.push(nrAttributesDoc('permission', nrPermissionAll, {}, true));
+    cleanupDocs.push(nrAttributesDoc('permission', nrPermissionAttrOnly, {}, true));
+    var _use_json_base = JSON.stringify(cleanupDocs);
 ↓CleanupBefore [steps.TransactionStep-1781088803512]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
   ↓_use_json_base [variables.StepVariable-1781088803514]: 
@@ -110,7 +135,10 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
     	nrGroupRoleDoc(nrGroupA, nrRoleReader, false),
     	nrGroupRoleDoc(nrGroupB, nrRoleReader, false),
     	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "own", false),
-    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "all", false)
+    	nrRolePermissionDoc(nrRoleReader, "nr_feature", "read", "all", false),
+    	nrAttributesDoc(''group'', nrGroupAttrOnly, {kind: ''attr-only'', order: ''group''}, false),
+    	nrAttributesDoc(''role'', nrRoleAttrOnly, {kind: ''attr-only'', order: ''role''}, false),
+    	nrAttributesDoc(''permission'', nrPermissionAttrOnly, {kind: ''attr-only'', order: ''permission''}, false)
     ];
     var _use_json_base = JSON.stringify(baseDocs);'
 ↓SetupBase [steps.TransactionStep-1781088803518]: 
@@ -1323,6 +1351,144 @@ comment: Non-regression sequence covering FullSync group and RBAC primitives wit
           nodeName: status
       ↓jElse [steps.ElseStep-1782746179885]: 
         ↓Status [steps.ElementStep-1782746179887]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsListAttributeOnly [steps.XMLComplexStep-1784557904025]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904028]: 
+      expression: '"Groups lists attribute-only group"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904030]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803522
+            - java.lang.String: 
+              - ↑value: ./document/group[.="nr_attr_only_group" and @users="0"]
+      ↓jThen [steps.ThenStep-1784557904032]: 
+        ↓Status [steps.ElementStep-1784557904034]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904036]: 
+        ↓Status [steps.ElementStep-1784557904038]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesListAttributeOnly [steps.XMLComplexStep-1784557904048]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904050]: 
+      expression: '"Roles lists attribute-only role"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904052]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803538
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_attr_only_role" and @groups="0"]
+      ↓jThen [steps.ThenStep-1784557904054]: 
+        ↓Status [steps.ElementStep-1784557904056]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904058]: 
+        ↓Status [steps.ElementStep-1784557904060]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsListAttributeOnly [steps.XMLComplexStep-1784557904065]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904067]: 
+      expression: '"Permissions lists attribute-only permission"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904069]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1781088803552
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_attr_only.resource:read" and @roles="0"]
+      ↓jThen [steps.ThenStep-1784557904071]: 
+        ↓Status [steps.ElementStep-1784557904073]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904075]: 
+        ↓Status [steps.ElementStep-1784557904077]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckGroupsWithAttributesAttributeOnly [steps.XMLComplexStep-1784557904079]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904081]: 
+      expression: '"Groups withAttributes includes attribute-only group attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904083]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125320
+            - java.lang.String: 
+              - ↑value: ./document/group[@name="nr_attr_only_group" and @users="0"]/attributes/order[.="group"]
+      ↓jThen [steps.ThenStep-1784557904085]: 
+        ↓Status [steps.ElementStep-1784557904087]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904089]: 
+        ↓Status [steps.ElementStep-1784557904091]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRolesWithAttributesAttributeOnly [steps.XMLComplexStep-1784557904096]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904098]: 
+      expression: '"Roles withAttributes includes attribute-only role attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904100]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125404
+            - java.lang.String: 
+              - ↑value: ./document/role[@name="nr_attr_only_role" and @groups="0"]/attributes/order[.="role"]
+      ↓jThen [steps.ThenStep-1784557904102]: 
+        ↓Status [steps.ElementStep-1784557904104]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904106]: 
+        ↓Status [steps.ElementStep-1784557904108]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckPermissionsWithAttributesAttributeOnly [steps.XMLComplexStep-1784557904110]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784557904112]: 
+      expression: '"Permissions withAttributes includes attribute-only permission attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784557904114]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1782746125499
+            - java.lang.String: 
+              - ↑value: ./document/permission[@name="nr_attr_only.resource:read" and @roles="0"]/attributes/order[.="permission"]
+      ↓jThen [steps.ThenStep-1784557904116]: 
+        ↓Status [steps.ElementStep-1784557904118]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784557904120]: 
+        ↓Status [steps.ElementStep-1784557904122]: 
           expression: '"fail"'
           nodeName: status
 ↓PrepareFinalCleanup [steps.SimpleStep-1781088803688]: 

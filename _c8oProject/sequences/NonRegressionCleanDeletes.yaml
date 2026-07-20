@@ -1,0 +1,412 @@
+accessibility: Private
+comment: Non-regression sequence covering bulk cleanup performed by RemoveGroup, RemoveRole and RemovePermission
+↓InitCleanup [steps.SimpleStep-1784562417243]: 
+  expression: |
+    'var nrCleanUser = "nr_clean_delete_user";
+    var nrCleanGroup = "nr_clean_delete_group";
+    var nrCleanGroupRole = "nr_clean_group_role";
+    var nrCleanRole = "nr_clean_delete_role";
+    var nrCleanRoleGroupA = "nr_clean_role_group_a";
+    var nrCleanRoleGroupB = "nr_clean_role_group_b";
+    var nrCleanRolePerm = "nr_clean_role.delete:read";
+    var nrCleanPermission = "nr_clean_permission.delete:all";
+    var nrCleanPermRoleA = "nr_clean_perm_role_a";
+    var nrCleanPermRoleB = "nr_clean_perm_role_b";
+    var nrCleanPermGroupA = "nr_clean_perm_group_a";
+    var nrCleanPermGroupB = "nr_clean_perm_group_b";
+    
+    function nrId(left, right) {
+        return org.apache.commons.codec.digest.DigestUtils.sha256Hex(left + ":" + right);
+    }
+    
+    function userGroupDoc(userName, groupName, deleted) {
+        var doc = {_id: nrId(userName, groupName)};
+        if (deleted) {
+            doc._deleted = true;
+        } else {
+            doc.type = "c8oGrp";
+            doc.user = userName;
+            doc.group = groupName;
+            doc["~c8oAcl"] = "c8o:admin";
+        }
+        return doc;
+    }
+    
+    function groupRoleDoc(groupName, roleName, deleted) {
+        roleName = roleName.trim().toLowerCase();
+        var doc = {_id: nrId(groupName, roleName)};
+        if (deleted) {
+            doc._deleted = true;
+        } else {
+            doc.type = "c8oGrpRole";
+            doc.group = groupName;
+            doc.role = roleName;
+            doc["~c8oAcl"] = "c8o:admin";
+        }
+        return doc;
+    }
+    
+    function rolePermissionDoc(roleName, permissionName, deleted) {
+        roleName = roleName.trim().toLowerCase();
+        permissionName = permissionName.trim().toLowerCase();
+        var parts = permissionName.split(":");
+        var left = parts[0].split(".");
+        var doc = {_id: nrId(roleName, permissionName)};
+        if (deleted) {
+            doc._deleted = true;
+        } else {
+            doc.type = "c8oRolePerm";
+            doc.role = roleName;
+            doc.element = left[0];
+            doc.action = left[1];
+            doc.scope = parts[1];
+            doc.permission = permissionName;
+            doc["~c8oAcl"] = "c8o:admin";
+        }
+        return doc;
+    }
+    
+    function attributesDoc(kind, name, attrs, deleted) {
+        var prefix = kind + "Attributes";
+        name = kind == "group" ? name : name.trim().toLowerCase();
+        var doc = {_id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(prefix + ":" + name)};
+        if (deleted) {
+            doc._deleted = true;
+            return doc;
+        }
+        if (kind == "group") {
+            doc.type = "c8oGroupAttributes";
+            doc.group = name;
+        } else if (kind == "role") {
+            doc.type = "c8oRoleAttributes";
+            doc.role = name;
+        } else if (kind == "permission") {
+            doc.type = "c8oPermissionAttributes";
+            doc.permission = name;
+        }
+        doc.attributes = attrs || {};
+        return doc;
+    }
+    
+    var cleanupDocs = [
+        userGroupDoc(nrCleanUser, nrCleanGroup, true),
+        groupRoleDoc(nrCleanGroup, nrCleanGroupRole, true),
+        attributesDoc("group", nrCleanGroup, {}, true),
+        groupRoleDoc(nrCleanRoleGroupA, nrCleanRole, true),
+        groupRoleDoc(nrCleanRoleGroupB, nrCleanRole, true),
+        rolePermissionDoc(nrCleanRole, nrCleanRolePerm, true),
+        attributesDoc("role", nrCleanRole, {}, true),
+        groupRoleDoc(nrCleanPermGroupA, nrCleanPermRoleA, true),
+        groupRoleDoc(nrCleanPermGroupB, nrCleanPermRoleB, true),
+        rolePermissionDoc(nrCleanPermRoleA, nrCleanPermission, true),
+        rolePermissionDoc(nrCleanPermRoleB, nrCleanPermission, true),
+        attributesDoc("permission", nrCleanPermission, {}, true)
+    ];
+    var _use_json_base = JSON.stringify(cleanupDocs);'
+↓CleanupBefore [steps.TransactionStep-1784562417245]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562417247]: 
+↓BuildFixtures [steps.SimpleStep-1784562417249]: 
+  expression: |
+    'var fixtures = [
+        userGroupDoc(nrCleanUser, nrCleanGroup, false),
+        groupRoleDoc(nrCleanGroup, nrCleanGroupRole, false),
+        attributesDoc("group", nrCleanGroup, {tag: "remove-group"}, false),
+        groupRoleDoc(nrCleanRoleGroupA, nrCleanRole, false),
+        groupRoleDoc(nrCleanRoleGroupB, nrCleanRole, false),
+        rolePermissionDoc(nrCleanRole, nrCleanRolePerm, false),
+        attributesDoc("role", nrCleanRole, {tag: "remove-role"}, false),
+        groupRoleDoc(nrCleanPermGroupA, nrCleanPermRoleA, false),
+        groupRoleDoc(nrCleanPermGroupB, nrCleanPermRoleB, false),
+        rolePermissionDoc(nrCleanPermRoleA, nrCleanPermission, false),
+        rolePermissionDoc(nrCleanPermRoleB, nrCleanPermission, false),
+        attributesDoc("permission", nrCleanPermission, {tag: "remove-permission"}, false)
+    ];
+    var _use_json_base = JSON.stringify(fixtures);'
+↓SetupFixtures [steps.TransactionStep-1784562417251]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562417253]: 
+↓UseRemoveGroup [steps.SimpleStep-1784562417255]: 
+  expression: var group = nrCleanGroup;
+↓CallRemoveGroup [steps.SequenceStep-1784562417257]: 
+  sourceSequence: lib_FullSyncGrp.RemoveGroup
+  ↓group [variables.StepVariable-1784562417259]: 
+↓CallUsersOfRemovedGroup [steps.SequenceStep-1784562417261]: 
+  sourceSequence: lib_FullSyncGrp.UsersOf
+  ↓group [variables.StepVariable-1784562417263]: 
+↓CallRolesOfRemovedGroup [steps.SequenceStep-1784562417265]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1784562417267]: 
+↓CallGetRemovedGroupAttributes [steps.SequenceStep-1784562417269]: 
+  sourceSequence: lib_FullSyncGrp.GetGroupAttributes
+  ↓group [variables.StepVariable-1784562417271]: 
+↓UseRemoveRole [steps.SimpleStep-1784562417273]: 
+  expression: var role = nrCleanRole;
+↓CallRemoveRole [steps.SequenceStep-1784562417275]: 
+  sourceSequence: lib_FullSyncGrp.RemoveRole
+  ↓role [variables.StepVariable-1784562417277]: 
+↓CallGroupsOfRemovedRole [steps.SequenceStep-1784562417279]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOfRole
+  ↓role [variables.StepVariable-1784562417281]: 
+↓CallPermissionsOfRemovedRole [steps.SequenceStep-1784562417283]: 
+  sourceSequence: lib_FullSyncGrp.PermissionsOfRole
+  ↓role [variables.StepVariable-1784562417285]: 
+↓CallGetRemovedRoleAttributes [steps.SequenceStep-1784562417287]: 
+  sourceSequence: lib_FullSyncGrp.GetRoleAttributes
+  ↓role [variables.StepVariable-1784562417289]: 
+↓UseRemovePermission [steps.SimpleStep-1784562417291]: 
+  expression: var permission = nrCleanPermission;
+↓CallRemovePermission [steps.SequenceStep-1784562417293]: 
+  sourceSequence: lib_FullSyncGrp.RemovePermission
+  ↓permission [variables.StepVariable-1784562417295]: 
+↓CallRolesOfRemovedPermission [steps.SequenceStep-1784562417297]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfPermission
+  ↓permission [variables.StepVariable-1784562417299]: 
+↓CallGetRemovedPermissionAttributes [steps.SequenceStep-1784562417301]: 
+  sourceSequence: lib_FullSyncGrp.GetPermissionAttributes
+  ↓permission [variables.StepVariable-1784562417303]: 
+↓UsePermGroupA [steps.SimpleStep-1784562417305]: 
+  expression: var group = nrCleanPermGroupA;
+↓CallRolesOfPermGroupA [steps.SequenceStep-1784562417307]: 
+  sourceSequence: lib_FullSyncGrp.RolesOfGroup
+  ↓group [variables.StepVariable-1784562417309]: 
+↓Checks [steps.XMLComplexStep-1784562417311]: 
+  nodeName: checks
+  ↓CheckRemoveGroupResponse [steps.XMLComplexStep-1784562417313]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417315]: 
+      expression: '"RemoveGroup returns removed"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417317]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417257
+            - java.lang.String: 
+              - ↑value: ./document/removed[.="true"]
+      ↓jThen [steps.ThenStep-1784562417319]: 
+        ↓Status [steps.ElementStep-1784562417321]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417323]: 
+        ↓Status [steps.ElementStep-1784562417325]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveGroupUsers [steps.XMLComplexStep-1784562417327]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417329]: 
+      expression: '"RemoveGroup removes user-group links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417331]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417261
+            - java.lang.String: 
+              - ↑value: ./document/user[.="nr_clean_delete_user"]
+      ↓jThen [steps.ThenStep-1784562417333]: 
+        ↓Status [steps.ElementStep-1784562417335]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417337]: 
+        ↓Status [steps.ElementStep-1784562417339]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckRemoveGroupRoles [steps.XMLComplexStep-1784562417341]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417343]: 
+      expression: '"RemoveGroup removes group-role links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417345]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417265
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_clean_group_role"]
+      ↓jThen [steps.ThenStep-1784562417347]: 
+        ↓Status [steps.ElementStep-1784562417349]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417351]: 
+        ↓Status [steps.ElementStep-1784562417353]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckRemoveGroupAttributes [steps.XMLComplexStep-1784562417355]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417357]: 
+      expression: '"RemoveGroup removes group attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417359]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417269
+            - java.lang.String: 
+              - ↑value: ./document/error/details[.="not_found"]
+      ↓jThen [steps.ThenStep-1784562417361]: 
+        ↓Status [steps.ElementStep-1784562417363]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417365]: 
+        ↓Status [steps.ElementStep-1784562417367]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemoveRoleGroups [steps.XMLComplexStep-1784562417369]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417371]: 
+      expression: '"RemoveRole removes group-role links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417373]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417279
+            - java.lang.String: 
+              - ↑value: ./document/group
+      ↓jThen [steps.ThenStep-1784562417375]: 
+        ↓Status [steps.ElementStep-1784562417377]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417379]: 
+        ↓Status [steps.ElementStep-1784562417381]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckRemoveRolePermissions [steps.XMLComplexStep-1784562417383]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417385]: 
+      expression: '"RemoveRole removes role-permission links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417387]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417283
+            - java.lang.String: 
+              - ↑value: ./document/permission[.="nr_clean_role.delete:read"]
+      ↓jThen [steps.ThenStep-1784562417389]: 
+        ↓Status [steps.ElementStep-1784562417391]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417393]: 
+        ↓Status [steps.ElementStep-1784562417395]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckRemoveRoleAttributes [steps.XMLComplexStep-1784562417397]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417399]: 
+      expression: '"RemoveRole removes role attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417401]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417287
+            - java.lang.String: 
+              - ↑value: ./document/error/details[.="not_found"]
+      ↓jThen [steps.ThenStep-1784562417403]: 
+        ↓Status [steps.ElementStep-1784562417405]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417407]: 
+        ↓Status [steps.ElementStep-1784562417409]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemovePermissionRoles [steps.XMLComplexStep-1784562417411]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417413]: 
+      expression: '"RemovePermission removes role-permission links"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417415]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417297
+            - java.lang.String: 
+              - ↑value: ./document/role
+      ↓jThen [steps.ThenStep-1784562417417]: 
+        ↓Status [steps.ElementStep-1784562417419]: 
+          expression: '"fail"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417421]: 
+        ↓Status [steps.ElementStep-1784562417423]: 
+          expression: '"pass"'
+          nodeName: status
+  ↓CheckRemovePermissionAttributes [steps.XMLComplexStep-1784562417425]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417427]: 
+      expression: '"RemovePermission removes permission attributes"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417429]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417301
+            - java.lang.String: 
+              - ↑value: ./document/error/details[.="not_found"]
+      ↓jThen [steps.ThenStep-1784562417431]: 
+        ↓Status [steps.ElementStep-1784562417433]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417435]: 
+        ↓Status [steps.ElementStep-1784562417437]: 
+          expression: '"fail"'
+          nodeName: status
+  ↓CheckRemovePermissionKeepsRoles [steps.XMLComplexStep-1784562417439]: 
+    nodeName: check
+    ↓Name [steps.ElementStep-1784562417441]: 
+      expression: '"RemovePermission keeps roles attached to groups"'
+      nodeName: name
+    ↓Assert [steps.IfExistThenElseStep-1784562417443]: 
+      condition: Assert
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1784562417307
+            - java.lang.String: 
+              - ↑value: ./document/role[.="nr_clean_perm_role_a"]
+      ↓jThen [steps.ThenStep-1784562417445]: 
+        ↓Status [steps.ElementStep-1784562417447]: 
+          expression: '"pass"'
+          nodeName: status
+      ↓jElse [steps.ElseStep-1784562417449]: 
+        ↓Status [steps.ElementStep-1784562417451]: 
+          expression: '"fail"'
+          nodeName: status
+↓PrepareCleanupAfter [steps.SimpleStep-1784562417453]: 
+  expression: var _use_json_base = JSON.stringify(cleanupDocs);
+↓CleanupAfter [steps.TransactionStep-1784562417455]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562417457]: 
+↓Summary [steps.ElementStep-1784562417459]: 
+  expression: '"Non-regression clean deletes executed with isolated nr_clean_* data"'
+  nodeName: summary

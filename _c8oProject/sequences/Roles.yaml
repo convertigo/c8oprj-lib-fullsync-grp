@@ -1,5 +1,5 @@
 accessibility: Private
-comment: list all roles
+comment: list all roles known from group-role links or role attributes documents
 ↓Call_Transaction [steps.TransactionStep-1776161239626]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRoles
 ↓InitWithAttributes [steps.SimpleStep-1782730616222]: 

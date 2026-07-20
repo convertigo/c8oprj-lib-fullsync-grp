@@ -2,7 +2,7 @@
 ↓lib_FullSyncGrp [core.Project]: 
   comment: Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include the attributes object for each returned group, role, or permission.
   contextTimeout: 1800
-  version: 8.0.0.14
+  version: 8.0.0.16
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓EffectivePermissionsOfUser [sequences.GenericSequence]: 🗏 sequences/EffectivePermissionsOfUser.yaml
   ↓GetGroupAttributes [sequences.GenericSequence]: 🗏 sequences/GetGroupAttributes.yaml
@@ -11,12 +11,15 @@
   ↓Groups [sequences.GenericSequence]: 🗏 sequences/Groups.yaml
   ↓GroupsOf [sequences.GenericSequence]: 🗏 sequences/GroupsOf.yaml
   ↓GroupsOfRole [sequences.GenericSequence]: 🗏 sequences/GroupsOfRole.yaml
+  ↓NonRegressionCleanDeletes [sequences.GenericSequence]: 🗏 sequences/NonRegressionCleanDeletes.yaml
   ↓NonRegressionPrimitives [sequences.GenericSequence]: 🗏 sequences/NonRegressionPrimitives.yaml
   ↓Permissions [sequences.GenericSequence]: 🗏 sequences/Permissions.yaml
   ↓PermissionsOfRole [sequences.GenericSequence]: 🗏 sequences/PermissionsOfRole.yaml
   ↓RemoveGroup [sequences.GenericSequence]: 🗏 sequences/RemoveGroup.yaml
+  ↓RemovePermission [sequences.GenericSequence]: 🗏 sequences/RemovePermission.yaml
   ↓RemovePermissionAttributes [sequences.GenericSequence]: 🗏 sequences/RemovePermissionAttributes.yaml
   ↓RemovePermissionFromRole [sequences.GenericSequence]: 🗏 sequences/RemovePermissionFromRole.yaml
+  ↓RemoveRole [sequences.GenericSequence]: 🗏 sequences/RemoveRole.yaml
   ↓RemoveRoleFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveRoleFromGroup.yaml
   ↓RemoveUserFromGroup [sequences.GenericSequence]: 🗏 sequences/RemoveUserFromGroup.yaml
   ↓RemoveUserInGroupBulkV2 [sequences.GenericSequence]: 🗏 sequences/RemoveUserInGroupBulkV2.yaml

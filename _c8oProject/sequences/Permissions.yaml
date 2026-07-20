@@ -1,5 +1,5 @@
 accessibility: Private
-comment: list all permissions
+comment: list all permissions known from role-permission links or permission attributes documents
 ↓Call_Transaction [steps.TransactionStep-1776161225297]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissions
 ↓InitWithAttributes [steps.SimpleStep-1782730616960]: 

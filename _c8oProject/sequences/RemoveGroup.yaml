@@ -1,87 +1,100 @@
 accessibility: Private
-comment: Remove a group by deleting all user-group links for this group, and also deleting the attached GroupAttributes document if it exists. The group attributes document id is sha256("groupAttributes:" + group).
-↓Input_variables [steps.InputVariablesStep-1672247955826]: 
-↓Call_Sequence_1 [steps.SequenceStep-1672247363978]: 
-  sourceSequence: lib_FullSyncGrp.UsersOf
-  ↓group [variables.StepVariable-1672247387831]: 
-    sourceDefinition: 
+comment: Remove a group and cleanup all related user-group links, group-role links and group attributes documents in bulk
+↓ValidateGroup [steps.IfStep-1784562106522]: 
+  condition: group == undefined || ('' + group).trim().length < 1
+  ↓Error_empty_group [steps.XMLErrorStep-1784562106524]: 
+    message: 
       - xmlizable: 
-        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
-        - com.twinsoft.convertigo.beans.common.XMLVector: 
-          - java.lang.String: 
-            - ↑value: 1672247955826
-          - java.lang.String: 
-            - ↑value: ./group/text()
-↓InitGroupRemoved [steps.SimpleStep-1781094164403]: 
-  expression: var groupRemoved = false;
-↓Iterator [steps.IteratorStep-1672247399637]: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "group" parameter must be defined and not empty
+  ↓Return_empty_group [steps.ReturnStep-1784562106526]: 
+↓NormalizeGroup [steps.SimpleStep-1784562106528]: 
+  expression: |
+    group = ('' + group).trim();
+    var _use_key = group;
+    var groupAttributesDocId = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
+    var _use_docid = groupAttributesDocId;
+↓Call_GetUsersByGroup [steps.TransactionStep-1784562106530]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetUsersByGroup
+  ↓_use_key [variables.StepVariable-1784562106532]: 
+↓UserGroupRows [steps.JsonSourceStep-1784562106534]: 
   sourceDefinition: 
     - xmlizable: 
       - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
       - com.twinsoft.convertigo.beans.common.XMLVector: 
         - java.lang.String: 
-          - ↑value: 1672247363978
+          - ↑value: 1784562106530
         - java.lang.String: 
-          - ↑value: ./document/user
-  ↓jSimpleSource [steps.SimpleSourceStep-1672247420653]: 
-    sourceDefinition: 
-      - xmlizable: 
-        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
-        - com.twinsoft.convertigo.beans.common.XMLVector: 
-          - java.lang.String: 
-            - ↑value: 1672247399637
-          - java.lang.String: 
-            - ↑value: ./text()
-    variableName: user
-  ↓CalcID [steps.SimpleStep-1672247281586]: 
-    expression: var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex(user + ":" + group);
-  ↓Call_Transaction [steps.TransactionStep-1672247264786]: 
-    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveGroup
-    ↓_use_docid [variables.StepVariable-1672247286244]: 
-      description: Document ID
-  ↓IfExistThenElse [steps.IfExistThenElseStep-1672247559950]: 
-    sourceDefinition: 
-      - xmlizable: 
-        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
-        - com.twinsoft.convertigo.beans.common.XMLVector: 
-          - java.lang.String: 
-            - ↑value: 1672247264786
-          - java.lang.String: 
-            - ↑value: ./document/couchdb_output/ok
-    ↓jThen [steps.ThenStep-1672247559953]: 
-      ↓Element [steps.XMLElementStep-1672247559959]: 
-        nodeName: removed
-        nodeText: true
-        output: false
-      ↓Element1 [steps.XMLElementStep-1672247704212]: 
-        nodeName: success
-        nodeText: true
-        output: false
-      ↓MarkGroupRemoved [steps.SimpleStep-1781094164418]: 
-        expression: groupRemoved = true;
-    ↓jElse [steps.ElseStep-1672247559962]: 
-      ↓Element1 [steps.XMLElementStep-1672247712612]: 
-        nodeName: success
-        nodeText: false
-        output: false
-↓CalcGroupAttributesID [steps.SimpleStep-1781092956890]: 
-  expression: var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
-↓Call_RemoveGroupAttributes [steps.TransactionStep-1781092956901]: 
-  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveGroupAttributes
-  ↓_use_docid [variables.StepVariable-1781092956903]: 
-    description: Group attributes document ID
-↓SetFinalSuccess [steps.IfThenElseStep-1781094164458]: 
-  condition: groupRemoved == true
-  ↓jThen [steps.ThenStep-1781094164460]: 
-    ↓Element1 [steps.XMLElementStep-1781094164462]: 
-      nodeName: success
-      nodeText: true
-  ↓jElse [steps.ElseStep-1781094164464]: 
-    ↓Element1 [steps.XMLElementStep-1781094164466]: 
-      nodeName: success
-      nodeText: false
+          - ↑value: ./document/couchdb_output/rows/item
+  variableName: userGroupRows
+↓Call_GetRolesByGroup [steps.TransactionStep-1784562106536]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRolesByGroup
+  ↓_use_key [variables.StepVariable-1784562106538]: 
+↓GroupRoleRows [steps.JsonSourceStep-1784562106540]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784562106536
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  variableName: groupRoleRows
+↓Call_GetGroupAttributes [steps.TransactionStep-1784563263027]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributes
+  ↓_use_docid [variables.StepVariable-1784563263029]: 
+↓GroupAttributeDocumentId [steps.SimpleSourceStep-1784563267207]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784563263027
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/_id/text()
+  variableName: groupAttributeDocumentId
+↓BuildDeleteDocs [steps.SimpleStep-1784562106542]: 
+  expression: |
+    'function asArray(rows) {
+        if (rows == undefined || rows == null) {
+            return [];
+        }
+        return Array.isArray(rows) ? rows : [rows];
+    }
+    
+    function addRows(rows) {
+        rows = asArray(rows);
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i] && rows[i].id != undefined) {
+                deleteDocs.push({_id: '''' + rows[i].id, _deleted: true});
+            }
+        }
+    }
+    
+    var deleteDocs = [];
+    addRows(userGroupRows);
+    addRows(groupRoleRows);
+    if (groupAttributeDocumentId != undefined && ('''' + groupAttributeDocumentId).length > 0) {
+        deleteDocs.push({_id: '''' + groupAttributeDocumentId, _deleted: true});
+    }
+    var deletedCount = deleteDocs.length;
+    var _use_json_base = JSON.stringify(deleteDocs);'
+↓Call_PostBulkDocumentsOverride [steps.TransactionStep-1784562106544]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562106546]: 
+↓Success [steps.ElementStep-1784562106548]: 
+  expression: '"Group ''" + group + "'' removal requested"'
+  nodeName: success
+↓Removed [steps.ElementStep-1784562106550]: 
+  expression: 'deletedCount > 0 ? "true" : "false"'
+  nodeName: removed
+↓Deleted [steps.ElementStep-1784562106552]: 
+  expression: '"" + deletedCount'
+  nodeName: deleted
 ↓group [variables.RequestableVariable-1672246912669]: 
-  comment: Group name to remove. RemoveGroup deletes all user-group links for this group and also deletes the attached GroupAttributes document if it exists.
+  comment: Name of the group to remove. The sequence deletes user-group links, group-role links and group attributes in bulk.
 ↓Test_Case [core.TestCase]: 
   ↓group [variables.TestCaseVariable-1672247301818]: 
     value: aa

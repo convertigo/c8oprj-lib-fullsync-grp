@@ -1,0 +1,82 @@
+accessibility: Private
+comment: Remove a permission and cleanup all related role-permission links and permission attributes documents in bulk
+↓ValidatePermission [steps.IfStep-1784562169628]: 
+  condition: permission == undefined || ('' + permission).trim().length < 1
+  ↓Error_empty_permission [steps.XMLErrorStep-1784562169630]: 
+    message: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: The "permission" parameter must be defined and not empty
+  ↓Return_empty_permission [steps.ReturnStep-1784562169632]: 
+↓NormalizePermission [steps.SimpleStep-1784562169634]: 
+  expression: |
+    permission = ('' + permission).trim().toLowerCase();
+    var _use_key = permission;
+    var permissionAttributesDocId = org.apache.commons.codec.digest.DigestUtils.sha256Hex('permissionAttributes:' + permission);
+    var _use_docid = permissionAttributesDocId;
+↓Call_GetRolesByPermission [steps.TransactionStep-1784562169636]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetRolesByPermission
+  ↓_use_key [variables.StepVariable-1784562169638]: 
+↓RolePermissionRows [steps.JsonSourceStep-1784562169640]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784562169636
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/rows/item
+  variableName: rolePermissionRows
+↓Call_GetPermissionAttributes [steps.TransactionStep-1784563311237]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetPermissionAttributes
+  ↓_use_docid [variables.StepVariable-1784563311239]: 
+↓PermissionAttributeDocumentId [steps.SimpleSourceStep-1784563316277]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1784563311237
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/_id/text()
+  variableName: permissionAttributeDocumentId
+↓BuildDeleteDocs [steps.SimpleStep-1784562169642]: 
+  expression: |
+    'function asArray(rows) {
+        if (rows == undefined || rows == null) {
+            return [];
+        }
+        return Array.isArray(rows) ? rows : [rows];
+    }
+    
+    var deleteDocs = [];
+    var rows = asArray(rolePermissionRows);
+    for (var i = 0; i < rows.length; i++) {
+        if (rows[i] && rows[i].id != undefined) {
+            deleteDocs.push({_id: '''' + rows[i].id, _deleted: true});
+        }
+    }
+    if (permissionAttributeDocumentId != undefined && ('''' + permissionAttributeDocumentId).length > 0) {
+        deleteDocs.push({_id: '''' + permissionAttributeDocumentId, _deleted: true});
+    }
+    var deletedCount = deleteDocs.length;
+    var _use_json_base = JSON.stringify(deleteDocs);'
+↓Call_PostBulkDocumentsOverride [steps.TransactionStep-1784562169644]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
+  ↓_use_json_base [variables.StepVariable-1784562169646]: 
+↓Success [steps.ElementStep-1784562169648]: 
+  expression: '"Permission ''" + permission + "'' removal requested"'
+  nodeName: success
+↓Removed [steps.ElementStep-1784562169650]: 
+  expression: 'deletedCount > 0 ? "true" : "false"'
+  nodeName: removed
+↓Deleted [steps.ElementStep-1784562169652]: 
+  expression: '"" + deletedCount'
+  nodeName: deleted
+↓permission [variables.RequestableVariable-1784562169654]: 
+  comment: Permission name to remove. The permission is normalized to lowercase, then role-permission links and permission attributes are deleted in bulk.
+↓Test_Case [core.TestCase]: 
+  ↓permission [variables.TestCaseVariable-1784562169657]: 
+    value: resource:read

@@ -14,7 +14,7 @@ databaseName: c8ofullsyncgrp
 ↓GetGroups [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
-  viewname: design/get_users_by_group
+  viewname: design/get_groups
 ↓GetGroupsByRole [transactions.couchdb.GetViewTransaction]: 
   q_reduce: false
   viewname: design/get_groups_by_role
@@ -34,7 +34,7 @@ databaseName: c8ofullsyncgrp
 ↓GetPermissions [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
-  viewname: design/get_roles_count_by_permission
+  viewname: design/get_permissions
 ↓GetPermissionsByRole [transactions.couchdb.GetViewTransaction]: 
   q_reduce: false
   viewname: design/get_permissions_by_role
@@ -49,7 +49,7 @@ databaseName: c8ofullsyncgrp
 ↓GetRoles [transactions.couchdb.GetViewTransaction]: 
   q_group_level: 1
   q_reduce: true
-  viewname: design/get_groups_count_by_role
+  viewname: design/get_roles
 ↓GetRolesByGroup [transactions.couchdb.GetViewTransaction]: 
   q_reduce: false
   viewname: design/get_roles_by_group
@@ -247,6 +247,34 @@ databaseName: c8ofullsyncgrp
       }",
             "reduce": "_count"
           },
+          "get_groups": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGrp\" && doc.group) {\r\n
+                  emit(doc.group, 1);\r\n
+              } else if (doc.type == \"c8oGroupAttributes\" && doc.group) {\r\n
+                  emit(doc.group, 0);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_sum"
+          },
+          "get_roles": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oGrpRole\" && doc.role) {\r\n
+                  emit(doc.role, 1);\r\n
+              } else if (doc.type == \"c8oRoleAttributes\" && doc.role) {\r\n
+                  emit(doc.role, 0);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_sum"
+          },
           "get_permissions_by_role": {
             "map": "function (doc) {\r\n
           try {\r\n
@@ -280,6 +308,20 @@ databaseName: c8ofullsyncgrp
           }\r\n
       }",
             "reduce": "_count"
+          },
+          "get_permissions": {
+            "map": "function (doc) {\r\n
+          try {\r\n
+              if (doc.type == \"c8oRolePerm\" && doc.permission) {\r\n
+                  emit(doc.permission, 1);\r\n
+              } else if (doc.type == \"c8oPermissionAttributes\" && doc.permission) {\r\n
+                  emit(doc.permission, 0);\r\n
+              }\r\n
+          } catch (err) {\r\n
+              log(err.message);\r\n
+          }\r\n
+      }",
+            "reduce": "_sum"
           },
           "get_group_attributes_by_group": {
             "map": "function (doc) {\r\n

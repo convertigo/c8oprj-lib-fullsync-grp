@@ -1,5 +1,50 @@
 accessibility: Private
+comment: Rename a group by moving its users from old_group_name to new_group_name and removing the old group. When delegation is enabled, both the source and destination groups are authorized before any change.
 ↓Input_variables [steps.InputVariablesStep-1672311803230]: 
+↓PrepareAdministrationGroups [steps.SimpleStep-1790067246414]: 
+  expression: |
+    'if (old_group_name == undefined || ('''' + old_group_name).trim().length < 1) {
+        throw ''The "old_group_name" parameter must be defined and not empty'';
+    }
+    if (new_group_name == undefined || ('''' + new_group_name).trim().length < 1) {
+        throw ''The "new_group_name" parameter must be defined and not empty'';
+    }
+    old_group_name = ('''' + old_group_name).trim();
+    new_group_name = ('''' + new_group_name).trim();
+    var groups = JSON.stringify([old_group_name, new_group_name]);'
+↓Call_CanAdministerGroups [steps.SequenceStep-1790067246426]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroups
+  ↓groups [variables.StepVariable-1790067246428]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067274419]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067246426
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067274427]: 
+  ↓Else [steps.ElseStep-1790067274429]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067274431]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067246426
+              - java.lang.String: 
+                - ↑value: ./document/deniedGroup/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: PLAIN
+            - →→: The authenticated user is not allowed to administer every group required by UpdateGroup
+    ↓Return [steps.ReturnStep-1790067274433]: 
 ↓Call_Sequence [steps.SequenceStep-1672311811692]: 
   sourceSequence: lib_FullSyncGrp.UsersOf
   ↓group [variables.StepVariable-1672311825158]: 

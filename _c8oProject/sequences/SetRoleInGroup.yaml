@@ -1,5 +1,5 @@
 accessibility: Private
-comment: add a role to a group
+comment: Add a role to a group. When delegation is enabled, protected groups require authorization through CanAdministerGroup before the group-role link is written.
 ↓jIf [steps.IfStep-1776163000060]: 
   condition: role == undefined || role.length < 1
   ↓Error_structure [steps.XMLErrorStep-1776163000061]: 
@@ -25,6 +25,39 @@ comment: add a role to a group
     group = group.trim();
     role = role.trim().toLowerCase();
     var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(group + ":" + role);
+↓Call_CanAdministerGroup [steps.SequenceStep-1790067150355]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+  ↓group [variables.StepVariable-1790067150357]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067216502]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067150355
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067216504]: 
+  ↓Else [steps.ElseStep-1790067216506]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067216508]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067150355
+              - java.lang.String: 
+                - ↑value: ./document/reason/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"The authenticated user is not allowed to administer the ''" + group + "'' group"'
+    ↓Return [steps.ReturnStep-1790067216510]: 
 ↓Call_Transaction [steps.TransactionStep-1776163000067]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetRoleInGroup
   ↓group [variables.StepVariable-1776163000068]: 

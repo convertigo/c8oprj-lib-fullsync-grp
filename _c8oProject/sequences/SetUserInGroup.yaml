@@ -1,5 +1,5 @@
 accessibility: Private
-comment: add a user to a group
+comment: Add a user to a group. When delegation is enabled, protected groups require authorization through CanAdministerGroup before the membership is written.
 ↓jIf [steps.IfStep-1485254882277]: 
   condition: user == undefined || user.length < 1
   ↓Error_structure [steps.XMLErrorStep-1485254933601]: 
@@ -22,6 +22,39 @@ comment: add a user to a group
   ↓Return [steps.ReturnStep-1485255183651]: 
 ↓CalcID [steps.SimpleStep-1485254322544]: 
   expression: var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(user + ":" + group);
+↓Call_CanAdministerGroup [steps.SequenceStep-1790067150317]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+  ↓group [variables.StepVariable-1790067150320]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067216469]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067150317
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067216471]: 
+  ↓Else [steps.ElseStep-1790067216473]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067216475]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067150317
+              - java.lang.String: 
+                - ↑value: ./document/reason/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"The authenticated user is not allowed to administer the ''" + group + "'' group"'
+    ↓Return [steps.ReturnStep-1790067216477]: 
 ↓Call_Transaction [steps.TransactionStep-1485253923062]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetUserInGroup
   ↓user [variables.StepVariable-1485253923064]: 

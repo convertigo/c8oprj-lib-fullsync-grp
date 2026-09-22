@@ -1,0 +1,120 @@
+accessibility: Private
+comment: Evaluate whether the current authenticated user may administer every distinct group in a JSON array. All checks finish before callers start a bulk write. When the global delegation symbol is empty, the sequence returns allowed=true without per-group calls.
+↓ValidateAndInitialize [steps.SimpleStep-1790066955658]: 
+  expression: |
+    'var configuredAdminGroups = ${lib.fullsyncgrp.delegation.adminGroups=[]};
+    if (!Array.isArray(configuredAdminGroups)) {
+        throw ''The symbol "lib.fullsyncgrp.delegation.adminGroups" must contain a JSON array'';
+    }
+    var delegationEnabled = configuredAdminGroups.length > 0;
+    var rawGroups = groups;
+    if (!Array.isArray(rawGroups)) {
+        var rawGroupsText = rawGroups == undefined ? '''' : ('''' + rawGroups).trim();
+        if (rawGroupsText.length < 1) {
+            throw ''The "groups" parameter must be a JSON array'';
+        }
+        rawGroups = JSON.parse(rawGroupsText);
+    }
+    if (!Array.isArray(rawGroups)) {
+        throw ''The "groups" parameter must be a JSON array'';
+    }
+    var normalizedGroups = [];
+    var seenGroups = {};
+    for (var i = 0; i < rawGroups.length; i++) {
+        if (typeof rawGroups[i] != ''string'' || rawGroups[i].trim().length < 1) {
+            throw ''The "groups" parameter must contain only non-empty group names'';
+        }
+        var normalizedGroup = rawGroups[i].trim();
+        if (!seenGroups[normalizedGroup]) {
+            seenGroups[normalizedGroup] = true;
+            normalizedGroups.push(normalizedGroup);
+        }
+    }
+    var allAllowed = true;
+    var deniedGroup = '''';
+    var denialReason = '''';
+    var checkedCount = 0;'
+↓GroupsToCheck [steps.JsonToXmlStep-1790066955660]: 
+  arrayChildrenTag: group
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: normalizedGroups
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: groups
+  output: false
+↓IfDelegationEnabled [steps.IfStep-1790067645151]: 
+  condition: delegationEnabled
+  ↓IteratorGroups [steps.IteratorStep-1790066955667]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1790066955660
+          - java.lang.String: 
+            - ↑value: ./group
+    ↓CurrentGroup [steps.SimpleSourceStep-1790066955669]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1790066955667
+            - java.lang.String: 
+              - ↑value: ./text()
+      variableName: currentGroup
+    ↓PrepareGroup [steps.SimpleStep-1790066955671]: 
+      expression: var group = '' + currentGroup;
+    ↓Call_CanAdministerGroup [steps.SequenceStep-1790066955673]: 
+      sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+      ↓group [variables.StepVariable-1790066955675]: 
+    ↓CurrentAllowed [steps.SimpleSourceStep-1790066955677]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1790066955673
+            - java.lang.String: 
+              - ↑value: ./document/allowed/text()
+      variableName: currentAllowed
+    ↓CurrentReason [steps.SimpleSourceStep-1790066955679]: 
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1790066955673
+            - java.lang.String: 
+              - ↑value: ./document/reason/text()
+      variableName: currentReason
+    ↓CollectResult [steps.SimpleStep-1790066955681]: 
+      expression: |
+        'checkedCount++;
+        if (allAllowed && ('''' + currentAllowed).toLowerCase() != ''true'') {
+            allAllowed = false;
+            deniedGroup = group;
+            denialReason = currentReason == undefined ? ''not_authorized'' : '''' + currentReason;
+        }'
+↓Allowed [steps.ElementStep-1790066955683]: 
+  expression: 'allAllowed ? "true" : "false"'
+  nodeName: allowed
+↓DeniedGroup [steps.ElementStep-1790066955685]: 
+  expression: deniedGroup
+  nodeName: deniedGroup
+↓Reason [steps.ElementStep-1790066955687]: 
+  expression: denialReason
+  nodeName: reason
+↓CheckedCount [steps.ElementStep-1790066955689]: 
+  expression: '"" + checkedCount'
+  nodeName: checkedCount
+↓groups [variables.RequestableVariable-1790066955691]: 
+  comment: JSON array of group names to evaluate. Values are trimmed and deduplicated before checks.
+  description: JSON array of group names to evaluate.

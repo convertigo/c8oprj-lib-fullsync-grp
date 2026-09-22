@@ -1,5 +1,5 @@
 accessibility: Private
-comment: remove a role from a group
+comment: Remove a role from a group. When delegation is enabled, protected groups require authorization through CanAdministerGroup before the group-role link is deleted.
 ↓jIf [steps.IfStep-1776161236562]: 
   condition: role == undefined || role.length < 1
   ↓Error_structure [steps.XMLErrorStep-1776161236578]: 
@@ -25,6 +25,39 @@ comment: remove a role from a group
     group = group.trim();
     role = role.trim().toLowerCase();
     var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex(group + ":" + role);
+↓Call_CanAdministerGroup [steps.SequenceStep-1790067150371]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+  ↓group [variables.StepVariable-1790067150373]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067216514]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067150371
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067216516]: 
+  ↓Else [steps.ElseStep-1790067216518]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067216520]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067150371
+              - java.lang.String: 
+                - ↑value: ./document/reason/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"The authenticated user is not allowed to administer the ''" + group + "'' group"'
+    ↓Return [steps.ReturnStep-1790067216522]: 
 ↓Call_Transaction [steps.TransactionStep-1776161237429]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.RemoveRoleFromGroup
   ↓_use_docid [variables.StepVariable-1776161237440]: 

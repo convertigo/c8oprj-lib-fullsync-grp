@@ -1,5 +1,5 @@
 accessibility: Private
-comment: 'Set or merge attributes for a group. Parameters: group is the group name; attributes is a JSON object encoded as a string, for example {"label":"Managers","level":"2"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced. Use mergePolicy to control special merge behavior on paths, for example {"attributes.label":"delete"} removes the label key, {"attributes.tags":"append"} appends to an array, and {"attributes.profile":"override"} replaces the nested object instead of deep-merging it. The document id is deterministic: sha256("groupAttributes:" + group). Stored document type is c8oGroupAttributes.'
+comment: 'Set or merge non-delegation attributes for a group. Parameters: group is the group name; attributes is a JSON object encoded as a string, for example {"label":"Managers","level":"2"}; mergePolicy is optional and is forwarded to the FullSync PostDocument p_merge parameter. The administrableBy attribute is reserved and must be changed through SetGroupAdministrators. When delegation is enabled, protected groups require authorization through CanAdministerGroup before attributes are written. By default, the new attributes object is merged with the existing attributes object: existing keys are kept, provided keys are added or replaced.'
 ↓BuildDocument [steps.SimpleStep-1781090099905]: 
   expression: |
     'if (group == undefined || ('''' + group).trim().length < 1) { throw ''The "group" parameter must be defined and not empty''; }
@@ -9,10 +9,66 @@ comment: 'Set or merge attributes for a group. Parameters: group is the group na
     if (rawAttributes.length > 0) {
         attrs = JSON.parse(rawAttributes);
     }
-    if (attrs == null || typeof attrs != ''object'' || attrs instanceof Array) { throw ''The "attributes" parameter must be a JSON object''; }
+    if (attrs == null || typeof attrs != ''object'' || attrs instanceof Array) {
+        throw ''The "attributes" parameter must be a JSON object'';
+    }
+    if (Object.prototype.hasOwnProperty.call(attrs, ''administrableBy'')) {
+        throw ''The "administrableBy" attribute is reserved; use SetGroupAdministrators'';
+    }
+    var rawMergePolicy = mergePolicy == undefined ? '''' : ('''' + mergePolicy).trim();
+    if (rawMergePolicy.length > 0) {
+        var parsedMergePolicy = JSON.parse(rawMergePolicy);
+        if (parsedMergePolicy != null && typeof parsedMergePolicy == ''object'' && !(parsedMergePolicy instanceof Array)) {
+            for (var mergePath in parsedMergePolicy) {
+                if (Object.prototype.hasOwnProperty.call(parsedMergePolicy, mergePath) &&
+                    (mergePath == ''attributes.administrableBy'' || mergePath.indexOf(''attributes.administrableBy.'') == 0)) {
+                    throw ''The "administrableBy" attribute is reserved; use SetGroupAdministrators'';
+                }
+            }
+            if (parsedMergePolicy.attributes != null &&
+                typeof parsedMergePolicy.attributes == ''object'' &&
+                !(parsedMergePolicy.attributes instanceof Array) &&
+                Object.prototype.hasOwnProperty.call(parsedMergePolicy.attributes, ''administrableBy'')) {
+                throw ''The "administrableBy" attribute is reserved; use SetGroupAdministrators'';
+            }
+        }
+    }
     var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(''groupAttributes:'' + group);
     var _use_json_base = JSON.stringify({_id: _id, type: ''c8oGroupAttributes'', group: group, attributes: attrs});
-    var _use_merge = mergePolicy == undefined ? '''' : ('''' + mergePolicy);'
+    var _use_merge = rawMergePolicy;'
+↓Call_CanAdministerGroup [steps.SequenceStep-1790067150404]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+  ↓group [variables.StepVariable-1790067150407]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067216536]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067150404
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067216538]: 
+  ↓Else [steps.ElseStep-1790067216540]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067216542]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067150404
+              - java.lang.String: 
+                - ↑value: ./document/reason/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"The authenticated user is not allowed to administer the ''" + group + "'' group"'
+    ↓Return [steps.ReturnStep-1790067216544]: 
 ↓Call_SetGroupAttributes [steps.TransactionStep-1781090099907]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetGroupAttributes
   ↓_use_json_base [variables.StepVariable-1781090099909]: 
@@ -52,8 +108,8 @@ comment: 'Set or merge attributes for a group. Parameters: group is the group na
   comment: Group name owning the attributes document. The stored document id is sha256("groupAttributes:" + group).
   description: Group name owning the attributes document.
 ↓attributes [variables.RequestableVariable-1781090099915]: 
-  comment: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.
-  description: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}.
+  comment: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}. The reserved administrableBy attribute is rejected and must be changed through SetGroupAdministrators.
+  description: JSON object encoded as a string. Provided keys are merged into the existing attributes object, for example {"label":"Managers","level":"2"}. The reserved administrableBy attribute is rejected and must be changed through SetGroupAdministrators.
 ↓mergePolicy [variables.RequestableVariable-1781090099917]: 
-  comment: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
-  description: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}.
+  comment: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}. Policies targeting attributes.administrableBy are rejected.
+  description: Optional FullSync PostDocument p_merge JSON string. It controls special merge behavior by path, for example {"attributes.label":"delete"}, {"attributes.tags":"append"}, or {"attributes.profile":"override"}. Policies targeting attributes.administrableBy are rejected.

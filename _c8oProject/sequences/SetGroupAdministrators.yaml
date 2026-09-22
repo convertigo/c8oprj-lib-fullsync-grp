@@ -1,0 +1,176 @@
+accessibility: Private
+comment: Set the administrableBy attribute of a group. The current authenticated user must belong to one of the central administrator groups configured by the project symbol lib.fullsyncgrp.delegation.adminGroups. The administrableBy parameter is a JSON array of group names; an empty array removes group delegation. Other group attributes are preserved.
+↓ValidateAndInitialize [steps.SimpleStep-1790061491980]: 
+  expression: |
+    'if (group == undefined || ('''' + group).trim().length < 1) {
+        throw ''The "group" parameter must be defined and not empty'';
+    }
+    group = ('''' + group).trim();
+    
+    var configuredAdminGroups = ${lib.fullsyncgrp.delegation.adminGroups=[]};
+    if (!Array.isArray(configuredAdminGroups)) {
+        throw ''The symbol "lib.fullsyncgrp.delegation.adminGroups" must contain a JSON array'';
+    }
+    
+    var centralAdminGroups = [];
+    var seenCentralGroups = {};
+    for (var i = 0; i < configuredAdminGroups.length; i++) {
+        if (typeof configuredAdminGroups[i] != ''string'' || configuredAdminGroups[i].trim().length < 1) {
+            throw ''The symbol "lib.fullsyncgrp.delegation.adminGroups" must contain only non-empty group names'';
+        }
+        var centralGroup = configuredAdminGroups[i].trim();
+        if (!seenCentralGroups[centralGroup]) {
+            seenCentralGroups[centralGroup] = true;
+            centralAdminGroups.push(centralGroup);
+        }
+    }
+    if (centralAdminGroups.length == 0) {
+        throw ''Group administration delegation is disabled because the symbol "lib.fullsyncgrp.delegation.adminGroups" is empty'';
+    }
+    
+    if (administrableBy == undefined || ('''' + administrableBy).trim().length < 1) {
+        throw ''The "administrableBy" parameter must be a JSON array'';
+    }
+    var configuredDelegatedGroups = JSON.parse(('''' + administrableBy).trim());
+    if (!Array.isArray(configuredDelegatedGroups)) {
+        throw ''The "administrableBy" parameter must be a JSON array'';
+    }
+    
+    var normalizedAdministrableBy = [];
+    var seenDelegatedGroups = {};
+    for (var j = 0; j < configuredDelegatedGroups.length; j++) {
+        if (typeof configuredDelegatedGroups[j] != ''string'' || configuredDelegatedGroups[j].trim().length < 1) {
+            throw ''The "administrableBy" parameter must contain only non-empty group names'';
+        }
+        var delegatedGroup = configuredDelegatedGroups[j].trim();
+        if (!seenDelegatedGroups[delegatedGroup]) {
+            seenDelegatedGroups[delegatedGroup] = true;
+            normalizedAdministrableBy.push(delegatedGroup);
+        }
+    }
+    
+    var centralAdministrator = false;
+    var matchedAdministratorGroup = '''';
+    var administratorCount = normalizedAdministrableBy.length;'
+↓GetAuthenticatedUser [steps.GetAuthenticatedUserStep-1790061492013]: 
+  nodeName: GetAuthenticatedUser
+  output: false
+↓CurrentUser [steps.SimpleSourceStep-1790061529247]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790061492013
+        - java.lang.String: 
+          - ↑value: ./text()
+  variableName: currentUser
+↓RequireAuthenticatedUser [steps.SimpleStep-1790061529282]: 
+  expression: |
+    'if (currentUser == undefined || ('''' + currentUser).trim().length < 1) {
+        throw ''An authenticated user is required to update group administrators'';
+    }
+    var user = ('''' + currentUser).trim();'
+↓Call_GroupsOf [steps.SequenceStep-1790061529321]: 
+  sourceSequence: lib_FullSyncGrp.GroupsOf
+  ↓user [variables.StepVariable-1790061529323]: 
+↓IteratorUserGroups [steps.IteratorStep-1790061559210]: 
+  condition: IteratorUserGroups
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790061529321
+        - java.lang.String: 
+          - ↑value: ./document/group
+  ↓CurrentUserGroup [steps.SimpleSourceStep-1790061666750]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1790061559210
+          - java.lang.String: 
+            - ↑value: ./text()
+    variableName: currentUserGroup
+  ↓MatchCentralAdministrator [steps.SimpleStep-1790061666785]: 
+    expression: |
+      'if (!centralAdministrator && currentUserGroup != undefined) {
+          var candidateGroup = ('''' + currentUserGroup).trim();
+          if (centralAdminGroups.indexOf(candidateGroup) >= 0) {
+              centralAdministrator = true;
+              matchedAdministratorGroup = candidateGroup;
+          }
+      }'
+↓AuthorizeAndBuildDocument [steps.SimpleStep-1790061666813]: 
+  expression: |
+    'if (!centralAdministrator) {
+        throw ''The authenticated user is not allowed to update group administrators'';
+    }
+    var _id = org.apache.commons.codec.digest.DigestUtils.sha256Hex(''groupAttributes:'' + group);
+    var _use_json_base = JSON.stringify({
+        _id: _id,
+        type: ''c8oGroupAttributes'',
+        group: group,
+        attributes: {
+            administrableBy: normalizedAdministrableBy
+        }
+    });
+    var _use_merge = JSON.stringify({
+        ''attributes.administrableBy'': ''override''
+    });'
+↓Call_SetGroupAttributes [steps.TransactionStep-1790061666832]: 
+  sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.SetGroupAttributes
+  ↓_use_json_base [variables.StepVariable-1790061666834]: 
+  ↓_use_merge [variables.StepVariable-1790061666836]: 
+↓IfWriteSucceeded [steps.IfExistThenElseStep-1790061706346]: 
+  condition: IfWriteSucceeded
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790061666832
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/ok[.="true"]
+  ↓Then [steps.ThenStep-1790061706353]: 
+    ↓Success [steps.ElementStep-1790061706355]: 
+      expression: '"Group administrators updated for ''" + group + "''"'
+      nodeName: success
+    ↓Updated [steps.ElementStep-1790061706357]: 
+      expression: '"true"'
+      nodeName: updated
+    ↓Group [steps.ElementStep-1790061706359]: 
+      expression: group
+      nodeName: group
+    ↓AdministratorCount [steps.ElementStep-1790061706361]: 
+      expression: '"" + administratorCount'
+      nodeName: administratorCount
+    ↓AuthorizedBy [steps.ElementStep-1790061706363]: 
+      expression: matchedAdministratorGroup
+      nodeName: authorizedBy
+  ↓Else [steps.ElseStep-1790061706365]: 
+    ↓WriteError [steps.XMLErrorStep-1790061706367]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790061666832
+              - java.lang.String: 
+                - ↑value: ./document/couchdb_output/*
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"Unexpected error while updating administrators for the ''" + group + "'' group"'
+↓group [variables.RequestableVariable-1790061492041]: 
+  comment: Group name whose administrableBy attribute is replaced.
+  description: Group name whose administrators are updated.
+↓administrableBy [variables.RequestableVariable-1790061492063]: 
+  comment: JSON array of group names allowed to administer the target group. Names are trimmed and deduplicated. Use [] to remove delegation from the group.
+  description: JSON array of administrator group names.

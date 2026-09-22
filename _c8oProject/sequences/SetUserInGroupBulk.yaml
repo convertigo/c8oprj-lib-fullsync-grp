@@ -1,5 +1,5 @@
 accessibility: Private
-comment: add a user to a group
+comment: Bulk add user-group memberships from the legacy bulkOBj format. Distinct target groups are authorized together before the first write, so a denied bulk operation is never partially applied.
 ↓Input_variables [steps.InputVariablesStep-1594129985760]: 
 ↓jSource [steps.SourceStep-1594130023727]: 
   sourceDefinition: 
@@ -22,18 +22,56 @@ comment: add a user to a group
   variableName: groups
 ↓CalcID [steps.SimpleStep-1594128461727]: 
   expression: |
-    'var jDoc = JSON.parse(''''+com.twinsoft.convertigo.engine.util.XMLUtils.XmlToJson(myNodeList.item(0), true, true));
+    'var jDoc = JSON.parse('''' + com.twinsoft.convertigo.engine.util.XMLUtils.XmlToJson(myNodeList.item(0), true, true));
     var bulk = jDoc.groups.complex;
-    if(!Array.isArray(bulk)){
-    	bulk = [bulk];
+    if (!Array.isArray(bulk)) {
+        bulk = [bulk];
     }
-    for(var i in bulk){
-    	bulk[i]["_id"] = ""+ org.apache.commons.codec.digest.DigestUtils.sha256Hex(bulk[i]["user"] + ":" + bulk[i]["group"]);  
-    	bulk[i]["type"] = "c8oGrp";
+    var authorizationGroups = [];
+    var seenAuthorizationGroups = {};
+    for (var i in bulk) {
+        bulk[i]["_id"] = "" + org.apache.commons.codec.digest.DigestUtils.sha256Hex(bulk[i]["user"] + ":" + bulk[i]["group"]);
+        bulk[i]["type"] = "c8oGrp";
+        var authorizationGroup = ('''' + bulk[i]["group"]).trim();
+        if (!seenAuthorizationGroups[authorizationGroup]) {
+            seenAuthorizationGroups[authorizationGroup] = true;
+            authorizationGroups.push(authorizationGroup);
+        }
     }
-    
-    
-    '
+    groups = JSON.stringify(authorizationGroups);'
+↓Call_CanAdministerGroups [steps.SequenceStep-1790067335414]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroups
+  ↓groups [variables.StepVariable-1790067335416]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067414817]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067335414
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067414819]: 
+  ↓Else [steps.ElseStep-1790067414821]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067414823]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067335414
+              - java.lang.String: 
+                - ↑value: ./document/deniedGroup/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: PLAIN
+            - →→: The authenticated user is not allowed to administer every group in this bulk operation
+    ↓Return [steps.ReturnStep-1790067414825]: 
 ↓jElement [steps.ElementStep-1594136696357]: 
   expression: JSON.stringify(bulk)
 ↓Call_Transaction1 [steps.TransactionStep-1594136601582]: 

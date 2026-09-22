@@ -1,0 +1,164 @@
+accessibility: Private
+comment: Determine whether the current authenticated user may administer a group. Global delegation administrators are configured by the project symbol lib.fullsyncgrp.delegation.adminGroups as a JSON array. An empty configured array disables delegation and preserves legacy behavior. When delegation is enabled, a group is protected only when its attributes contain a non-empty administrableBy array.
+↓ValidateAndInitialize [steps.SimpleStep-1790059586629]: 
+  expression: |
+    'if (group == undefined || ('''' + group).trim().length < 1) {
+        throw ''The "group" parameter must be defined and not empty'';
+    }
+    group = ('''' + group).trim();
+    
+    var configuredAdminGroups = ${lib.fullsyncgrp.delegation.adminGroups=[]};
+    if (!Array.isArray(configuredAdminGroups)) {
+        throw ''The symbol "lib.fullsyncgrp.delegation.adminGroups" must contain a JSON array'';
+    }
+    
+    var centralAdminGroups = [];
+    var seenCentralGroups = {};
+    for (var i = 0; i < configuredAdminGroups.length; i++) {
+        if (typeof configuredAdminGroups[i] != ''string'' || configuredAdminGroups[i].trim().length < 1) {
+            throw ''The symbol "lib.fullsyncgrp.delegation.adminGroups" must contain only non-empty group names'';
+        }
+        var centralGroup = configuredAdminGroups[i].trim();
+        if (!seenCentralGroups[centralGroup]) {
+            seenCentralGroups[centralGroup] = true;
+            centralAdminGroups.push(centralGroup);
+        }
+    }
+    
+    var delegationEnabled = centralAdminGroups.length > 0;
+    var protectedGroup = false;
+    var allowed = !delegationEnabled;
+    var reason = delegationEnabled ? ''group_not_delegated'' : ''delegation_disabled'';
+    var matchedGroup = '''';
+    var delegatedGroups = [];
+    var userGroups = [];
+    var _use_docid = org.apache.commons.codec.digest.DigestUtils.sha256Hex(''groupAttributes:'' + group);'
+↓GetAuthenticatedUser [steps.GetAuthenticatedUserStep-1790059586693]: 
+  nodeName: GetAuthenticatedUser
+  output: false
+↓CurrentUser [steps.SimpleSourceStep-1790059627041]: 
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790059586693
+        - java.lang.String: 
+          - ↑value: ./text()
+  variableName: currentUser
+↓IfDelegationEnabled [steps.IfStep-1790059586725]: 
+  condition: delegationEnabled
+  ↓Call_GetGroupAttributes [steps.TransactionStep-1790059627083]: 
+    sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetGroupAttributes
+    ↓_use_docid [variables.StepVariable-1790059627089]: 
+  ↓GroupAttributes [steps.JsonSourceStep-1790059651448]: 
+    sourceDefinition: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+        - com.twinsoft.convertigo.beans.common.XMLVector: 
+          - java.lang.String: 
+            - ↑value: 1790059627083
+          - java.lang.String: 
+            - ↑value: ./document/couchdb_output/attributes
+    variableName: groupAttributes
+  ↓EvaluateGroupProtection [steps.SimpleStep-1790059627116]: 
+    expression: |
+      'var attrs = groupAttributes;
+      var invalidDelegationAttribute = false;
+      delegatedGroups = [];
+      
+      if (attrs != undefined && attrs != null && attrs.administrableBy != undefined && attrs.administrableBy != null) {
+          var configuredDelegatedGroups = attrs.administrableBy;
+          if (!Array.isArray(configuredDelegatedGroups)) {
+              invalidDelegationAttribute = true;
+          } else {
+              var seenDelegatedGroups = {};
+              for (var i = 0; i < configuredDelegatedGroups.length; i++) {
+                  if (typeof configuredDelegatedGroups[i] != ''string'' || configuredDelegatedGroups[i].trim().length < 1) {
+                      invalidDelegationAttribute = true;
+                      break;
+                  }
+                  var delegatedGroup = configuredDelegatedGroups[i].trim();
+                  if (!seenDelegatedGroups[delegatedGroup]) {
+                      seenDelegatedGroups[delegatedGroup] = true;
+                      delegatedGroups.push(delegatedGroup);
+                  }
+              }
+          }
+      }
+      
+      if (invalidDelegationAttribute) {
+          protectedGroup = true;
+          allowed = false;
+          reason = ''invalid_administrable_by'';
+      } else if (delegatedGroups.length == 0) {
+          protectedGroup = false;
+          allowed = true;
+          reason = ''group_not_delegated'';
+      } else {
+          protectedGroup = true;
+          allowed = false;
+          reason = currentUser == undefined || ('''' + currentUser).length < 1 ? ''unauthenticated'' : ''not_authorized'';
+      }'
+  ↓IfMembershipLookupRequired [steps.IfStep-1790059627142]: 
+    condition: protectedGroup && currentUser != undefined && ('' + currentUser).length > 0
+    ↓PrepareMembershipLookup [steps.SimpleStep-1790059651488]: 
+      expression: var user = '' + currentUser;
+    ↓Call_GroupsOf [steps.SequenceStep-1790059651515]: 
+      sourceSequence: lib_FullSyncGrp.GroupsOf
+      ↓user [variables.StepVariable-1790059651525]: 
+    ↓IteratorUserGroups [steps.IteratorStep-1790059679901]: 
+      condition: IteratorUserGroups
+      sourceDefinition: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+          - com.twinsoft.convertigo.beans.common.XMLVector: 
+            - java.lang.String: 
+              - ↑value: 1790059651515
+            - java.lang.String: 
+              - ↑value: ./document/group
+      ↓CurrentUserGroup [steps.SimpleSourceStep-1790059704317]: 
+        sourceDefinition: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790059679901
+              - java.lang.String: 
+                - ↑value: ./text()
+        variableName: currentUserGroup
+      ↓MatchMembership [steps.SimpleStep-1790059704944]: 
+        expression: |
+          'if (!allowed && currentUserGroup != undefined) {
+              var candidateGroup = ('''' + currentUserGroup).trim();
+              if (centralAdminGroups.indexOf(candidateGroup) >= 0) {
+                  allowed = true;
+                  reason = ''central_admin'';
+                  matchedGroup = candidateGroup;
+              } else if (delegatedGroups.indexOf(candidateGroup) >= 0) {
+                  allowed = true;
+                  reason = ''delegated'';
+                  matchedGroup = candidateGroup;
+              }
+          }'
+↓Allowed [steps.ElementStep-1790059586762]: 
+  expression: 'allowed ? "true" : "false"'
+  nodeName: allowed
+↓DelegationEnabled [steps.ElementStep-1790059586804]: 
+  expression: 'delegationEnabled ? "true" : "false"'
+  nodeName: delegationEnabled
+↓Protected [steps.ElementStep-1790059586844]: 
+  expression: 'protectedGroup ? "true" : "false"'
+  nodeName: protected
+↓Reason [steps.ElementStep-1790059586877]: 
+  expression: reason
+  nodeName: reason
+↓User [steps.ElementStep-1790059586918]: 
+  expression: 'currentUser == undefined ? '''' : '''' + currentUser'
+  nodeName: user
+↓MatchedGroup [steps.ElementStep-1790059586954]: 
+  expression: matchedGroup
+  nodeName: matchedGroup
+↓group [variables.RequestableVariable-1790059586978]: 
+  comment: Group name to evaluate against the current authenticated user and the administrableBy group attribute.
+  description: Group name to evaluate.

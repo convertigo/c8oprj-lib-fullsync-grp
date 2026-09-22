@@ -1,5 +1,5 @@
 accessibility: Private
-comment: Bulk remove of 1,n users to 1,n groups
+comment: Bulk remove one or more users from one or more groups. Distinct target groups are authorized together before the first write, so a denied bulk operation is never partially applied.
 ↓Input_variables [steps.InputVariablesStep-1741268872205]: 
 ↓jGroups [steps.JsonSourceStep-1741268872208]: 
   sourceDefinition: 
@@ -26,18 +26,52 @@ comment: Bulk remove of 1,n users to 1,n groups
     'var _use_json_base = [];
     users = JSON.parse(users);
     groups = JSON.parse(groups);
-    for(var i=0; i < users.length; i++){
-    	for(var j=0; j < groups.length; j++){
-    		_use_json_base.push(
-    				{
-    					_id : org.apache.commons.codec.digest.DigestUtils.sha256Hex(users[i] + ":" + groups[j]),
-    					_deleted: true
-    				}
-    			)
-    	}
+    if (!Array.isArray(users) || !Array.isArray(groups)) {
+        throw ''The "users" and "groups" parameters must be JSON arrays'';
     }
-    
-    _use_json_base = JSON.stringify(_use_json_base);'
+    for (var i = 0; i < users.length; i++) {
+        for (var j = 0; j < groups.length; j++) {
+            _use_json_base.push({
+                _id: org.apache.commons.codec.digest.DigestUtils.sha256Hex(users[i] + ":" + groups[j]),
+                _deleted: true
+            });
+        }
+    }
+    _use_json_base = JSON.stringify(_use_json_base);
+    groups = JSON.stringify(groups);'
+↓Call_CanAdministerGroups [steps.SequenceStep-1790067335401]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroups
+  ↓groups [variables.StepVariable-1790067335403]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067414804]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067335401
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067414806]: 
+  ↓Else [steps.ElseStep-1790067414808]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067414810]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067335401
+              - java.lang.String: 
+                - ↑value: ./document/deniedGroup/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: PLAIN
+            - →→: The authenticated user is not allowed to administer every group in this bulk operation
+    ↓Return [steps.ReturnStep-1790067414812]: 
 ↓Call_Transaction2 [steps.TransactionStep-1741268872217]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.PostBulkDocumentsOverride
   ↓_use_json_base [variables.StepVariable-1741268872220]: 

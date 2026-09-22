@@ -1,5 +1,5 @@
 accessibility: Private
-comment: Remove a group and cleanup all related user-group links, group-role links and group attributes documents in bulk
+comment: Remove a group and clean up all related user-group links, group-role links and group attributes in bulk. When delegation is enabled, protected groups require authorization through CanAdministerGroup before any read-delete workflow starts.
 ↓ValidateGroup [steps.IfStep-1784562106522]: 
   condition: group == undefined || ('' + group).trim().length < 1
   ↓Error_empty_group [steps.XMLErrorStep-1784562106524]: 
@@ -16,6 +16,39 @@ comment: Remove a group and cleanup all related user-group links, group-role lin
     var _use_key = group;
     var groupAttributesDocId = org.apache.commons.codec.digest.DigestUtils.sha256Hex('groupAttributes:' + group);
     var _use_docid = groupAttributesDocId;
+↓Call_CanAdministerGroup [steps.SequenceStep-1790067150384]: 
+  sourceSequence: lib_FullSyncGrp.CanAdministerGroup
+  ↓group [variables.StepVariable-1790067150386]: 
+↓IfGroupAdministrationAllowed [steps.IfExistThenElseStep-1790067216526]: 
+  condition: IfGroupAdministrationAllowed
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1790067150384
+        - java.lang.String: 
+          - ↑value: ./document/allowed[.="true"]
+  ↓Then [steps.ThenStep-1790067216528]: 
+  ↓Else [steps.ElseStep-1790067216530]: 
+    ↓AdministrationDenied [steps.XMLErrorStep-1790067216532]: 
+      details: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: SOURCE
+            - com.twinsoft.convertigo.beans.common.XMLVector: 
+              - java.lang.String: 
+                - ↑value: 1790067150384
+              - java.lang.String: 
+                - ↑value: ./document/reason/text()
+      message: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+          - SmartType: 
+            - ↑mode: JS
+            - →→: '"The authenticated user is not allowed to administer the ''" + group + "'' group"'
+    ↓Return [steps.ReturnStep-1790067216534]: 
 ↓Call_GetUsersByGroup [steps.TransactionStep-1784562106530]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetUsersByGroup
   ↓_use_key [variables.StepVariable-1784562106532]: 

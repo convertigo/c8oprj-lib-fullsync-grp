@@ -1,9 +1,50 @@
 ↑convertigo: 8.0.0.m006
 ↓lib_FullSyncGrp [core.Project]: 
-  comment: Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include the attributes object for each returned group, role, or permission.
+  comment: |
+    'Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include attributes.
+    
+    ## Delegated group administration
+    
+    Delegation restricts the administration of a group to users who belong to authorized administrator groups.
+    
+    ### Global configuration
+    
+    The `lib.fullsyncgrp.delegation.adminGroups` symbol contains a JSON array of central administrator groups, for example `["grp_platform_admins"]`. A user who belongs to any of these groups may administer protected groups and change their delegation settings.
+    
+    The default value is `[]`. An empty array disables delegation entirely, so administration operations remain authorized as they were in earlier versions.
+    
+    ### Protecting a group
+    
+    
+    A group''s delegation is stored in the reserved `administrableBy` attribute as a JSON array of group names, for example `["grp1", "grp2"]`.
+    
+    - When `administrableBy` is missing or empty, the group is not protected.
+    - When `administrableBy` contains groups, the authenticated user must belong to at least one of them or to a central administrator group.
+    - An unauthenticated user cannot administer a protected group.
+    - Only the `SetGroupAdministrators` sequence can change `administrableBy`, and this sequence is restricted to central administrators.
+    - `SetGroupAttributes` rejects direct changes to this reserved attribute, including changes made through a merge policy.
+    
+    ### Authorization checks
+    
+    The private `CanAdministerGroup` sequence evaluates authorization for one group. Its response includes `allowed` and `reason`. The reason indicates whether delegation is disabled, the group is not protected, the user is a central or delegated administrator, or access is denied.
+    
+    The following operations perform this check before writing: adding or removing a user, adding or removing a role, changing group attributes, renaming a group, and deleting a group.
+    
+    Bulk sequences authorize every distinct target group before the first mutation. If authorization fails for any group, the entire bulk operation is rejected without writing anything. The private `CanAdministerGroups` sequence performs this preflight check and returns the first rejected group in `deniedGroup`.
+    
+    ### Setup
+    
+    1. Configure `lib.fullsyncgrp.delegation.adminGroups` with the central administrator groups.
+    2. Add central administrators to at least one of these groups.
+    3. Call `SetGroupAdministrators` to set the target group''s `administrableBy` list.
+    4. Use the regular administration sequences; they enforce delegation automatically.
+    
+    To remove protection from a group, call `SetGroupAdministrators` with `[]`.'
   contextTimeout: 1800
-  version: 8.0.0.18
+  version: 8.0.0.19
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
+  ↓CanAdministerGroup [sequences.GenericSequence]: 🗏 sequences/CanAdministerGroup.yaml
+  ↓CanAdministerGroups [sequences.GenericSequence]: 🗏 sequences/CanAdministerGroups.yaml
   ↓EffectivePermissionsOfUser [sequences.GenericSequence]: 🗏 sequences/EffectivePermissionsOfUser.yaml
   ↓GetGroupAttributes [sequences.GenericSequence]: 🗏 sequences/GetGroupAttributes.yaml
   ↓GetPermissionAttributes [sequences.GenericSequence]: 🗏 sequences/GetPermissionAttributes.yaml
@@ -31,6 +72,7 @@
   ↓RolesOfGroup [sequences.GenericSequence]: 🗏 sequences/RolesOfGroup.yaml
   ↓RolesOfPermission [sequences.GenericSequence]: 🗏 sequences/RolesOfPermission.yaml
   ↓SeedRbacDemoData [sequences.GenericSequence]: 🗏 sequences/SeedRbacDemoData.yaml
+  ↓SetGroupAdministrators [sequences.GenericSequence]: 🗏 sequences/SetGroupAdministrators.yaml
   ↓SetGroupAttributes [sequences.GenericSequence]: 🗏 sequences/SetGroupAttributes.yaml
   ↓SetPermissionAttributes [sequences.GenericSequence]: 🗏 sequences/SetPermissionAttributes.yaml
   ↓SetPermissionInRole [sequences.GenericSequence]: 🗏 sequences/SetPermissionInRole.yaml

@@ -73,7 +73,6 @@ databaseName: c8ofullsyncgrp
   ↓_use_key [variables.RequestableVariable-1486387636061]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓PostBulkDocuments [transactions.couchdb.PostBulkDocumentsTransaction]: 
-  accessibility: Public
   ↓Test_Case [core.TestCase]: 
     ↓_use_json_base [variables.TestCaseVariable-1594128698918]: 
       description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional

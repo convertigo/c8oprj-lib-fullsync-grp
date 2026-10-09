@@ -1,5 +1,5 @@
 accessibility: Private
-comment: list all users
+comment: 'list all users that belong to at least one group. There is no standalone user document in this library: a user with no group is not represented in the database and is therefore never listed. Each <user> element carries a ''groups'' attribute with the number of groups the user belongs to.'
 ↓Call_Transaction [steps.TransactionStep-1487150478466]: 
   sourceTransaction: lib_FullSyncGrp.c8ofullsyncgrp.GetUsers
 ↓Iterator [steps.IteratorStep-1487150478481]: 

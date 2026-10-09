@@ -5,6 +5,10 @@
 
 Library to define users, groups, roles, permissions, and optional attributes (RBAC) for fullsync replication filtering. Listing sequences keep their legacy response by default; set withAttributes=true to include attributes.
 
+## User listing semantics
+
+There is no standalone user document in this library: users exist only through their group memberships (c8oGrp documents). As a result, the Users sequence lists only users that belong to at least one group; a user with no group is not represented in the database and is never listed. The groups attribute of each user element is the number of groups the user belongs to. To list users known to the system regardless of groups, cross-reference the account source (for example lib_UserManager) instead.
+
 ## Delegated group administration
 
 Delegation restricts the administration of a group to users who belong to authorized administrator groups.
@@ -42,6 +46,7 @@ Bulk sequences authorize every distinct target group before the first mutation. 
 4. Use the regular administration sequences; they enforce delegation automatically.
 
 To remove protection from a group, call `SetGroupAdministrators` with `[]`.
+
 
 
 For more technical informations : [documentation](./project.md)
@@ -740,7 +745,7 @@ Rename a group by moving its users from old_group_name to new_group_name and rem
 
 ### Users
 
-list all users
+list all users that belong to at least one group. There is no standalone user document in this library: a user with no group is not represented in the database and is therefore never listed. Each <user> element carries a 'groups' attribute with the number of groups the user belongs to.
 
 ### UsersOf
 

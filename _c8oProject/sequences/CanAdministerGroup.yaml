@@ -108,7 +108,6 @@ comment: Determine whether the current authenticated user may administer a group
       sourceSequence: lib_FullSyncGrp.GroupsOf
       ↓user [variables.StepVariable-1790059651525]: 
     ↓IteratorUserGroups [steps.IteratorStep-1790059679901]: 
-      condition: IteratorUserGroups
       sourceDefinition: 
         - xmlizable: 
           - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector

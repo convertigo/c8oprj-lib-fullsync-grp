@@ -75,7 +75,6 @@ comment: Set the administrableBy attribute of a group. The current authenticated
   sourceSequence: lib_FullSyncGrp.GroupsOf
   ↓user [variables.StepVariable-1790061529323]: 
 ↓IteratorUserGroups [steps.IteratorStep-1790061559210]: 
-  condition: IteratorUserGroups
   sourceDefinition: 
     - xmlizable: 
       - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector

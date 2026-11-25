@@ -74,9 +74,10 @@ comment: Remove a role and cleanup all related group-role links, role-permission
     }
     
     var deleteDocs = [];
-    addRows(groupRoleRows);
-    addRows(rolePermissionRows);
-    if (roleAttributeDocumentId != undefined && ('''' + roleAttributeDocumentId).length > 0) {
+    // A source step that matches nothing declares no variable on a Convertigo 8.3 engine: read them with typeof.
+    addRows(typeof groupRoleRows == "undefined" ? null : groupRoleRows);
+    addRows(typeof rolePermissionRows == "undefined" ? null : rolePermissionRows);
+    if (typeof roleAttributeDocumentId != "undefined" && roleAttributeDocumentId != undefined && ('''' + roleAttributeDocumentId).length > 0) {
         deleteDocs.push({_id: '''' + roleAttributeDocumentId, _deleted: true});
     }
     var deletedCount = deleteDocs.length;

@@ -52,13 +52,14 @@ comment: Remove a permission and cleanup all related role-permission links and p
     }
     
     var deleteDocs = [];
-    var rows = asArray(rolePermissionRows);
+    // A source step that matches nothing declares no variable on a Convertigo 8.3 engine: read them with typeof.
+    var rows = asArray(typeof rolePermissionRows == "undefined" ? null : rolePermissionRows);
     for (var i = 0; i < rows.length; i++) {
         if (rows[i] && rows[i].id != undefined) {
             deleteDocs.push({_id: '''' + rows[i].id, _deleted: true});
         }
     }
-    if (permissionAttributeDocumentId != undefined && ('''' + permissionAttributeDocumentId).length > 0) {
+    if (typeof permissionAttributeDocumentId != "undefined" && permissionAttributeDocumentId != undefined && ('''' + permissionAttributeDocumentId).length > 0) {
         deleteDocs.push({_id: '''' + permissionAttributeDocumentId, _deleted: true});
     }
     var deletedCount = deleteDocs.length;

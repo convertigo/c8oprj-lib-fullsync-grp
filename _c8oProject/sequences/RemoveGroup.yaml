@@ -97,19 +97,31 @@ comment: Remove a group and clean up all related user-group links, group-role li
         return Array.isArray(rows) ? rows : [rows];
     }
     
+    var seen = {};
     function addRows(rows) {
         rows = asArray(rows);
         for (var i = 0; i < rows.length; i++) {
-            if (rows[i] && rows[i].id != undefined) {
-                deleteDocs.push({_id: '''' + rows[i].id, _deleted: true});
+            var id = rows[i] ? (rows[i].id != undefined ? rows[i].id : rows[i]._id) : undefined;
+            if (id != undefined && !seen['''' + id]) {
+                seen['''' + id] = true;
+                deleteDocs.push({_id: '''' + id, _deleted: true});
             }
         }
     }
     
     var deleteDocs = [];
-    addRows(userGroupRows);
-    addRows(groupRoleRows);
-    if (groupAttributeDocumentId != undefined && ('''' + groupAttributeDocumentId).length > 0) {
+    // A source step that matches nothing declares no variable on a Convertigo 8.3 engine: read them with typeof.
+    addRows(typeof userGroupRows == "undefined" ? null : userGroupRows);
+    addRows(typeof groupRoleRows == "undefined" ? null : groupRoleRows);
+    // The membership views only list the documents with the reserved ACL: memberships written before it
+    // are found directly, so that a deleted group leaves none behind.
+    var membershipQuery = new org.codehaus.jettison.json.JSONObject(JSON.stringify({
+        selector: {type: "c8oGrp", group: '''' + group}, fields: ["_id"], limit: 10000
+    }));
+    var memberships = JSON.parse('''' + com.twinsoft.convertigo.engine.Engine.theApp.couchDbManager.getFullSyncClient()
+        .postFind("c8ofullsyncgrp", membershipQuery).toString());
+    addRows(memberships.docs);
+    if (typeof groupAttributeDocumentId != "undefined" && groupAttributeDocumentId != undefined && ('''' + groupAttributeDocumentId).length > 0) {
         deleteDocs.push({_id: '''' + groupAttributeDocumentId, _deleted: true});
     }
     var deletedCount = deleteDocs.length;

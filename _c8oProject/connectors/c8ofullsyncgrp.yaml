@@ -1,78 +1,98 @@
 ↑default: true
 databaseName: c8ofullsyncgrp
+replicationAccess: deny
 ↓GetAttributesByKindNameValue [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_attributes_by_kind_name_value
   ↓_use_key [variables.RequestableVariable-1782730347704]: 
     description: Composite key [kind, attributeName, attributeValue] used to search entities by attribute.
 ↓GetGroupAttributes [transactions.couchdb.GetDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1781090038050]: 
     description: Document ID
 ↓GetGroupAttributesList [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_group_attributes_by_group
 ↓GetGroups [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_group_level: 1
   q_reduce: true
   viewname: design/get_groups
 ↓GetGroupsByRole [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_groups_by_role
   ↓_use_key [variables.RequestableVariable-1776161211372]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetGroupsByUser [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_groups_by_user
   ↓_use_key [variables.RequestableVariable-1486393547007]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetPermissionAttributes [transactions.couchdb.GetDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1781090038084]: 
     description: Document ID
 ↓GetPermissionAttributesList [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_permission_attributes_by_permission
 ↓GetPermissions [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_group_level: 1
   q_reduce: true
   viewname: design/get_permissions
 ↓GetPermissionsByRole [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_permissions_by_role
   ↓_use_key [variables.RequestableVariable-1776161212334]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetRoleAttributes [transactions.couchdb.GetDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1781090038067]: 
     description: Document ID
 ↓GetRoleAttributesList [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_role_attributes_by_role
 ↓GetRoles [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_group_level: 1
   q_reduce: true
   viewname: design/get_roles
 ↓GetRolesByGroup [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_roles_by_group
   ↓_use_key [variables.RequestableVariable-1776161210887]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetRolesByPermission [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_roles_by_permission
   ↓_use_key [variables.RequestableVariable-1776161212681]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓GetServerInfo [transactions.couchdb.GetServerInfoTransaction]: 
+  accessibility: Private
   ↑default: true
-  accessibility: Public
 ↓GetUsers [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_group_level: 1
   q_reduce: true
   viewname: design/get_groups_by_user
 ↓GetUsersByGroup [transactions.couchdb.GetViewTransaction]: 
+  accessibility: Private
   q_reduce: false
   viewname: design/get_users_by_group
   ↓_use_key [variables.RequestableVariable-1486387636061]: 
     description: (string) – Return only documents that match the specified key. Optional
 ↓PostBulkDocuments [transactions.couchdb.PostBulkDocumentsTransaction]: 
+  accessibility: Private
+  fullSyncAclPolicy: fromKeyC8oAcl
   ↓Test_Case [core.TestCase]: 
     ↓_use_json_base [variables.TestCaseVariable-1594128698918]: 
       description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
@@ -85,6 +105,7 @@ databaseName: c8ofullsyncgrp
     description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
     value: c8o:admin
 ↓PostBulkDocumentsOverride [transactions.couchdb.PostBulkDocumentsTransaction]: 
+  accessibility: Private
   fullSyncAclPolicy: noOp
   policy: merge
   ↓Test_Case [core.TestCase]: 
@@ -96,6 +117,7 @@ databaseName: c8ofullsyncgrp
   ↓_use_json_base [variables.RequestableVariable-1741280474524]: 
     description: (string) – JSON use as a base for the array of documents (js array), or for individual documents (js object). Optional
 ↓PostFind [transactions.couchdb.PostFindTransaction]: 
+  accessibility: Private
   ↓Test_Case [core.TestCase]: 
     ↓_use_selector [variables.TestCaseVariable-1672751510992]: 
       description: |
@@ -112,38 +134,53 @@ databaseName: c8ofullsyncgrp
   ↓_use_limit [variables.RequestableVariable-1672750890152]: 
     description: (number) – Maximum number of results returned. Default is 25. Optional
 ↓RemoveGroup [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1672247091187]: 
     description: Document ID
 ↓RemoveGroupAttributes [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1781092925774]: 
     description: Group attributes document ID
 ↓RemovePermissionAttributes [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1781092925788]: 
     description: Permission attributes document ID
 ↓RemovePermissionFromRole [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1776161214974]: 
     description: Document ID
 ↓RemoveRoleFromGroup [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1776161213537]: 
     description: Document ID
 ↓RemoveUserFromGroup [transactions.couchdb.DeleteDocumentTransaction]: 
+  accessibility: Private
   ↓_use_docid [variables.RequestableVariable-1486391952010]: 
     description: Document ID
 ↓SetGroupAttributes [transactions.couchdb.PostDocumentTransaction]: 
-  fullSyncAclPolicy: noOp
+  accessibility: Private
+  fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oGroupAttributes"}'
   policy: merge
   ↓_use_merge [variables.RequestableVariable-1781090038020]: 
   ↓_use_json_base [variables.RequestableVariable-1781090051248]: 
     description: JSON document base generated by the sequence
+  ↓_c8oAcl [variables.RequestableVariable-1895000000101]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
 ↓SetPermissionAttributes [transactions.couchdb.PostDocumentTransaction]: 
-  fullSyncAclPolicy: noOp
+  accessibility: Private
+  fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oPermissionAttributes"}'
   policy: merge
   ↓_use_merge [variables.RequestableVariable-1781090038044]: 
   ↓_use_json_base [variables.RequestableVariable-1781090051273]: 
     description: JSON document base generated by the sequence
+  ↓_c8oAcl [variables.RequestableVariable-1895000000102]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
 ↓SetPermissionInRole [transactions.couchdb.PostDocumentTransaction]: 
+  accessibility: Private
   fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oRolePerm"}'
   ↓role [variables.RequestableVariable-1776161215188]: 
@@ -156,13 +193,18 @@ databaseName: c8ofullsyncgrp
     description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
     value: c8o:admin
 ↓SetRoleAttributes [transactions.couchdb.PostDocumentTransaction]: 
-  fullSyncAclPolicy: noOp
+  accessibility: Private
+  fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oRoleAttributes"}'
   policy: merge
   ↓_use_merge [variables.RequestableVariable-1781090038034]: 
   ↓_use_json_base [variables.RequestableVariable-1781090051261]: 
     description: JSON document base generated by the sequence
+  ↓_c8oAcl [variables.RequestableVariable-1895000000103]: 
+    description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
+    value: c8o:admin
 ↓SetRoleInGroup [transactions.couchdb.PostDocumentTransaction]: 
+  accessibility: Private
   fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oGrpRole"}'
   ↓group [variables.RequestableVariable-1776161213815]: 
@@ -172,6 +214,7 @@ databaseName: c8ofullsyncgrp
     description: Set the owner of the document if the "Acl Policy"="From _c8oACL variable"
     value: c8o:admin
 ↓SetUserInGroup [transactions.couchdb.PostDocumentTransaction]: 
+  accessibility: Private
   fullSyncAclPolicy: fromKeyC8oAcl
   p_json_base: '{"type":"c8oGrp"}'
   ↓user [variables.RequestableVariable-1485253901719]: 
@@ -187,11 +230,18 @@ databaseName: c8ofullsyncgrp
         "_id": "_design\/design",
         "filters": {},
         "updates": {},
+        "validate_doc_update": "function (newDoc, oldDoc, userCtx, secObj) {\r\n
+          \/\/ Groups, roles and permissions are written by the lib_FullSyncGrp sequences only, with the reserved ACL.\r\n
+          \/\/ Other documents are refused.\r\n
+          if (newDoc._id.indexOf(\"_design\/\") !== 0 && newDoc._deleted !== true && newDoc[\"~c8oAcl\"] !== \"c8o:admin\") {\r\n
+              throw({forbidden: \"Groups are written by the lib_FullSyncGrp sequences only.\"});\r\n
+          }\r\n
+      }",
         "views": {
           "get_users_by_group": {
             "map": "function (doc) {\r\n
           try {\r\n
-              if (doc.type == \"c8oGrp\" && doc.user && doc.group) {\r\n
+              if (doc.type == \"c8oGrp\" && doc.user && doc.group && doc[\"~c8oAcl\"] == \"c8o:admin\") {\r\n
                   emit(doc.group, doc.user);\r\n
               }\r\n
           } catch (err) {\r\n
@@ -203,7 +253,7 @@ databaseName: c8ofullsyncgrp
           "get_groups_by_user": {
             "map": "function (doc) {\r\n
           try {\r\n
-              if (doc.type == \"c8oGrp\" && doc.user && doc.group) {\r\n
+              if (doc.type == \"c8oGrp\" && doc.user && doc.group && doc[\"~c8oAcl\"] == \"c8o:admin\") {\r\n
                   emit(doc.user, doc.group);\r\n
               }\r\n
           } catch (err) {\r\n

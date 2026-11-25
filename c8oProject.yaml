@@ -7,6 +7,14 @@
     
     There is no standalone user document in this library: users exist only through their group memberships (c8oGrp documents). As a result, the Users sequence lists only users that belong to at least one group; a user with no group is not represented in the database and is never listed. The groups attribute of each user element is the number of groups the user belongs to. To list users known to the system regardless of groups, cross-reference the account source (for example lib_UserManager) instead.
     
+    ## Group data ownership
+    
+    Memberships (c8oGrp documents) and the group, role and permission documents of the c8ofullsyncgrp database are owned by `c8o:admin`: they are written by the sequences of this library. The database refuses documents written otherwise, and only the memberships owned by `c8o:admin` are listed and used for the FullSync group filtering.
+    
+    Client replication of the c8ofullsyncgrp database is closed (`replicationAccess: deny` on the connector) on the Convertigo engines that support this property: 8.3.14, and 8.4.6 or later.
+    
+    Memberships created by the bulk sequences of earlier versions (`SetUserInGroupBulk`, `SetUserInGroupBulkV2`) are owned by the user who called them. When upgrading, re-own them to `c8o:admin` (set their `~c8oAcl` to `c8o:admin`) so that they stay visible.
+    
     ## Delegated group administration
     
     Delegation restricts the administration of a group to users who belong to authorized administrator groups.
@@ -46,7 +54,7 @@
     To remove protection from a group, call `SetGroupAdministrators` with `[]`.
     '
   contextTimeout: 1800
-  version: 8.0.0.21
+  version: 8.0.1.0
   ↓c8ofullsyncgrp [connectors.FullSyncConnector]: 🗏 connectors/c8ofullsyncgrp.yaml
   ↓CanAdministerGroup [sequences.GenericSequence]: 🗏 sequences/CanAdministerGroup.yaml
   ↓CanAdministerGroups [sequences.GenericSequence]: 🗏 sequences/CanAdministerGroups.yaml
